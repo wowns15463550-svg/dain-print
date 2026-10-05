@@ -27,6 +27,19 @@ const ASSETS = [
   ["step3.webp", "hf_20261005_020239_26c9e1fe-0ff7-4e19-a539-45bb82654141", { max: 1100 }],
   ["step4.webp", "hf_20261005_020240_1eb41ac2-028f-4f00-b621-e731b1ae56b5", { max: 1100 }],
   ["step5.webp", "hf_20261005_020239_1537bdae-7aef-41a8-bcad-eba877f6b880", { max: 1100 }],
+  ["paper-mojo.webp", "hf_20261005_152325_25bd3e4f-bb5d-4bd2-9586-1cd623426c6e"],
+  ["paper-mojo-use.webp", "hf_20261005_152327_98ef12a4-aaea-4c3b-9f4c-9e5a6eb69d59"],
+  ["paper-snow.webp", "hf_20261005_152324_56f4e483-c4bb-4918-8e9b-8ffc66c5d8ad"],
+  ["paper-snow-use.webp", "hf_20261005_152325_b08d0b6d-8529-46b8-ac3a-85f2017bfb28"],
+  ["paper-rdv.webp", "hf_20261005_152324_02b8ead8-5bd1-4dc3-a617-4be190642603"],
+  ["paper-rdv-use.webp", "hf_20261005_152323_8b74e69e-b132-4bc3-8928-e425fa3a62ad"],
+  ["check-bleed.webp", "hf_20261005_152323_c2433ce1-5299-40e5-aa58-ad935d7e3043", { max: 1100 }],
+  ["check-safe.webp", "hf_20261005_152325_75670b4d-59b9-4134-810d-37a0f5e91bf4", { max: 1100 }],
+  ["check-dpi.webp", "hf_20261005_152322_f4acbd04-35fa-4437-b12c-3dafc0f9a2e8", { max: 1100 }],
+  ["check-cmyk.webp", "hf_20261005_152324_187067af-af4e-4ca5-95ea-ffdcb70135e2", { max: 1100 }],
+  ["check-font.webp", "hf_20261005_152325_91dc3e70-2cb6-48aa-88a4-81cff45abf77", { max: 1100 }],
+  ["check-order.webp", "hf_20261005_152324_f81fc9fa-b6e6-4731-aae8-abf9a6e24865", { max: 1100 }],
+  ["l-invite.webp", "hf_20261005_152331_f2b83398-7c25-4582-8b25-f338ef8a3c5b"],
 ];
 
 mkdirSync(OUT, { recursive: true });

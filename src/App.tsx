@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { CHECKS, CONTACT, EQUIPMENT, FAQ, MAIL_TEMPLATE, NOTICES, PAPERS, SERVICES, STEPS } from "./site-data";
+import { CHECKS, CONTACT, EQUIPMENT, FAQ, MAIL_TEMPLATE, NOTICES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
 
 const HERO_SLIDES = [
   { src: "assets/hero-presses-r.webp", w: 964, pos: "18% 62%", alt: "코니카미놀타 AccurioPress C14000과 캐논 varioPRINT 115" },
@@ -66,6 +66,8 @@ function useCopy() {
 export default function App() {
   const [menu, setMenu] = useState(false);
   const [slide, setSlide] = useState(0);
+  const [paperOpen, setPaperOpen] = useState<number | null>(null);
+  const [checkOpen, setCheckOpen] = useState<number | null>(null);
   const [solid, setSolid] = useState(false);
   const [svc, setSvc] = useState(0);
   const heroRef = useRef<HTMLElement>(null);
@@ -288,14 +290,43 @@ export default function App() {
                 ))}
               </div>
             </div>
-            <div className="papers">
-              <span className="pt">자주 쓰는 용지</span>
-              {PAPERS.map(([n, w]) => (
-                <span key={n}>
-                  <b>{n}</b>
-                  {w}
-                </span>
-              ))}
+            <div className="paper">
+              <div className="paper-head rv">
+                <h3 className="serif">자주 쓰는 종이</h3>
+                <p>사진에 마우스를 올리거나 눌러 보면 실제로 쓰이는 모습이 보여요.</p>
+              </div>
+              <div className="paper-grid">
+                {PAPER_GUIDE.map((pp, i) => (
+                  <article className={paperOpen === i ? "pc rv open" : "pc rv"} key={pp.name} data-d={i}>
+                    <button
+                      type="button"
+                      className="pc-img"
+                      aria-pressed={paperOpen === i}
+                      aria-label={`${pp.name} 종이가 쓰이는 모습 보기`}
+                      onClick={() => setPaperOpen((v) => (v === i ? null : i))}
+                    >
+                      <img src={pp.img} alt={`${pp.name} 종이 질감`} loading="lazy" width={1168} height={880} />
+                      <img className="pc-use" src={pp.use} alt={`${pp.name} 종이로 만든 ${pp.useLabel}`} loading="lazy" width={1168} height={880} />
+                      <span className="pc-cap">{pp.useLabel}</span>
+                    </button>
+                    <div className="pc-body">
+                      <div className="pc-top">
+                        <h4>{pp.name}</h4>
+                        <span>{pp.finish}</span>
+                      </div>
+                      <p>{pp.desc}</p>
+                      <dl>
+                        {pp.rows.map(([w, u]) => (
+                          <div key={w}>
+                            <dt>{w}</dt>
+                            <dd>{u}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -380,17 +411,56 @@ export default function App() {
               </div>
               <div className="rv">
                 <ul className="chk">
-                  {CHECKS.map((c) => (
-                    <li key={c.t}>
-                      <b>{c.t}</b>
-                      <span>{c.d}</span>
-                    </li>
-                  ))}
+                  <li>
+                    <b>받는 파일</b>
+                    <span>PDF 권장. AI, JPG, PNG도 받습니다.</span>
+                  </li>
+                  <li>
+                    <b>보내기 전에</b>
+                    <span>재단 여백과 해상도 등 여섯 가지만 확인해 주세요.</span>
+                  </li>
+                  <li>
+                    <b>급한 작업</b>
+                    <span>
+                      전화나 문자({CONTACT.phone})로 먼저 알려주세요.
+                    </span>
+                  </li>
                 </ul>
-                <p className="fmt">
-                  <b>받는 파일</b> PDF 권장, AI, JPG, PNG
-                </p>
+                <a className="link-line fmt" href="#check">
+                  인쇄 전 확인 사항 보기 <Arrow />
+                </a>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="sec chk-sec" id="check">
+          <div className="wrap">
+            <div className="rv">
+              <h2 className="serif sec-title">인쇄 전 꼭 확인하세요</h2>
+              <p className="sec-lead">디자인 파일은 직접 준비해 주셔야 해요. 카드에 마우스를 올리거나 누르면 자세한 설명이 나옵니다.</p>
+            </div>
+            <div className="ck-grid">
+              {CHECKS.map((c, i) => (
+                <button
+                  type="button"
+                  key={c.t}
+                  className={checkOpen === i ? "ck rv open" : "ck rv"}
+                  data-d={i % 3}
+                  aria-expanded={checkOpen === i}
+                  onClick={() => setCheckOpen((v) => (v === i ? null : i))}
+                >
+                  <span className="ck-img">
+                    <img src={c.img} alt="" loading="lazy" width={1168} height={880} />
+                    <span className="ck-detail">{c.d}</span>
+                  </span>
+                  <span className="ck-body">
+                    <small>CHECK {String(i + 1).padStart(2, "0")}</small>
+                    <b>{c.t}</b>
+                    <span>{c.s}</span>
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
         </section>
