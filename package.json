@@ -1,0 +1,19 @@
+{
+  "name": "dain-print",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "assets": "node scripts/fetch-assets.mjs",
+    "build": "node scripts/build.mjs"
+  },
+  "dependencies": {
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9",
+    "esbuild": "0.25.9",
+    "sharp": "0.34.3"
+  }
+}
