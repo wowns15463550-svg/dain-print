@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { CHECKS, CONTACT, EQUIPMENT, FAQ, MAIL_TEMPLATE, NOTICES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
+import { CHECKS, CONTACT, EQUIPMENT, FAQ, MAIL_TEMPLATE, NOTICES, ORDER_NOTES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
 
 const HERO_SLIDES = [
   { src: "assets/hero-presses-r.webp", w: 964, pos: "18% 62%", alt: "코니카미놀타 AccurioPress C14000과 캐논 varioPRINT 115" },
@@ -38,6 +38,41 @@ function Phone() {
     </svg>
   );
 }
+function Ico({ k }: { k: "talk" | "blog" | "insta" | "mail" | "pin" | "up" | "close" }) {
+  const p = { stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, fill: "none" };
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+      {k === "talk" && <path {...p} d="M12 4.5c4.7 0 8.5 3 8.5 6.7s-3.8 6.7-8.5 6.7c-.8 0-1.6-.1-2.3-.3L5.5 20l.9-3.6c-1.8-1.2-2.9-3-2.9-5.2 0-3.7 3.8-6.7 8.5-6.7Z" />}
+      {k === "blog" && (
+        <>
+          <path {...p} d="M5 4.5h10l4 4v11H5z" />
+          <path {...p} d="M8.5 11h7M8.5 14.5h7M8.5 7.5h4" />
+        </>
+      )}
+      {k === "insta" && (
+        <>
+          <rect {...p} x="4" y="4" width="16" height="16" rx="4.5" />
+          <circle {...p} cx="12" cy="12" r="3.6" />
+          <circle cx="16.6" cy="7.4" r="1" fill="currentColor" />
+        </>
+      )}
+      {k === "mail" && (
+        <>
+          <rect {...p} x="3.5" y="5.5" width="17" height="13" rx="1" />
+          <path {...p} d="m4 6.5 8 6 8-6" />
+        </>
+      )}
+      {k === "pin" && (
+        <>
+          <path {...p} d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z" />
+          <circle {...p} cx="12" cy="10" r="2.3" />
+        </>
+      )}
+      {k === "up" && <path {...p} d="M12 19V5M6 11l6-6 6 6" />}
+      {k === "close" && <path {...p} d="M6 6l12 12M18 6 6 18" />}
+    </svg>
+  );
+}
 function Mark() {
   return (
     <a href="#top" className="mark" aria-label="다인인쇄소 처음으로">
@@ -70,6 +105,15 @@ export default function App() {
   const [checkOpen, setCheckOpen] = useState<number | null>(null);
   const [solid, setSolid] = useState(false);
   const [svc, setSvc] = useState(0);
+  const [visit, setVisit] = useState(false);
+  const visitClose = useRef<HTMLButtonElement>(null);
+  const visitFrom = useRef<HTMLElement | null>(null);
+  const openVisit = (e?: { preventDefault(): void }) => {
+    e?.preventDefault();
+    visitFrom.current = document.activeElement as HTMLElement | null;
+    setMenu(false);
+    setVisit(true);
+  };
   const heroRef = useRef<HTMLElement>(null);
   const { copied, copy } = useCopy();
   const tel = CONTACT.phone.replace(/-/g, "");
@@ -116,6 +160,20 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, [menu]);
 
+  // 오시는 길 modal: lock scroll, Esc closes, focus moves in and returns
+  useEffect(() => {
+    if (!visit) return;
+    document.body.style.overflow = "hidden";
+    visitClose.current?.focus();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setVisit(false);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+      visitFrom.current?.focus?.();
+    };
+  }, [visit]);
+
   return (
     <div className="dn" id="top">
       <header className={solid || menu ? "hdr solid" : "hdr"}>
@@ -123,7 +181,7 @@ export default function App() {
           <Mark />
           <nav className="nav" aria-label="주요 메뉴">
             {NAV.map(([h, l]) => (
-              <a key={h} href={h}>
+              <a key={h} href={h} onClick={h === "#visit" ? openVisit : undefined}>
                 {l}
               </a>
             ))}
@@ -147,7 +205,7 @@ export default function App() {
       </header>
       <nav className="sheet" id="sheet" hidden={!menu} aria-label="모바일 메뉴">
         {NAV.map(([h, l]) => (
-          <a key={h} href={h} onClick={() => setMenu(false)}>
+          <a key={h} href={h} onClick={h === "#visit" ? openVisit : () => setMenu(false)}>
             {l}
           </a>
         ))}
@@ -181,7 +239,7 @@ export default function App() {
                 <a className="btn" href="#order">
                   주문 방법 보기
                 </a>
-                <a className="btn btn-accent" href={`mailto:${CONTACT.email}`}>
+                <a className="btn btn-accent" href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
                   파일 보내기 <Arrow />
                 </a>
               </div>
@@ -293,7 +351,13 @@ export default function App() {
             <div className="paper">
               <div className="paper-head rv">
                 <h3 className="serif">자주 쓰는 종이</h3>
-                <p>사진에 마우스를 올리거나 눌러 보면 실제로 쓰이는 모습이 보여요.</p>
+                <p>
+                  여기 없는 종이도 가능합니다. 다른 종이는{" "}
+                  <a href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
+                    메일로 문의
+                  </a>
+                  해 주세요.
+                </p>
               </div>
               <div className="paper-grid">
                 {PAPER_GUIDE.map((pp, i) => (
@@ -327,6 +391,7 @@ export default function App() {
                   </article>
                 ))}
               </div>
+              <p className="paper-note">※ 종이 사진은 이해를 돕기 위한 참고 이미지입니다. 실제 종이의 색과 질감은 다르게 보일 수 있습니다.</p>
             </div>
           </div>
         </section>
@@ -399,6 +464,9 @@ export default function App() {
                     {CONTACT.email}
                   </span>
                   <span className="mail-acts">
+                    <a className="mini mini-accent" href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
+                      메일 쓰기
+                    </a>
                     <button type="button" className={copied === "mail" ? "mini done" : "mini"} onClick={() => copy("mail", CONTACT.email)}>
                       {copied === "mail" ? "복사됨" : "주소 복사"}
                     </button>
@@ -430,6 +498,14 @@ export default function App() {
                   인쇄 전 확인 사항 보기 <Arrow />
                 </a>
               </div>
+            </div>
+            <div className="notes rv">
+              <h3>주문 전에 꼭 읽어주세요</h3>
+              <ol>
+                {ORDER_NOTES.map((n) => (
+                  <li key={n}>{n}</li>
+                ))}
+              </ol>
             </div>
           </div>
         </section>
@@ -493,7 +569,7 @@ export default function App() {
                 <dt>주소</dt>
                 <dd>
                   {CONTACT.address}
-                  <small>{CONTACT.addressDetail} · 충무로역 7번 출구 3분</small>
+                  <small>{CONTACT.addressDetail} · {CONTACT.subway}</small>
                 </dd>
                 <dt>영업시간</dt>
                 <dd>{CONTACT.hours}</dd>
@@ -504,13 +580,18 @@ export default function App() {
                 </dd>
                 <dt>메일</dt>
                 <dd>{CONTACT.email}</dd>
+                <dt>카카오톡</dt>
+                <dd>
+                  채널 {CONTACT.kakaoId}
+                  <small>카카오톡에서 '{CONTACT.kakaoId}' 검색</small>
+                </dd>
               </dl>
               <div className="visit-acts">
-                <a className="btn" href={CONTACT.mapUrl} target="_blank" rel="noreferrer">
-                  네이버 지도
-                </a>
-                <a className="btn" href={CONTACT.blog} target="_blank" rel="noreferrer">
-                  블로그
+                <button type="button" className="btn" onClick={() => openVisit()}>
+                  <Ico k="pin" /> 지도 보기
+                </button>
+                <a className="btn" href={CONTACT.kakao} target="_blank" rel="noreferrer">
+                  카카오톡 상담
                 </a>
                 <a className="btn btn-accent" href={`tel:${tel}`}>
                   <Phone /> 전화하기
@@ -534,6 +615,12 @@ export default function App() {
               <a href={CONTACT.blog} target="_blank" rel="noreferrer">
                 블로그
               </a>
+              <a href={CONTACT.insta} target="_blank" rel="noreferrer">
+                인스타그램
+              </a>
+              <a href={CONTACT.kakao} target="_blank" rel="noreferrer">
+                카카오톡 채널
+              </a>
             </nav>
           </div>
           <div className="ftr-info">
@@ -550,9 +637,87 @@ export default function App() {
         </div>
       </footer>
 
-      <a className={solid ? "fab" : "fab away"} href={`tel:${tel}`} hidden={menu}>
-        <Phone /> 전화 문의
-      </a>
+      <nav className={solid ? "qm" : "qm top"} aria-label="빠른 문의" hidden={menu || visit}>
+        <a className="qm-i qm-main" href={CONTACT.kakao} target="_blank" rel="noreferrer">
+          <Ico k="talk" />
+          <span>카톡상담</span>
+        </a>
+        <a className="qm-i" href={`tel:${tel}`}>
+          <Phone />
+          <span>전화</span>
+        </a>
+        <a className="qm-i" href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
+          <Ico k="mail" />
+          <span>메일</span>
+        </a>
+        <a className="qm-i" href="#visit" onClick={openVisit}>
+          <Ico k="pin" />
+          <span>오시는 길</span>
+        </a>
+        <a className="qm-i" href={CONTACT.blog} target="_blank" rel="noreferrer">
+          <Ico k="blog" />
+          <span>블로그</span>
+        </a>
+        <a className="qm-i" href={CONTACT.insta} target="_blank" rel="noreferrer">
+          <Ico k="insta" />
+          <span>인스타</span>
+        </a>
+        <a className="qm-i qm-up" href="#top" aria-label="맨 위로">
+          <Ico k="up" />
+        </a>
+      </nav>
+
+      {visit && (
+        <div className="vm" onClick={(e) => e.target === e.currentTarget && setVisit(false)}>
+          <div className="vm-box" role="dialog" aria-modal="true" aria-labelledby="vm-h">
+            <button type="button" className="vm-x" ref={visitClose} onClick={() => setVisit(false)} aria-label="닫기">
+              <Ico k="close" />
+            </button>
+            <div className="vm-map">
+              <iframe
+                title="다인인쇄소 위치 지도"
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(CONTACT.address)}&z=17&hl=ko&output=embed`}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+            <div className="vm-info">
+              <small>VISIT</small>
+              <h2 className="serif" id="vm-h">
+                오시는 길
+              </h2>
+              <dl className="dl">
+                <dt>주소</dt>
+                <dd>
+                  {CONTACT.address}
+                  <small>{CONTACT.addressDetail}</small>
+                </dd>
+                <dt>지하철</dt>
+                <dd>{CONTACT.subway}</dd>
+                <dt>영업시간</dt>
+                <dd>{CONTACT.hours}</dd>
+                <dt>전화</dt>
+                <dd>
+                  <a href={`tel:${tel}`}>{CONTACT.phone}</a>
+                  <small>문자도 받습니다</small>
+                </dd>
+                <dt>카카오톡</dt>
+                <dd>
+                  채널 {CONTACT.kakaoId}
+                </dd>
+              </dl>
+              <div className="vm-acts">
+                <a className="btn" href={CONTACT.mapUrl} target="_blank" rel="noreferrer">
+                  네이버 지도 <Arrow />
+                </a>
+                <a className="btn btn-accent" href={`tel:${tel}`}>
+                  <Phone /> 전화하기
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

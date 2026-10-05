@@ -9,6 +9,11 @@ export const CONTACT = {
   hours: "09:30 ~ 19:00",
   bizNo: "205-03-58831",
   blog: "https://blog.naver.com/dainsystem969",
+  kakao: "http://pf.kakao.com/_rGKVn/chat",
+  kakaoId: "dain969",
+  insta: "https://www.instagram.com/dain969_/",
+  mailWrite: "https://mail.naver.com/write/direct?orderType=new&to=dain969@naver.com",
+  subway: "충무로역 7번 출구 도보 3분",
   mapUrl: "https://map.naver.com/p/search/%EB%A7%88%EB%A5%B8%EB%82%B4%EB%A1%9C4%EA%B8%B8%2027",
 };
 
@@ -23,6 +28,16 @@ export const SERVICES = [
   { img: "assets/l-card.webp", name: "명함", desc: "두께감 있는 랑데뷰지 240g에 깔끔하게 인쇄합니다.", spec: "랑데뷰 240g · 52×92mm" },
   { img: "assets/l-invite.webp", name: "엽서 · 청첩장", desc: "두께감 있고 결이 고운 랑데뷰 240g으로 많이 만듭니다. 손에 쥐었을 때 고급스러운 인상이 남습니다.", spec: "랑데뷰 240g" },
   { img: "assets/l-poster.webp", name: "포스터", desc: "전시, 매장, 행사 포스터. 사진과 색이 살아 있는 출력물로 만들어 드립니다. A3부터 최대 B2까지.", spec: "A3 · A2 · B2" },
+];
+
+// 주문 전 안내 (주문 방법 아래에 번호 목록으로 나옵니다)
+export const ORDER_NOTES = [
+  "파일은 PDF가 가장 안전합니다. 다른 형식은 글꼴이나 배치가 바뀔 수 있어요.",
+  "저작권 문제가 있는 파일은 제작할 수 없습니다.",
+  "해상도가 낮은 이미지는 인쇄 품질을 보장하기 어렵습니다.",
+  "모니터 화면과 실제 인쇄물의 색은 차이가 있을 수 있습니다.",
+  "주문 제작이라 작업이 시작된 뒤에는 변경 · 취소 · 환불이 어렵습니다.",
+  "저희 실수로 잘못 인쇄된 경우 다시 인쇄해 드립니다. 이때 파일 수정은 할 수 없습니다.",
 ];
 
 export type Paper = { name: string; finish: string; desc: string; rows: [string, string][]; img: string; use: string; useLabel: string };
@@ -48,19 +63,19 @@ export const PAPER_GUIDE: Paper[] = [
       ["150g 이상", "리플렛 · 표지"],
       ["250g", "무선제본 표지 (무광코팅)"],
     ],
-    img: "assets/paper-snow.webp",
+    img: "assets/paper-snow2.webp",
     use: "assets/paper-snow-use.webp",
     useLabel: "전단지 · 리플렛 · 표지",
   },
   {
     name: "랑데뷰",
-    finish: "무광 · 거친 표면",
-    desc: "손끝에 결이 느껴지는 고급 종이입니다. 차분하고 고급스러운 인상을 줍니다.",
+    finish: "무광 · 고운 결",
+    desc: "표면에 은은하고 고운 결이 있는 무광 종이입니다. 차분하고 고급스러운 인상을 줍니다.",
     rows: [
       ["105g · 130g", "내지"],
       ["160g · 190g · 240g", "엽서 · 청첩장 · 리플렛 · 팜플렛"],
     ],
-    img: "assets/paper-rdv.webp",
+    img: "assets/paper-rdv2.webp",
     use: "assets/paper-rdv-use.webp",
     useLabel: "엽서 · 청첩장 · 팜플렛",
   },
@@ -76,7 +91,7 @@ export const STEPS = [
   { t: "파일 접수", d: "메일로 PDF 파일과 원하는 사양을 보내주세요.", img: "assets/step1.webp", alt: "노트북으로 인쇄 파일을 메일로 보내는 고객" },
   { t: "확인 · 견적", d: "파일 상태를 확인하고 견적과 작업 일정을 알려드립니다.", img: "assets/step2.webp", alt: "휴대폰으로 견적 답장을 확인하는 고객" },
   { t: "선입금", d: "견적을 확인하고 계좌이체로 입금하시면 작업 순서에 올립니다.", img: "assets/step3.webp", alt: "휴대폰으로 계좌이체를 하는 고객" },
-  { t: "출력 · 제본", d: "충무로 작업실에서 출력하고 색과 재단을 확인한 뒤 제본까지 마칩니다.", img: "assets/step4.webp", alt: "출력된 인쇄물을 확인하는 모습" },
+  { t: "출력 · 제본", d: "충무로 작업실에서 출력과 제본을 원스톱으로 함께 진행합니다.", img: "assets/step4.webp", alt: "출력된 인쇄물을 확인하는 모습" },
   { t: "받아가기", d: "방문 픽업, CJ대한통운 택배, 서울 근교 퀵 중에서 고르세요.", img: "assets/step5.webp", alt: "완성된 책을 받아 든 고객" },
 ];
 

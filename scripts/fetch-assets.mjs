@@ -32,6 +32,8 @@ const ASSETS = [
   ["paper-snow.webp", "hf_20261005_152324_56f4e483-c4bb-4918-8e9b-8ffc66c5d8ad"],
   ["paper-snow-use.webp", "hf_20261005_152325_b08d0b6d-8529-46b8-ac3a-85f2017bfb28"],
   ["paper-rdv.webp", "hf_20261005_152324_02b8ead8-5bd1-4dc3-a617-4be190642603"],
+  ["paper-snow2.webp", "hf_20261005_155137_26c57dcb-c234-49dd-8059-62f433e4e23a"],
+  ["paper-rdv2.webp", "hf_20261005_155137_611c1365-96fe-414c-9dd1-5d3fc6b6c0be"],
   ["paper-rdv-use.webp", "hf_20261005_152323_8b74e69e-b132-4bc3-8928-e425fa3a62ad"],
   ["check-bleed.webp", "hf_20261005_152323_c2433ce1-5299-40e5-aa58-ad935d7e3043", { max: 1100 }],
   ["check-safe.webp", "hf_20261005_152325_75670b4d-59b9-4134-810d-37a0f5e91bf4", { max: 1100 }],
