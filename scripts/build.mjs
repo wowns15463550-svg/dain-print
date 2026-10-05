@@ -3,7 +3,7 @@ import * as esbuild from "esbuild";
 import { cpSync, mkdirSync, rmSync, writeFileSync, existsSync } from "node:fs";
 import { createRequire } from "node:module";
 
-const SITE_URL = "https://wowns15463550-svg.github.io/dain-print/";
+const SITE_URL = "https://www.dainprint.co.kr/";
 const TITLE = "다인인쇄소 | 서울 충무로 출력 · 제본";
 const DESC =
   "서울 충무로역 7번 출구 3분. 최고급 디지털 프레스로 출력하고 그 자리에서 제본까지. 무선 · 중철 · 스프링 제본, 전단지, 리플렛, 포스터, 명함.";
