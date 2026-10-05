@@ -24,7 +24,9 @@ html{scroll-behavior:smooth;scroll-padding-top:84px;background:var(--bg)}
 .serif{font-family:var(--f-serif);font-weight:300;letter-spacing:-.015em;text-wrap:balance}
 .sec{padding-block:clamp(96px,11vw,160px)}
 .sec-title{font-size:clamp(30px,3.4vw,46px);line-height:1.3}
-.sec-lead{color:var(--ink-2);max-width:36em;margin-top:18px}
+.sec-lead{color:var(--ink-2);max-width:36em;margin-top:18px;text-wrap:pretty}
+.sec-title strong{font-weight:400;color:var(--accent)}
+.dn p,.dn li,.dn dd{text-wrap:pretty}
 
 /* buttons: square. outline = go somewhere on the page, cobalt = act */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;height:52px;padding-inline:28px;font-size:15px;font-weight:600;letter-spacing:.01em;white-space:nowrap;border:1px solid var(--ink);color:var(--ink);background:transparent;transition:background .35s var(--out),color .35s var(--out),border-color .35s var(--out)}
@@ -209,10 +211,10 @@ details[open] .plus::after{transform:scaleY(0)}
 @media (max-width:560px){.steps{grid-template-columns:repeat(5,minmax(74vw,1fr))}}
 
 /* order */
-.order-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(40px,6vw,88px);margin-top:clamp(48px,6vw,72px)}
+.order-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(40px,6vw,88px);margin-top:clamp(48px,6vw,72px);align-items:start}
 .mail{background:var(--surface);border:1px solid var(--line-2);box-shadow:0 18px 48px rgba(13,21,38,.06)}
 .mail-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;padding:18px 24px;border-bottom:1px solid var(--line)}
-.mail-to{font-size:15px;font-weight:500;min-width:0;word-break:break-all}
+.mail-to{font-size:16px;font-weight:600;color:var(--accent);min-width:0;word-break:break-all}
 .mail-to small{color:var(--ink-3);font-weight:400;margin-right:12px;font-size:13px}
 .mail-acts{display:flex;gap:8px}
 .mini{height:38px;padding-inline:16px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);font:600 13px var(--f-sans);cursor:pointer;transition:background .3s,color .3s,border-color .3s}
@@ -338,7 +340,7 @@ details[open] .plus::after{transform:scaleY(0)}
 /* paper note + order notes */
 .paper-head p a{color:var(--accent);font-weight:600;border-bottom:1px solid currentColor}
 .paper-note{margin-top:20px;color:var(--ink-3);font-size:13px}
-.notes{margin-top:clamp(48px,6vw,72px);padding:32px clamp(22px,3vw,40px);background:var(--tint);border-left:3px solid var(--accent)}
+.notes{margin-top:28px;padding:32px clamp(22px,3vw,40px);background:var(--tint);border-left:3px solid var(--accent)}
 .notes h3{font-size:18px;font-weight:600}
 .notes ol{margin:16px 0 0;padding:0;list-style:none;counter-reset:n;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 40px}
 .notes li{counter-increment:n;position:relative;padding-left:30px;color:var(--ink-2);font-size:15px}

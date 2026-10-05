@@ -487,29 +487,41 @@ export default function App() {
         <section className="sec" id="order">
           <div className="wrap">
             <div className="rv">
-              <h2 className="serif sec-title">주문은 메일 한 통이면 됩니다</h2>
+              <h2 className="serif sec-title">
+                주문은 <strong>메일</strong> 한{"\u00a0"}통이면 됩니다
+              </h2>
               <p className="sec-lead">양식을 복사해서 채운 뒤 파일과 함께 보내주세요. 모르는 칸은 비워두셔도 됩니다.</p>
             </div>
             <div className="order-grid">
-              <div className="mail rv">
-                <div className="mail-h">
-                  <span className="mail-to">
-                    <small>받는 사람</small>
-                    {CONTACT.email}
-                  </span>
-                  <span className="mail-acts">
-                    <a className="mini mini-accent" href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
-                      메일 쓰기
-                    </a>
-                    <button type="button" className={copied === "mail" ? "mini done" : "mini"} onClick={() => copy("mail", CONTACT.email)}>
-                      {copied === "mail" ? "복사됨" : "주소 복사"}
-                    </button>
-                    <button type="button" className={copied === "tpl" ? "mini done" : "mini"} onClick={() => copy("tpl", MAIL_TEMPLATE)}>
-                      {copied === "tpl" ? "복사됨" : "양식 복사"}
-                    </button>
-                  </span>
+              <div className="order-l">
+                <div className="mail rv">
+                  <div className="mail-h">
+                    <span className="mail-to">
+                      <small>받는 사람</small>
+                      {CONTACT.email}
+                    </span>
+                    <span className="mail-acts">
+                      <a className="mini mini-accent" href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
+                        메일 쓰기
+                      </a>
+                      <button type="button" className={copied === "mail" ? "mini done" : "mini"} onClick={() => copy("mail", CONTACT.email)}>
+                        {copied === "mail" ? "복사됨" : "주소 복사"}
+                      </button>
+                      <button type="button" className={copied === "tpl" ? "mini done" : "mini"} onClick={() => copy("tpl", MAIL_TEMPLATE)}>
+                        {copied === "tpl" ? "복사됨" : "양식 복사"}
+                      </button>
+                    </span>
+                  </div>
+                  <pre>{MAIL_TEMPLATE}</pre>
                 </div>
-                <pre>{MAIL_TEMPLATE}</pre>
+              <div className="notes rv">
+                <h3>주문 전에 꼭 읽어주세요</h3>
+                <ol>
+                  {ORDER_NOTES.map((n) => (
+                    <li key={n}>{n}</li>
+                  ))}
+                </ol>
+              </div>
               </div>
               <div className="rv">
                 <ul className="chk">
@@ -562,14 +574,6 @@ export default function App() {
                   인쇄 전 확인 사항 보기 <Arrow />
                 </a>
               </div>
-            </div>
-            <div className="notes rv">
-              <h3>주문 전에 꼭 읽어주세요</h3>
-              <ol>
-                {ORDER_NOTES.map((n) => (
-                  <li key={n}>{n}</li>
-                ))}
-              </ol>
             </div>
           </div>
         </section>
