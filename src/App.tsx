@@ -112,6 +112,9 @@ export default function App() {
   const [solid, setSolid] = useState(false);
   const [svc, setSvc] = useState(0);
   const [visit, setVisit] = useState(false);
+  const stepsRef = useRef<HTMLOListElement>(null);
+  const [stepAnim, setStepAnim] = useState(false);
+  const [stepOn, setStepOn] = useState(-1);
   const visitClose = useRef<HTMLButtonElement>(null);
   const visitFrom = useRef<HTMLElement | null>(null);
   const openVisit = (e?: { preventDefault(): void }) => {
@@ -165,6 +168,31 @@ export default function App() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [menu]);
+
+  // 작업 과정: 화면에 들어오면 1번부터 하나씩 올라오고, 지금 나온 단계만 파란색
+  useEffect(() => {
+    const el = stepsRef.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setStepOn(STEPS.length - 1);
+      return;
+    }
+    setStepAnim(true);
+    const timers: number[] = [];
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        STEPS.forEach((_, i) => timers.push(window.setTimeout(() => setStepOn(i), 350 + i * 700)));
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      timers.forEach((t) => window.clearTimeout(t));
+    };
+  }, []);
 
   // 오시는 길 modal: lock scroll, Esc closes, focus moves in and returns
   useEffect(() => {
@@ -435,13 +463,13 @@ export default function App() {
 
         <section className="sec proc" id="process">
           <div className="wrap">
-            <div className="rv">
+            <div className="rv rv-soft">
               <h2 className="serif sec-title">작업은 이렇게 진행됩니다</h2>
               <p className="sec-lead">파일을 보내주시면 그다음은 저희가 챙깁니다. 단계마다 연락드립니다.</p>
             </div>
-            <ol className="steps">
+            <ol className={stepAnim ? "steps anim" : "steps"} ref={stepsRef}>
               {STEPS.map((s, i) => (
-                <li className="step rv" key={s.t} data-d={i}>
+                <li className={"step" + (i <= stepOn ? " on" : "") + (i === stepOn ? " cur" : "")} key={s.t}>
                   <figure className="step-img">
                     <img src={s.img} alt={s.alt} loading="lazy" width={1100} height={825} />
                   </figure>
