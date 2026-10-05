@@ -13,6 +13,10 @@ export const CONTACT = {
   kakaoId: "dain969",
   insta: "https://www.instagram.com/dain969_/",
   mailWrite: "https://mail.naver.com/write/direct?orderType=new&to=dain969@naver.com",
+  webhard: "https://www.webhard.co.kr",
+  webhardId: "dain0496",
+  webhardPw: "22710496",
+  webhardFolder: "1.인터넷손님",
   subway: "충무로역 7번 출구 도보 3분",
   mapUrl: "https://map.naver.com/p/search/%EB%A7%88%EB%A5%B8%EB%82%B4%EB%A1%9C4%EA%B8%B8%2027",
 };

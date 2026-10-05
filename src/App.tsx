@@ -38,7 +38,7 @@ function Phone() {
     </svg>
   );
 }
-function Ico({ k }: { k: "talk" | "blog" | "insta" | "mail" | "pin" | "up" | "close" }) {
+function Ico({ k }: { k: "talk" | "blog" | "insta" | "mail" | "pin" | "up" | "close" | "cloud" }) {
   const p = { stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, fill: "none" };
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
@@ -66,6 +66,12 @@ function Ico({ k }: { k: "talk" | "blog" | "insta" | "mail" | "pin" | "up" | "cl
         <>
           <path {...p} d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z" />
           <circle {...p} cx="12" cy="10" r="2.3" />
+        </>
+      )}
+      {k === "cloud" && (
+        <>
+          <path {...p} d="M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.6 4.5 4.5 0 0 0 7 18.5Z" />
+          <path {...p} d="M12 15.5v-5M9.8 12.5 12 10.3l2.2 2.2" />
         </>
       )}
       {k === "up" && <path {...p} d="M12 19V5M6 11l6-6 6 6" />}
@@ -494,6 +500,36 @@ export default function App() {
                     </span>
                   </li>
                 </ul>
+                <div className="wh" id="webhard">
+                  <div className="wh-h">
+                    <Ico k="cloud" />
+                    <b>용량이 큰 파일은 웹하드로</b>
+                  </div>
+                  <dl>
+                    <dt>아이디</dt>
+                    <dd>
+                      {CONTACT.webhardId}
+                      <button type="button" className={copied === "whid" ? "mini done" : "mini"} onClick={() => copy("whid", CONTACT.webhardId)}>
+                        {copied === "whid" ? "복사됨" : "복사"}
+                      </button>
+                    </dd>
+                    <dt>비밀번호</dt>
+                    <dd>
+                      {CONTACT.webhardPw}
+                      <button type="button" className={copied === "whpw" ? "mini done" : "mini"} onClick={() => copy("whpw", CONTACT.webhardPw)}>
+                        {copied === "whpw" ? "복사됨" : "복사"}
+                      </button>
+                    </dd>
+                    <dt>올릴 폴더</dt>
+                    <dd>
+                      <span className="wh-folder">{CONTACT.webhardFolder}</span>
+                    </dd>
+                  </dl>
+                  <p>올리신 뒤 메일이나 문자로 성함과 파일 이름을 알려주세요.</p>
+                  <a className="btn btn-accent" href={CONTACT.webhard} target="_blank" rel="noreferrer">
+                    웹하드 열기 <Arrow />
+                  </a>
+                </div>
                 <a className="link-line fmt" href="#check">
                   인쇄 전 확인 사항 보기 <Arrow />
                 </a>
@@ -638,27 +674,31 @@ export default function App() {
       </footer>
 
       <nav className={solid ? "qm" : "qm top"} aria-label="빠른 문의" hidden={menu || visit}>
-        <a className="qm-i qm-main" href={CONTACT.kakao} target="_blank" rel="noreferrer">
+        <a className="qm-i qm-kakao" href={CONTACT.kakao} target="_blank" rel="noreferrer">
           <Ico k="talk" />
           <span>카톡상담</span>
         </a>
-        <a className="qm-i" href={`tel:${tel}`}>
+        <a className="qm-i qm-tel" href={`tel:${tel}`}>
           <Phone />
           <span>전화</span>
         </a>
-        <a className="qm-i" href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
+        <a className="qm-i qm-mail" href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
           <Ico k="mail" />
           <span>메일</span>
         </a>
-        <a className="qm-i" href="#visit" onClick={openVisit}>
+        <a className="qm-i qm-wh" href="#webhard">
+          <Ico k="cloud" />
+          <span>웹하드</span>
+        </a>
+        <a className="qm-i qm-map" href="#visit" onClick={openVisit}>
           <Ico k="pin" />
           <span>오시는 길</span>
         </a>
-        <a className="qm-i" href={CONTACT.blog} target="_blank" rel="noreferrer">
+        <a className="qm-i qm-blog" href={CONTACT.blog} target="_blank" rel="noreferrer">
           <Ico k="blog" />
           <span>블로그</span>
         </a>
-        <a className="qm-i" href={CONTACT.insta} target="_blank" rel="noreferrer">
+        <a className="qm-i qm-insta" href={CONTACT.insta} target="_blank" rel="noreferrer">
           <Ico k="insta" />
           <span>인스타</span>
         </a>

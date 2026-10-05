@@ -16,7 +16,7 @@ html{scroll-behavior:smooth;scroll-padding-top:84px;background:var(--bg)}
 .dn{word-break:keep-all;overflow-wrap:anywhere;background:var(--bg);color:var(--ink);font-family:var(--f-sans);font-size:16px;line-height:1.75;letter-spacing:-.005em;-webkit-font-smoothing:antialiased;overflow-x:clip;caret-color:var(--accent)}
 .dn *,.dn *::before,.dn *::after{box-sizing:border-box}
 .dn ::selection{background:var(--accent);color:var(--on-accent)}
-.dn a{color:inherit;text-decoration:none}
+:where(.dn) a{color:inherit;text-decoration:none}
 .dn img{display:block;max-width:100%;height:auto}
 .dn :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .dn h1,.dn h2,.dn h3,.dn p{margin:0}
@@ -277,16 +277,26 @@ details[open] .plus::after{transform:scaleY(0)}
 .mini-accent:hover{background:var(--accent-hi);border-color:var(--accent-hi)}
 .qm{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:35;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px;background:rgba(255,255,255,.9);backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);border:1px solid var(--line);border-radius:40px;box-shadow:0 16px 40px rgba(13,21,38,.10);animation:vmfade .8s .6s var(--out) both}
 .qm[hidden]{display:none}
-.qm-i{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:62px;height:62px;border-radius:50%;color:var(--ink-2);font-size:11px;font-weight:600;letter-spacing:-.02em;white-space:nowrap;transition:background .3s var(--out),color .3s var(--out)}
-.qm-i:hover{background:var(--tint);color:var(--accent)}
-.qm-main{background:var(--accent);color:var(--on-accent)}
-.qm-main:hover{background:var(--accent-hi);color:var(--on-accent)}
-.qm-up{height:44px;margin-top:4px;border-top:1px solid var(--line);border-radius:0 0 30px 30px;transition:opacity .3s,background .3s,color .3s}
+.qm-i{--c:var(--accent);--fg:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:62px;height:62px;border-radius:50%;color:var(--ink-2);font-size:11px;font-weight:600;letter-spacing:-.02em;white-space:nowrap;transition:background .3s var(--out),color .3s var(--out),transform .3s var(--out)}
+.qm-i svg{color:var(--c);transition:color .3s var(--out)}
+.qm-i:hover,.qm-i:focus-visible{background:var(--c);color:var(--fg);transform:scale(1.04)}
+.qm-i:hover svg,.qm-i:focus-visible svg{color:var(--fg)}
+.qm-kakao{--c:#FEE500;--fg:#191919}
+.qm-kakao svg{color:#3A1D1D}
+.qm-kakao svg path{fill:#FEE500;transition:fill .3s}
+.qm-kakao:hover svg path,.qm-kakao:focus-visible svg path{fill:#3A1D1D}
+.qm-tel{--c:#1E4BD2}
+.qm-mail{--c:#03C75A}
+.qm-wh{--c:#F26A1B}
+.qm-map{--c:#E8453C}
+.qm-blog{--c:#03C75A}
+.qm-insta{--c:#D62976}
+.qm-insta:hover,.qm-insta:focus-visible{background:linear-gradient(45deg,#FEDA75,#FA7E1E 25%,#D62976 55%,#962FBF 80%,#4F5BD5)}
+.qm-up{--c:var(--ink-2);height:44px;margin-top:4px;border-top:1px solid var(--line);border-radius:0 0 30px 30px;transition:opacity .3s,background .3s,color .3s}
 .qm.top .qm-up{opacity:0;pointer-events:none}
 @media (max-width:900px){
   .qm{inset:auto 0 0 0;transform:none;flex-direction:row;justify-content:space-around;gap:0;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));border-radius:0;border-width:1px 0 0;box-shadow:0 -8px 24px rgba(13,21,38,.06)}
   .qm-i{flex:1 1 0;width:auto;height:54px;border-radius:12px;font-size:11px}
-  .qm-main{border-radius:12px}
   .qm-up{display:none}
   .ftr{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
 }
@@ -334,3 +344,16 @@ details[open] .plus::after{transform:scaleY(0)}
   .js .rv{transform:none}
 }
 
+
+/* webhard box (order section) */
+.wh{margin-top:28px;padding:24px;background:var(--surface);border:1px solid var(--line-2)}
+.wh-h{display:flex;align-items:center;gap:10px;color:#F26A1B}
+.wh-h b{color:var(--ink);font-size:17px;font-weight:600}
+.wh dl{margin:16px 0 0;display:grid;grid-template-columns:80px minmax(0,1fr);border-top:1px solid var(--line)}
+.wh dt,.wh dd{margin:0;padding-block:10px;border-bottom:1px solid var(--line)}
+.wh dt{color:var(--ink-3);font-size:14px;padding-top:15px}
+.wh dd{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.wh dd .mini{height:32px;padding-inline:12px}
+.wh-folder{display:inline-block;padding:2px 10px;background:var(--tint);font-size:15px;letter-spacing:0}
+.wh p{color:var(--ink-2);font-size:14px;margin-top:14px}
+.wh .btn{margin-top:18px;width:100%}
