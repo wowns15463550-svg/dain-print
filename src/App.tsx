@@ -144,8 +144,12 @@ export default function App() {
   useEffect(() => {
     const root = document.documentElement;
     const hero = heroRef.current;
-    const ho = new IntersectionObserver(([e]) => setSolid(!e.isIntersecting), { rootMargin: "-80px 0px 0px 0px" });
-    if (hero) ho.observe(hero);
+    // header turns solid as soon as the page scrolls, so nothing shows through it
+    const onScroll = () => setSolid(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    const ho = { disconnect: () => window.removeEventListener("scroll", onScroll) };
+    void hero;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return () => ho.disconnect();
     root.classList.add("js");
     const io = new IntersectionObserver(
