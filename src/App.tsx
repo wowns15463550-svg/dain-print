@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { CHECKS, CONTACT, EQUIPMENT, FAQ, FINISHING, MAIL_TEMPLATE, NOTICES, ORDER_NOTES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
+import { CHECKS, CONTACT, EQUIPMENT, FAQ, FINISHING, GALLERY, MAIL_TEMPLATE, NOTICES, ORDER_NOTES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
 
 const HERO_SLIDES = [
   { src: "assets/hero-presses-r.webp", w: 964, pos: "18% 62%", alt: "코니카미놀타 AccurioPress C14000과 캐논 varioPRINT 115" },
@@ -13,6 +13,7 @@ const SLIDE_MS = 5500;
 const NAV = [
   ["#notice", "공지사항"],
   ["#service", "인쇄 · 제본"],
+  ["#gallery", "갤러리"],
   ["#equipment", "장비"],
   ["#process", "작업 과정"],
   ["#order", "주문 방법"],
@@ -523,6 +524,35 @@ export default function App() {
               ))}
             </div>
           </div>
+        </section>
+
+        <section className="sec gal-sec" id="gallery" aria-labelledby="gal-h">
+          <div className="wrap rv">
+            <h2 className="serif sec-title" id="gal-h">
+              이렇게 만들어 드립니다
+            </h2>
+            <p className="sec-lead">다인인쇄소에서 자주 만드는 책자와 인쇄물입니다. 사진을 누르면 크게 보고 사양을 확인할 수 있어요.</p>
+          </div>
+          <div className="gal">
+            <ul className="gal-track">
+              {[...GALLERY, ...GALLERY].map((g, i) => (
+                <li key={i} aria-hidden={i >= GALLERY.length ? true : undefined}>
+                  <button
+                    type="button"
+                    tabIndex={i >= GALLERY.length ? -1 : undefined}
+                    onClick={() => setZoom({ src: g.img, alt: `${g.t} · ${g.spec}` })}
+                  >
+                    <img src={g.img} alt={`${g.t} 예시`} loading="lazy" width={720} height={900} />
+                    <span className="gal-cap">
+                      <b>{g.t}</b>
+                      <small>{g.spec}</small>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <p className="wrap gal-note">※ 손님 디자인 보호를 위해 실제 작업 사양으로 다시 만든 예시 이미지입니다.</p>
         </section>
 
         <section className="sec proc" id="process">

@@ -172,3 +172,16 @@ export const FAQ = [
   { q: "지방에서도 주문할 수 있나요?", a: "네. CJ대한통운 택배로 전국에 보내드립니다." },
   { q: "PDF 말고 다른 파일도 되나요?", a: "AI, JPG, PNG도 받습니다. 색과 배치가 가장 정확하게 나오는 형식은 PDF입니다." },
 ];
+
+// 갤러리 (작업물 예시 — 실제 사양 기준으로 새로 만든 이미지)
+export const GALLERY = [
+  { img: "assets/g1.webp", t: "중철 브로슈어", spec: "아르떼 190g" },
+  { img: "assets/g2.webp", t: "무선 만화책", spec: "표지 스노우 250g 무광코팅 · 내지 모조 100g" },
+  { img: "assets/g3.webp", t: "무선 소설책", spec: "표지 스노우 250g 무광코팅 · 내지 모조 100g" },
+  { img: "assets/g4.webp", t: "무선 책", spec: "표지 랑데뷰 240g 무광코팅 · 내지 랑데뷰 130g" },
+  { img: "assets/g5.webp", t: "3단 리플렛", spec: "스노우 200g · 오시 접지" },
+  { img: "assets/g6.webp", t: "중철 브로슈어", spec: "스노우 200g" },
+  { img: "assets/g7.webp", t: "무선 만화책", spec: "표지 스노우 250g 유광코팅 · 내지 모조 100g" },
+  { img: "assets/g8.webp", t: "중철 브로슈어", spec: "모조 100g" },
+  { img: "assets/g9.webp", t: "무선 작품집", spec: "표지 스노우 250g 무광코팅 · 내지 모조 100g" },
+];

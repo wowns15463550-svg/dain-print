@@ -44,7 +44,7 @@ html{scroll-behavior:smooth;scroll-padding-top:84px;background:var(--bg)}
 .mark{display:flex;flex-direction:column;line-height:1;gap:7px}
 .mark b{font-family:var(--f-mark);font-weight:400;font-size:22px;letter-spacing:.32em;margin-right:-.32em}
 .mark span{font-size:11px;letter-spacing:.42em;color:var(--ink-3)}
-.nav{display:flex;gap:34px;margin-left:auto;font-size:15px;font-weight:500}
+.nav{display:flex;gap:clamp(18px,2vw,30px);margin-left:auto;font-size:15px;font-weight:500}
 .nav a{padding-block:8px;color:var(--ink-2);transition:color .3s}
 .nav a:hover{color:var(--accent)}
 .hdr-tel{font-size:14px;letter-spacing:.04em;color:var(--ink-2);font-variant-numeric:tabular-nums}
@@ -404,3 +404,20 @@ details[open] .plus::after{transform:scaleY(0)}
 .x-parts li{padding:4px 10px;background:var(--tint);font-size:13px;font-weight:600;color:var(--ink-2)}
 @media (max-width:900px){.svc-item .svc-mx{display:block}.x-parts{display:flex}}
 @media (max-width:900px){.svc-item .svc-mx{aspect-ratio:4/5}}
+
+/* gallery: works slide by */
+.gal-sec{overflow:hidden}
+.gal{margin-top:clamp(40px,5vw,64px);-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.gal-track{list-style:none;margin:0;padding:0;display:flex;gap:clamp(14px,1.8vw,24px);width:max-content;animation:galmove 70s linear infinite}
+.gal:hover .gal-track,.gal:focus-within .gal-track{animation-play-state:paused}
+@keyframes galmove{to{transform:translateX(calc(-50% - clamp(14px,1.8vw,24px)/2))}}
+.gal-track li{flex:none;width:clamp(220px,22vw,300px)}
+.gal-track button{display:block;width:100%;padding:0;border:0;background:none;text-align:left;cursor:zoom-in;font:inherit;color:inherit}
+.gal-track img{width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--tint);transition:transform .8s var(--out),box-shadow .8s var(--out)}
+.gal-track button:hover img{transform:translateY(-6px);box-shadow:0 18px 40px rgba(13,21,38,.14)}
+.gal-cap{display:flex;flex-direction:column;gap:2px;margin-top:14px}
+.gal-cap b{font-size:16px;font-weight:600}
+.gal-cap small{font-size:13px;color:var(--ink-2);line-height:1.5}
+.gal-note{margin-top:28px;color:var(--ink-3);font-size:13px}
+@media (prefers-reduced-motion:reduce){.gal{overflow-x:auto;-webkit-mask-image:none;mask-image:none}.gal-track{animation:none;padding-inline:var(--gut)}}
+@media (max-width:1320px){.hdr-tel{display:none}}
