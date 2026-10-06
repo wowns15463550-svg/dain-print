@@ -53,6 +53,7 @@ const html = `<!doctype html>
 <meta name="description" content="${DESC}">
 <meta name="theme-color" content="#F4F5F7">
 <link rel="canonical" href="${SITE_URL}">
+<meta name="naver-site-verification" content="5041c298fea45ba971dc2cc87150db9972907da1" />
 <meta property="og:type" content="website">
 <meta property="og:title" content="${TITLE}">
 <meta property="og:description" content="${DESC}">
