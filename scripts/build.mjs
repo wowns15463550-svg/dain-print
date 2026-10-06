@@ -5,9 +5,9 @@ import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
 
 const SITE_URL = "https://www.dainprint.co.kr/";
-const TITLE = "다인인쇄소 | 서울 충무로 출력 · 제본";
+const TITLE = "다인인쇄소 | 서울 충무로 출력 · 제본 원스톱 인쇄소";
 const DESC =
-  "서울 충무로역 7번 출구 3분. 최고급 디지털 프레스로 출력하고 그 자리에서 제본까지. 무선 · 중철 · 스프링 제본, 전단지, 리플렛, 포스터, 명함.";
+  "충무로역 7번 출구 3분. 출력부터 제본까지 한곳에서 빠르고 정확하게. 무선 · 중철 · 스프링 제본, 전단지, 리플렛, 포스터, 명함.";
 
 rmSync("dist", { recursive: true, force: true });
 mkdirSync("dist", { recursive: true });
@@ -58,7 +58,12 @@ const html = `<!doctype html>
 <meta property="og:title" content="${TITLE}">
 <meta property="og:description" content="${DESC}">
 <meta property="og:url" content="${SITE_URL}">
-<meta property="og:image" content="${SITE_URL}assets/og.jpg">
+<meta property="og:site_name" content="다인인쇄소">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="${SITE_URL}assets/og2.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="다인인쇄소 — 서울 충무로, 출력과 제본을 한 번에">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
