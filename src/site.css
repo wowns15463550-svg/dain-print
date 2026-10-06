@@ -478,3 +478,17 @@ details[open] .plus::after{transform:scaleY(0)}
 
 .nl-col .nl{margin-top:36px}
 .notice{align-items:start}
+
+/* HOT EVENT 창: 이벤트 3개 한 번에 */
+.evm-box{position:relative;width:min(1180px,100%);max-height:calc(100svh - 48px);overflow:auto;padding:28px 32px 26px;background:var(--surface);box-shadow:0 30px 80px rgba(12,23,48,.28);animation:vmup .5s var(--out) both}
+.evm-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:22px}
+.evm-head small{font-size:12px;font-weight:800;letter-spacing:.14em;color:#C2544A}
+.evm-head h2{margin-top:6px;font-size:clamp(24px,2.2vw,32px);font-weight:400}
+.evm-head .vm-x{position:static;flex:none}
+.evm-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.evm-grid .ev-card{box-shadow:0 12px 30px rgba(13,21,38,.10)}
+.evm-note{margin-top:24px;font-size:13px;color:var(--ink-3)}
+@media (max-width:900px){
+  .evm-box{max-height:92svh;padding:20px 16px 18px}
+  .evm-grid{grid-template-columns:minmax(0,1fr);gap:14px}
+}

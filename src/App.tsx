@@ -10,6 +10,26 @@ const HERO_SLIDES = [
 ];
 const SLIDE_MS = 5500;
 
+type Ev = (typeof EVENTS)[number];
+function EvCard({ e, hidden, label }: { e: Ev; hidden?: boolean; label?: string }) {
+  return (
+    <article className={`ev-card ev-${e.theme}`} aria-hidden={hidden} aria-label={label}>
+      <img src={e.img} alt="" loading="lazy" width={800} height={800} />
+      <div className="ev-text">
+        <small>
+          {e.no} <span>{e.tag}</span>
+        </small>
+        <h3>
+          {e.title[0]}
+          <br />
+          <strong>{e.title[1]}</strong>
+        </h3>
+        <p>{e.sub}</p>
+      </div>
+    </article>
+  );
+}
+
 declare global {
   interface Window { kakao?: any }
 }
@@ -283,6 +303,21 @@ export default function App() {
     e.currentTarget.style.setProperty("--zy", `${((e.clientY - r.top) / r.height) * 100}%`);
   };
 
+  // HOT EVENT 창
+  const [evPop, setEvPop] = useState(false);
+  const evPopClose = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!evPop) return;
+    document.body.style.overflow = "hidden";
+    evPopClose.current?.focus();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setEvPop(false);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [evPop]);
+
   // 오시는 길 modal: lock scroll, Esc closes, focus moves in and returns
   useEffect(() => {
     if (!visit) return;
@@ -444,20 +479,7 @@ export default function App() {
               >
                 <div className="ev-track" style={{ transform: `translateX(-${ev * 100}%)` }}>
                   {EVENTS.map((e, i) => (
-                    <article className={`ev-card ev-${e.theme}`} key={e.no} aria-hidden={i !== ev} aria-label={`${i + 1} / ${EVENTS.length}`}>
-                      <img src={e.img} alt="" loading="lazy" width={800} height={800} />
-                      <div className="ev-text">
-                        <small>
-                          {e.no} <span>{e.tag}</span>
-                        </small>
-                        <h3>
-                          {e.title[0]}
-                          <br />
-                          <strong>{e.title[1]}</strong>
-                        </h3>
-                        <p>{e.sub}</p>
-                      </div>
-                    </article>
+                    <EvCard e={e} key={e.no} hidden={i !== ev} label={`${i + 1} / ${EVENTS.length}`} />
                   ))}
                 </div>
                 <div className="ev-ctrl">
@@ -954,8 +976,16 @@ export default function App() {
         </div>
       </footer>
 
-      <nav className={solid ? "qm" : "qm top"} aria-label="빠른 문의" hidden={menu || visit || !!zoom}>
-        <a className="qm-hot" href="#notice" aria-label="진행 중인 이벤트 보기">
+      <nav className={solid ? "qm" : "qm top"} aria-label="빠른 문의" hidden={menu || visit || evPop || !!zoom}>
+        <a
+          className="qm-hot"
+          href="#notice"
+          aria-label="진행 중인 이벤트 보기"
+          onClick={(e) => {
+            e.preventDefault();
+            setEvPop(true);
+          }}
+        >
           <b>HOT</b>
           <span>EVENT</span>
         </a>
@@ -1001,6 +1031,32 @@ export default function App() {
           <button type="button" className="vm-x" onClick={() => setZoom(null)} aria-label="닫기" autoFocus>
             <Ico k="close" />
           </button>
+        </div>
+      )}
+
+      {evPop && (
+        <div className="vm evm" onClick={(e) => e.target === e.currentTarget && setEvPop(false)}>
+          <div className="evm-box" role="dialog" aria-modal="true" aria-labelledby="evm-h">
+            <div className="evm-head">
+              <div>
+                <small>HOT EVENT</small>
+                <h2 className="serif" id="evm-h">
+                  진행 중인 이벤트
+                </h2>
+              </div>
+              <button type="button" className="vm-x" ref={evPopClose} onClick={() => setEvPop(false)} aria-label="닫기">
+                <Ico k="close" />
+              </button>
+            </div>
+            <div className="evm-grid">
+              {EVENTS.map((e) => (
+                <EvCard e={e} key={e.no} />
+              ))}
+            </div>
+            <p className="evm-note">
+              이벤트 적용 여부는 주문 메일이나 전화로 문의해 주세요.
+            </p>
+          </div>
         </div>
       )}
 
