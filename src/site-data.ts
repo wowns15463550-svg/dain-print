@@ -101,10 +101,11 @@ export const EQUIPMENT = [
 
 // 후가공 장비 (장비 소개 아래 작은 카드)
 export const FINISHING = [
-  { k: "무선제본", name: "호리존 BQ-270", sub: "책등을 다듬고 풀을 발라 표지를 붙입니다. 교재, 논문, 포트폴리오처럼 쪽수 있는 책을 만듭니다.", img: "assets/m-binder.webp" },
-  { k: "재단", name: "호리존 APC-T61", sub: "유압 프로그램 재단기. 책 세 면과 명함, 엽서를 정확한 치수로 반듯하게 자릅니다.", img: "assets/m-cutter.webp" },
-  { k: "코팅", name: "JS CHICO 460AT", sub: "자동 코팅기. 표지와 포스터에 무광·유광 필름을 입혀 오염과 긁힘을 막습니다.", img: "assets/m-lami.webp" },
-  { k: "스프링 제본", name: "EBX-50 사각 스프링기", sub: "사각 구멍을 일정한 간격으로 깔끔하게 뚫어 스프링 제본을 합니다. 보고서, 문제집, 매뉴얼에 씁니다.", img: "assets/m-punch.webp" },
+  { k: "무선제본", name: "호리존 BQ-270", sub: "책등을 다듬고 풀을 발라 표지를 붙입니다. 교재, 논문, 포트폴리오처럼 쪽수 있는 책을 만듭니다.", img: "assets/m-binder2.webp" },
+  { k: "재단", name: "호리존 APC-T61", sub: "유압 프로그램 재단기. 책 세 면과 명함, 엽서를 정확한 치수로 반듯하게 자릅니다.", img: "assets/m-cutter2.webp" },
+  { k: "코팅", name: "JS CHICO 460AT", sub: "자동 코팅기. 표지와 포스터에 무광·유광 필름을 입혀 오염과 긁힘을 막습니다.", img: "assets/m-lami2.webp" },
+  { k: "오시", name: "YPL 자동 오시기", sub: "강력한 오시로 접는 선을 깊고 반듯하게 눌러 둡니다. 리플렛 접지나 중철 제본 때 접힌 부분이 터지지 않습니다.", img: "assets/m-crease.webp" },
+  { k: "스프링 제본", name: "EBX-50 사각 스프링기", sub: "사각 구멍을 일정한 간격으로 깔끔하게 뚫어 스프링 제본을 합니다. 보고서, 문제집, 매뉴얼에 씁니다.", img: "assets/m-punch2.webp" },
 ];
 
 export const STEPS = [
@@ -184,4 +185,11 @@ export const GALLERY = [
   { img: "assets/g7.webp", t: "무선 만화책", spec: "표지 스노우 250g 유광코팅 · 내지 모조 100g" },
   { img: "assets/g8.webp", t: "중철 브로슈어", spec: "모조 100g" },
   { img: "assets/g9.webp", t: "무선 작품집", spec: "표지 스노우 250g 무광코팅 · 내지 모조 100g" },
+];
+
+// 이벤트 카드뉴스 (공지사항 왼쪽 아래 슬라이드)
+export const EVENTS = [
+  { no: "EVENT 01", tag: "무선제본", title: ["무선책 100부 이상", "무선 제본비 1,000원"], sub: "무선책을 100부 이상 주문하시면 무선 제본비를 1,000원으로 해드립니다.", img: "assets/ev1.webp", theme: "blue" },
+  { no: "EVENT 02", tag: "택배", title: ["5만 원 이상 주문 시", "택배비 지원"], sub: "CJ대한통운으로 전국 어디든 보내드립니다.", img: "assets/ev2.webp", theme: "mint" },
+  { no: "EVENT 03", tag: "리뷰", title: ["네이버 플레이스 리뷰 쓰고", "아이스 아메리카노 한 잔"], sub: "리뷰 등록 시 스타벅스 아이스 아메리카노를 드립니다. 간이영수증 요청 주시면 됩니다.", img: "assets/ev3.webp", theme: "cream" },
 ];

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { CHECKS, CONTACT, EQUIPMENT, FAQ, FINISHING, GALLERY, MAIL_TEMPLATE, NOTICES, ORDER_NOTES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
+import { CHECKS, CONTACT, EQUIPMENT, EVENTS, FAQ, FINISHING, GALLERY, MAIL_TEMPLATE, NOTICES, ORDER_NOTES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
 
 const HERO_SLIDES = [
   { src: "assets/hero-presses-r.webp", w: 964, pos: "18% 62%", alt: "코니카미놀타 AccurioPress C14000과 캐논 varioPRINT 115" },
@@ -113,6 +113,9 @@ export default function App() {
   const [solid, setSolid] = useState(false);
   const [svc, setSvc] = useState(0);
   const [svcX, setSvcX] = useState(false);
+  const [ev, setEv] = useState(0);
+  const [evHold, setEvHold] = useState(false);
+  const evTouch = useRef<number | null>(null);
   const [visit, setVisit] = useState(false);
   const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
   const stepsRef = useRef<HTMLOListElement>(null);
@@ -196,6 +199,14 @@ export default function App() {
       timers.forEach((t) => window.clearTimeout(t));
     };
   }, []);
+
+  // 이벤트 카드: 6초마다 다음 장 (마우스를 올리면 멈춤)
+  useEffect(() => {
+    if (evHold || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = window.setTimeout(() => setEv((n) => (n + 1) % EVENTS.length), 6000);
+    return () => window.clearTimeout(t);
+  }, [ev, evHold]);
+  const evGo = (d: number) => setEv((n) => (n + d + EVENTS.length) % EVENTS.length);
 
   // 장비 사진 크게 보기
   useEffect(() => {
@@ -356,6 +367,55 @@ export default function App() {
             <div className="rv">
               <h2 className="serif sec-title">공지사항</h2>
               <p className="sec-lead">휴무, 택배 마감, 작업 안내를 이곳에 먼저 올립니다.</p>
+              <div
+                className="ev"
+                aria-roledescription="carousel"
+                aria-label="진행 중인 이벤트"
+                onMouseEnter={() => setEvHold(true)}
+                onMouseLeave={() => setEvHold(false)}
+                onTouchStart={(e) => (evTouch.current = e.touches[0].clientX)}
+                onTouchEnd={(e) => {
+                  if (evTouch.current === null) return;
+                  const dx = e.changedTouches[0].clientX - evTouch.current;
+                  if (Math.abs(dx) > 40) evGo(dx < 0 ? 1 : -1);
+                  evTouch.current = null;
+                }}
+              >
+                <div className="ev-track" style={{ transform: `translateX(-${ev * 100}%)` }}>
+                  {EVENTS.map((e, i) => (
+                    <article className={`ev-card ev-${e.theme}`} key={e.no} aria-hidden={i !== ev} aria-label={`${i + 1} / ${EVENTS.length}`}>
+                      <img src={e.img} alt="" loading="lazy" width={800} height={800} />
+                      <div className="ev-text">
+                        <small>
+                          {e.no} <span>{e.tag}</span>
+                        </small>
+                        <h3>
+                          {e.title[0]}
+                          <br />
+                          <strong>{e.title[1]}</strong>
+                        </h3>
+                        <p>{e.sub}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+                <div className="ev-ctrl">
+                  <button type="button" onClick={() => evGo(-1)} aria-label="이전 이벤트">
+                    ‹
+                  </button>
+                  <span className="ev-dots">
+                    {EVENTS.map((e, i) => (
+                      <button type="button" key={e.no} className={i === ev ? "on" : undefined} onClick={() => setEv(i)} aria-label={`${i + 1}번 이벤트`} />
+                    ))}
+                  </span>
+                  <span className="ev-count">
+                    {ev + 1} / {EVENTS.length}
+                  </span>
+                  <button type="button" onClick={() => evGo(1)} aria-label="다음 이벤트">
+                    ›
+                  </button>
+                </div>
+              </div>
             </div>
             <div className="nl rv">
               {NOTICES.map((n, i) => (
@@ -505,7 +565,7 @@ export default function App() {
             </div>
             <div className="eq-sub-head rv">
               <h3>후가공 장비</h3>
-              <p>재단, 제본, 코팅까지 작업실 안에서 바로 이어집니다.</p>
+              <p>재단, 오시, 제본, 코팅까지 작업실 안에서 바로 이어집니다.</p>
             </div>
             <div className="eq-sub">
               {FINISHING.map((e) => (
