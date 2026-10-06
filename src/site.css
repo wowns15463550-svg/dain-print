@@ -418,6 +418,6 @@ details[open] .plus::after{transform:scaleY(0)}
 .gal-cap{display:flex;flex-direction:column;gap:2px;margin-top:14px}
 .gal-cap b{font-size:16px;font-weight:600}
 .gal-cap small{font-size:13px;color:var(--ink-2);line-height:1.5}
-.gal-note{margin-top:28px;color:var(--ink-3);font-size:13px}
+.gal-note{margin-top:44px;color:var(--ink-3);font-size:13px}
 @media (prefers-reduced-motion:reduce){.gal{overflow-x:auto;-webkit-mask-image:none;mask-image:none}.gal-track{animation:none;padding-inline:var(--gut)}}
 @media (max-width:1320px){.hdr-tel{display:none}}
