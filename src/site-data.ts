@@ -84,9 +84,9 @@ export const PAPER_GUIDE: Paper[] = [
     useLabel: "엽서 · 청첩장 · 팜플렛",
   },
   {
-    name: "고급 복사용지",
-    finish: "무림 M COPY · 백색",
-    desc: "하얗고 매끄러운 무림 M COPY 80g입니다. 보고서와 스프링 제본, 일반 복사·출력에 가장 많이 씁니다.",
+    name: "복사용지",
+    finish: "무림 M COPY",
+    desc: "하얗고 매끄러운 고급 복사용지(무림 M COPY 백색 80g)입니다. 보고서와 스프링 제본, 일반 복사·출력에 가장 많이 씁니다.",
     rows: [["80g", "보고서 · 스프링 제본 · 일반 복사"]],
     img: "assets/paper-mcopy.webp",
     use: "assets/paper-mcopy-use.webp",

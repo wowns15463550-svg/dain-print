@@ -167,6 +167,7 @@ details[open] .plus::after{transform:scaleY(0)}
 .pc dt{font-weight:600;font-variant-numeric:tabular-nums}
 .pc dd{margin:0;color:var(--ink-2)}
 .paper-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (min-width:1241px){.paper-grid .pc dl div{grid-template-columns:minmax(0,1fr);gap:2px}.paper-grid .pc-body{padding:22px 22px 24px}}
 @media (max-width:1240px){.paper-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){.paper-grid{grid-template-columns:minmax(0,1fr)}}
 
