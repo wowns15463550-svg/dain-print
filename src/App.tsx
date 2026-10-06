@@ -483,7 +483,7 @@ export default function App() {
               <p className="sec-lead">휴무, 택배 마감, 작업 안내를 이곳에 먼저 올립니다.</p>
               <div className="nl">
               {NOTICES.map((n, i) => (
-                <details className="ni" key={n.title} open={i === 0}>
+                <details className="ni" key={n.title}>
                   <summary>
                     <time>{n.date}</time>
                     <span className={n.hot ? "tag hot" : "tag"}>{n.tag}</span>
