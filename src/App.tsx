@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { CHECKS, CONTACT, EQUIPMENT, FAQ, MAIL_TEMPLATE, NOTICES, ORDER_NOTES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
+import { CHECKS, CONTACT, EQUIPMENT, FAQ, FINISHING, MAIL_TEMPLATE, NOTICES, ORDER_NOTES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
 
 const HERO_SLIDES = [
   { src: "assets/hero-presses-r.webp", w: 964, pos: "18% 62%", alt: "코니카미놀타 AccurioPress C14000과 캐논 varioPRINT 115" },
@@ -439,7 +439,7 @@ export default function App() {
               <p className="sec-lead">출력부터 재단, 제본까지 바깥에 맡기지 않고 작업실에서 직접 끝냅니다.</p>
             </div>
             <div className="eq-grid">
-              {EQUIPMENT.slice(0, 2).map((e) => (
+              {EQUIPMENT.map((e) => (
                 <article className="eq-card rv" key={e.name}>
                   <figure>
                     <img src={e.img} alt={e.name} loading="lazy" width={1184} height={888} />
@@ -452,12 +452,24 @@ export default function App() {
                 </article>
               ))}
             </div>
-            <p className="eq-note rv">
-              <span>
-                <b>{EQUIPMENT[2].k}</b>
-                {EQUIPMENT[2].name}
-              </span>
-            </p>
+            <div className="eq-sub-head rv">
+              <h3>후가공 장비</h3>
+              <p>재단, 제본, 코팅까지 작업실 안에서 바로 이어집니다.</p>
+            </div>
+            <div className="eq-sub">
+              {FINISHING.map((e) => (
+                <article className="eq-card eq-mini rv" key={e.name}>
+                  <figure>
+                    <img src={e.img} alt={e.name} loading="lazy" width={900} height={675} />
+                  </figure>
+                  <div className="eq-body">
+                    <small>{e.k}</small>
+                    <h3>{e.name}</h3>
+                    <p>{e.sub}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 

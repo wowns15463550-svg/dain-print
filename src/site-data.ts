@@ -83,12 +83,28 @@ export const PAPER_GUIDE: Paper[] = [
     use: "assets/paper-rdv-use.webp",
     useLabel: "엽서 · 청첩장 · 팜플렛",
   },
+  {
+    name: "고급 복사용지",
+    finish: "무림 M COPY · 백색",
+    desc: "하얗고 매끄러운 무림 M COPY 80g입니다. 보고서와 스프링 제본, 일반 복사·출력에 가장 많이 씁니다.",
+    rows: [["80g", "보고서 · 스프링 제본 · 일반 복사"]],
+    img: "assets/paper-mcopy.webp",
+    use: "assets/paper-mcopy-use.webp",
+    useLabel: "보고서 · 스프링 제본",
+  },
 ];
 
 export const EQUIPMENT = [
-  { k: "컬러 인쇄", name: "AccurioPress C14000", sub: "코니카미놀타 컬러 프로덕션 프레스. 사진과 색이 중요한 책자, 포스터, 전단을 맡습니다.", img: "assets/m-konica.webp" },
+  { k: "컬러 인쇄", name: "AccurioPress C14000", sub: "코니카미놀타 컬러 프로덕션 프레스. 사진과 색이 중요한 책자, 포스터, 전단을 맡습니다.", img: "assets/m-c14000.webp" },
   { k: "흑백 인쇄", name: "Canon varioPRINT 115", sub: "캐논 오세 흑백 프로덕션 프린터. 교재, 논문, 문제집처럼 쪽수 많은 흑백 작업을 맡습니다.", img: "assets/m-canon.webp" },
-  { k: "제본", name: "호리존 무선제본기", sub: "책등까지 단단한 무선 제본", img: "" },
+];
+
+// 후가공 장비 (장비 소개 아래 작은 카드)
+export const FINISHING = [
+  { k: "무선제본", name: "호리존 BQ-270", sub: "책등을 다듬고 풀을 발라 표지를 붙입니다. 교재, 논문, 포트폴리오처럼 쪽수 있는 책을 만듭니다.", img: "assets/m-binder.webp" },
+  { k: "재단", name: "호리존 APC-T61", sub: "유압 프로그램 재단기. 책 세 면과 명함, 엽서를 정확한 치수로 반듯하게 자릅니다.", img: "assets/m-cutter.webp" },
+  { k: "코팅", name: "JS CHICO 460AT", sub: "자동 코팅기. 표지와 포스터에 무광·유광 필름을 입혀 오염과 긁힘을 막습니다.", img: "assets/m-lami.webp" },
+  { k: "타공", name: "스프링 제본 펀칭기", sub: "스프링 제본용 구멍을 일정한 간격으로 깔끔하게 뚫습니다. 보고서, 문제집, 매뉴얼에 씁니다.", img: "assets/m-punch.webp" },
 ];
 
 export const STEPS = [
