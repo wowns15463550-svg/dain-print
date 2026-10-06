@@ -1,6 +1,7 @@
 // 정적 사이트 빌드: dist/ 에 index.html, app.js, site.css, assets/ 를 만든다.
 import * as esbuild from "esbuild";
-import { cpSync, mkdirSync, rmSync, writeFileSync, existsSync } from "node:fs";
+import { cpSync, mkdirSync, rmSync, writeFileSync, existsSync, readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
 
 const SITE_URL = "https://www.dainprint.co.kr/";
@@ -24,6 +25,11 @@ await esbuild.build({
   target: ["es2019"],
   define: { "process.env.NODE_ENV": '"production"' },
 });
+
+// 파일이 바뀌면 주소 뒤 ?v= 값도 바뀌어서, 방문자 브라우저가 옛 파일을 쓰지 않는다
+const ver = (f) => createHash("sha1").update(readFileSync(f)).digest("hex").slice(0, 8);
+const JS_V = ver("dist/app.js");
+const CSS_V = ver("src/site.css");
 
 // 2) 미리 그린 HTML (검색 노출과 빠른 첫 화면용)
 await esbuild.build({
@@ -58,7 +64,7 @@ const html = `<!doctype html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400&family=Noto+Serif+KR:wght@300;400&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="site.css?v=${CSS_V}">
 <link rel="preload" as="image" href="assets/hero-presses-r.webp">
 <script type="application/ld+json">${JSON.stringify({
   "@context": "https://schema.org",
@@ -73,7 +79,7 @@ const html = `<!doctype html>
 </head>
 <body style="margin:0;background:#F4F5F7">
 <div id="root">${body}</div>
-<script type="module" src="app.js"></script>
+<script type="module" src="app.js?v=${JS_V}"></script>
 </body>
 </html>
 `;
