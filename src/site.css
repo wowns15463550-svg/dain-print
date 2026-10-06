@@ -178,7 +178,14 @@ details[open] .plus::after{transform:scaleY(0)}
 .eq-card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line)}
 .eq-card figure{margin:0;aspect-ratio:4/3;max-width:100%;overflow:hidden;background:var(--tint)}
 .eq-card figure img{width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--out)}
-.eq-card:hover figure img{transform:scale(1.03)}
+.zoomable{display:block;width:100%;height:100%;padding:0;border:0;background:none;cursor:zoom-in;overflow:hidden}
+.zoomable img{transform-origin:var(--zx,50%) var(--zy,50%);transition:transform .45s var(--out)}
+@media (hover:hover){.zoomable:hover img{transform:scale(2)}}
+.lb{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;background:rgba(12,23,48,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:vmfade .3s var(--out) both;cursor:zoom-out}
+.lb figure{margin:0;max-width:min(1100px,100%);animation:vmup .45s var(--out) both}
+.lb img{width:100%;height:auto;max-height:calc(100svh - 120px);object-fit:contain;background:var(--surface)}
+.lb figcaption{margin-top:12px;color:#fff;font-size:15px;font-weight:600;text-align:center}
+.lb .vm-x{position:fixed;top:16px;right:16px}
 .eq-body{padding:28px 32px 32px;display:flex;flex-direction:column;gap:6px}
 .eq-body small{font-size:13px;font-weight:600;color:var(--accent)}
 .eq-body h3{font-size:clamp(20px,1.8vw,24px);font-weight:600;letter-spacing:-.015em}

@@ -112,6 +112,7 @@ export default function App() {
   const [solid, setSolid] = useState(false);
   const [svc, setSvc] = useState(0);
   const [visit, setVisit] = useState(false);
+  const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
   const stepsRef = useRef<HTMLOListElement>(null);
   const [stepAnim, setStepAnim] = useState(false);
   const [stepOn, setStepOn] = useState(-1);
@@ -193,6 +194,23 @@ export default function App() {
       timers.forEach((t) => window.clearTimeout(t));
     };
   }, []);
+
+  // 장비 사진 크게 보기
+  useEffect(() => {
+    if (!zoom) return;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setZoom(null);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [zoom]);
+  const lens = (e: { currentTarget: HTMLElement; clientX: number; clientY: number }) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty("--zx", `${((e.clientX - r.left) / r.width) * 100}%`);
+    e.currentTarget.style.setProperty("--zy", `${((e.clientY - r.top) / r.height) * 100}%`);
+  };
 
   // 오시는 길 modal: lock scroll, Esc closes, focus moves in and returns
   useEffect(() => {
@@ -442,7 +460,9 @@ export default function App() {
               {EQUIPMENT.map((e) => (
                 <article className="eq-card rv" key={e.name}>
                   <figure>
-                    <img src={e.img} alt={e.name} loading="lazy" width={1184} height={888} />
+                    <button type="button" className="zoomable" onMouseMove={lens} onClick={() => setZoom({ src: e.img, alt: e.name })} aria-label={`${e.name} 사진 크게 보기`}>
+                      <img src={e.img} alt={e.name} loading="lazy" width={1184} height={888} />
+                    </button>
                   </figure>
                   <div className="eq-body">
                     <small>{e.k}</small>
@@ -460,7 +480,9 @@ export default function App() {
               {FINISHING.map((e) => (
                 <article className="eq-card eq-mini rv" key={e.name}>
                   <figure>
-                    <img src={e.img} alt={e.name} loading="lazy" width={900} height={675} />
+                    <button type="button" className="zoomable" onMouseMove={lens} onClick={() => setZoom({ src: e.img, alt: e.name })} aria-label={`${e.name} 사진 크게 보기`}>
+                      <img src={e.img} alt={e.name} loading="lazy" width={900} height={675} />
+                    </button>
                   </figure>
                   <div className="eq-body">
                     <small>{e.k}</small>
@@ -717,7 +739,7 @@ export default function App() {
         </div>
       </footer>
 
-      <nav className={solid ? "qm" : "qm top"} aria-label="빠른 문의" hidden={menu || visit}>
+      <nav className={solid ? "qm" : "qm top"} aria-label="빠른 문의" hidden={menu || visit || !!zoom}>
         <a className="qm-i qm-kakao" href={CONTACT.kakao} target="_blank" rel="noreferrer">
           <Ico k="talk" />
           <span>카톡상담</span>
@@ -750,6 +772,18 @@ export default function App() {
           <Ico k="up" />
         </a>
       </nav>
+
+      {zoom && (
+        <div className="lb" onClick={() => setZoom(null)} role="dialog" aria-modal="true" aria-label={zoom.alt}>
+          <figure>
+            <img src={zoom.src} alt={zoom.alt} />
+            <figcaption>{zoom.alt}</figcaption>
+          </figure>
+          <button type="button" className="vm-x" onClick={() => setZoom(null)} aria-label="닫기" autoFocus>
+            <Ico k="close" />
+          </button>
+        </div>
+      )}
 
       {visit && (
         <div className="vm" onClick={(e) => e.target === e.currentTarget && setVisit(false)}>
