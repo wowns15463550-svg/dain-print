@@ -10,6 +10,54 @@ const HERO_SLIDES = [
 ];
 const SLIDE_MS = 5500;
 
+declare global {
+  interface Window { kakao?: any }
+}
+
+// 오시는 길 지도. 카카오 키가 있으면 카카오맵, 없으면 구글 지도.
+function VisitMap() {
+  const box = useRef<HTMLDivElement>(null);
+  const key = CONTACT.kakaoMapKey;
+  useEffect(() => {
+    if (!key || !box.current) return;
+    const el = box.current;
+    const draw = () => {
+      const k = window.kakao;
+      k.maps.load(() => {
+        new k.maps.services.Geocoder().addressSearch(CONTACT.address, (r: any[], st: string) => {
+          if (st !== k.maps.services.Status.OK) return;
+          const pos = new k.maps.LatLng(r[0].y, r[0].x);
+          el.innerHTML = "";
+          const map = new k.maps.Map(el, { center: pos, level: 3 });
+          map.addControl(new k.maps.ZoomControl(), k.maps.ControlPosition.RIGHT);
+          new k.maps.Marker({ map, position: pos });
+          const tag = document.createElement("div");
+          tag.className = "map-tag";
+          tag.textContent = "다인인쇄소";
+          new k.maps.CustomOverlay({ map, position: pos, content: tag, yAnchor: 2.6 });
+        });
+      });
+    };
+    if (window.kakao?.maps) return draw();
+    const sc = document.createElement("script");
+    sc.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${key}&autoload=false&libraries=services`;
+    sc.onload = draw;
+    document.head.appendChild(sc);
+  }, [key]);
+  return (
+    <div className="map-box" ref={box}>
+      {!key && (
+        <iframe
+          title="다인인쇄소 위치 지도"
+          src={`https://maps.google.com/maps?q=${encodeURIComponent(CONTACT.address)}&z=17&hl=ko&output=embed`}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      )}
+    </div>
+  );
+}
+
 const NAV = [
   ["#notice", "공지사항"],
   ["#service", "인쇄 · 제본"],
@@ -793,8 +841,12 @@ export default function App() {
 
         <section className="sec visit-sec" id="visit">
           <div className="wrap visit">
-            <div className="visit-img rv">
-              <img src="assets/studio.webp" alt="밝은 인쇄 작업실의 작업대와 인쇄물" loading="lazy" width={1344} height={752} />
+            <div className="visit-map rv">
+              <VisitMap />
+              <div className="visit-map-links">
+                <a href={CONTACT.kakaoMapUrl} target="_blank" rel="noreferrer">카카오맵</a>
+                <a href={CONTACT.mapUrl} target="_blank" rel="noreferrer">네이버 지도</a>
+              </div>
             </div>
             <div className="visit-info rv">
               <h2 className="serif sec-title">오시는 길</h2>
@@ -820,9 +872,6 @@ export default function App() {
                 </dd>
               </dl>
               <div className="visit-acts">
-                <button type="button" className="btn" onClick={() => openVisit()}>
-                  <Ico k="pin" /> 지도 보기
-                </button>
                 <a className="btn" href={CONTACT.kakao} target="_blank" rel="noreferrer">
                   카카오톡 상담
                 </a>

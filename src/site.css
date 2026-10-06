@@ -125,7 +125,7 @@ html{scroll-behavior:smooth;scroll-padding-top:84px;background:var(--bg)}
 .plus::before{left:0;right:0;top:50%;height:1.5px}
 .plus::after{top:0;bottom:0;left:50%;width:1.5px}
 details[open] .plus::after{transform:scaleY(0)}
-.ni-b{padding:0 0 28px 200px;color:var(--ink-2);max-width:60em}
+.ni-b{white-space:pre-line;padding:0 0 28px 200px;color:var(--ink-2);max-width:60em}
 @media (max-width:900px){.notice{grid-template-columns:minmax(0,1fr)}.ni summary{grid-template-columns:auto minmax(0,1fr) 20px;row-gap:8px}.ni time{grid-column:1/-1}.ni-b{padding-left:0}.tag{padding-inline:10px}}
 
 /* services: index list + sticky photo */
@@ -286,8 +286,14 @@ details[open] .plus::after{transform:scaleY(0)}
 /* visit */
 .visit-sec{background:var(--surface);border-top:1px solid var(--line)}
 .visit{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(40px,6vw,88px);align-items:stretch}
-.visit-img{position:relative;overflow:hidden;min-height:500px;background:var(--tint)}
-.visit-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.visit-map{display:flex;flex-direction:column;gap:10px}
+.map-box{position:relative;flex:1;min-height:500px;background:var(--tint);border:1px solid var(--line);overflow:hidden}
+.map-box iframe{position:absolute;inset:0}
+.map-box iframe{width:100%;height:100%;border:0;display:block}
+.map-tag{background:#fff;border:1px solid var(--ink);padding:5px 12px;font-size:13px;font-weight:600;white-space:nowrap;box-shadow:0 4px 12px rgba(13,21,38,.12)}
+.visit-map-links{display:flex;gap:8px;justify-content:flex-end}
+.visit-map-links a{background:#fff;border:1px solid var(--line);padding:6px 12px;font-size:13px;font-weight:600;color:var(--ink);}
+.visit-map-links a:hover{border-color:var(--accent);color:var(--accent)}
 .visit-info{display:flex;flex-direction:column}
 .dl{margin:36px 0 0;display:grid;grid-template-columns:96px minmax(0,1fr);border-top:1px solid var(--ink)}
 .dl dt,.dl dd{margin:0;padding-block:17px;border-bottom:1px solid var(--line)}
@@ -295,7 +301,7 @@ details[open] .plus::after{transform:scaleY(0)}
 .dl dd{font-size:17px;font-weight:500;font-variant-numeric:tabular-nums;min-width:0;word-break:keep-all}
 .dl dd small{display:block;color:var(--ink-2);font-weight:400;font-size:14px;margin-top:2px}
 .visit-acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
-@media (max-width:900px){.visit{grid-template-columns:minmax(0,1fr)}.visit-img{min-height:280px}}
+@media (max-width:900px){.visit{grid-template-columns:minmax(0,1fr)}.map-box{min-height:320px}}
 
 /* footer */
 .ftr{background:var(--navy);color:var(--navy-fg-2);padding-block:64px calc(48px + env(safe-area-inset-bottom,0px));font-size:13px}

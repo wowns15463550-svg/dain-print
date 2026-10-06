@@ -18,6 +18,9 @@ export const CONTACT = {
   webhardPw: "22710496",
   webhardFolder: "1.인터넷손님",
   subway: "충무로역 7번 출구 도보 3분",
+  // 카카오 개발자센터에서 받은 JavaScript 키. 넣으면 오시는 길 지도가 카카오맵으로 바뀝니다 (비어 있으면 구글 지도).
+  kakaoMapKey: "",
+  kakaoMapUrl: "https://map.kakao.com/link/search/%EC%84%9C%EC%9A%B8%20%EC%A4%91%EA%B5%AC%20%EB%A7%88%EB%A5%B8%EB%82%B4%EB%A1%9C4%EA%B8%B8%2027",
   mapUrl: "https://map.naver.com/p/search/%EB%A7%88%EB%A5%B8%EB%82%B4%EB%A1%9C4%EA%B8%B8%2027",
 };
 
