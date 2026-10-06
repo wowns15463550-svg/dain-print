@@ -111,6 +111,7 @@ export default function App() {
   const [checkOpen, setCheckOpen] = useState<number | null>(null);
   const [solid, setSolid] = useState(false);
   const [svc, setSvc] = useState(0);
+  const [svcX, setSvcX] = useState(false);
   const [visit, setVisit] = useState(false);
   const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
   const stepsRef = useRef<HTMLOListElement>(null);
@@ -387,17 +388,46 @@ export default function App() {
                     </button>
                     <div className="svc-desc">
                       <div>
-                        <img className="svc-m" src={s.img} alt={`${s.name} 인쇄물`} loading="lazy" width={896} height={1120} />
+                        {s.detail ? (
+                          <button type="button" className={svcX ? "svc-m svc-mx x" : "svc-m svc-mx"} onClick={() => setSvcX((v) => !v)} aria-pressed={svcX}>
+                            <img src={s.img} alt={`${s.name} 완성본`} loading="lazy" width={896} height={1120} />
+                            <img src={s.detail} alt={`${s.name} 구성: ${s.parts?.join(", ")}`} loading="lazy" width={896} height={1120} />
+                            <span className="x-chip">{svcX ? "완성본 보기" : "눌러서 구성 보기"}</span>
+                          </button>
+                        ) : (
+                          <img className="svc-m" src={s.img} alt={`${s.name} 인쇄물`} loading="lazy" width={896} height={1120} />
+                        )}
+                        {s.parts && (
+                          <ol className="x-parts">
+                            {s.parts.map((pt) => (
+                              <li key={pt}>{pt}</li>
+                            ))}
+                          </ol>
+                        )}
                         <p>{s.desc}</p>
                       </div>
                     </div>
                   </li>
                 ))}
               </ul>
-              <div className="svc-view" aria-hidden="true">
+              <div
+                className={SERVICES[svc].detail ? "svc-view has-x" : "svc-view"}
+                aria-hidden="true"
+                onMouseEnter={() => setSvcX(true)}
+                onMouseLeave={() => setSvcX(false)}
+              >
                 {SERVICES.map((s, i) => (
-                  <img key={s.img} src={s.img} alt="" className={i === svc ? "on" : undefined} loading="lazy" width={896} height={1120} />
+                  <img key={s.img} src={s.img} alt="" className={i === svc && !(s.detail && svcX) ? "on" : undefined} loading="lazy" width={896} height={1120} />
                 ))}
+                {SERVICES.map((s, i) =>
+                  s.detail ? <img key={s.detail} src={s.detail} alt="" className={i === svc && svcX ? "on" : undefined} loading="lazy" width={896} height={1120} /> : null,
+                )}
+                {SERVICES[svc].parts && (
+                  <div className={svcX ? "x-legend on" : "x-legend"}>
+                    <span className="x-chip">{svcX ? "구성" : "커서를 올리면 구성이 보여요"}</span>
+                    {svcX && <b>{SERVICES[svc].parts?.join("  ·  ")}</b>}
+                  </div>
+                )}
               </div>
             </div>
             <div className="paper">

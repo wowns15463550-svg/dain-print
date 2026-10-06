@@ -27,7 +27,7 @@ export const NOTICES: Notice[] = notices as Notice[];
 export const SERVICES = [
   { img: "assets/l-perfect.webp", name: "무선제본", desc: "학원 교재, 포트폴리오, 보고서처럼 쪽수가 있는 책. 무선 제본기로 책등에 풀을 발라 붙이는 가장 일반적인 제본입니다.", spec: "표지 스노우지 250g 무광코팅" },
   { img: "assets/l-saddle.webp", name: "중철제본", desc: "카탈로그, 팜플렛, 행사 책자. 가운데를 스테이플로 묶어 활짝 펼쳐지는 얇은 책입니다.", spec: "소책자 · 카탈로그 · 프로그램북" },
-  { img: "assets/l-spiral.webp", name: "스프링제본", desc: "보고서, 문제집, 매뉴얼처럼 펼쳐두고 보는 자료. 구멍을 뚫어 스프링으로 제본하는 방식입니다.", spec: "보고서 · 문제집 · 매뉴얼" },
+  { img: "assets/l-spiral2.webp", detail: "assets/l-spiral-x.webp", parts: ["무광 반투명 PVC 앞표지", "내지", "PVC 뒷표지", "검정 트윈링"], name: "스프링제본", desc: "보고서, 문제집, 매뉴얼처럼 펼쳐두고 보는 자료. 사각 구멍을 뚫어 검정 트윈링으로 묶고, 앞뒤에 무광 반투명 PVC 표지를 넣어 깔끔하게 마감합니다.", spec: "검정 트윈링 · 무광 PVC 표지" },
   { img: "assets/l-flyer.webp", name: "전단지 · 리플렛", desc: "매장 홍보 전단부터 접는 리플렛까지. 소량도 또렷한 색으로 뽑아드립니다.", spec: "단면 · 양면 · 접지 리플렛" },
   { img: "assets/l-card.webp", name: "명함", desc: "두께감 있는 랑데뷰지 240g에 깔끔하게 인쇄합니다.", spec: "랑데뷰 240g · 52×92mm" },
   { img: "assets/l-invite.webp", name: "엽서 · 청첩장", desc: "두께감 있고 결이 고운 랑데뷰 240g으로 많이 만듭니다. 손에 쥐었을 때 고급스러운 인상이 남습니다.", spec: "랑데뷰 240g" },

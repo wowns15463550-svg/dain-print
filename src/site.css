@@ -388,3 +388,19 @@ details[open] .plus::after{transform:scaleY(0)}
 .wh-folder{display:inline-block;padding:2px 10px;background:var(--tint);font-size:15px;letter-spacing:0}
 .wh p{color:var(--ink-2);font-size:14px;margin-top:14px}
 .wh .btn{margin-top:18px;width:100%}
+
+/* 스프링제본 구성(분해도) */
+.svc-view.has-x{cursor:zoom-in}
+.x-legend{position:absolute;left:16px;right:16px;bottom:16px;z-index:2;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;pointer-events:none}
+.x-chip{display:inline-block;padding:6px 12px;background:rgba(255,255,255,.92);color:var(--ink);font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(13,21,38,.08)}
+.x-legend.on .x-chip{background:var(--accent);color:var(--on-accent)}
+.x-legend b{padding:6px 12px;background:rgba(255,255,255,.92);font-size:13px;font-weight:600;color:var(--ink)}
+.svc-mx{position:relative;display:none;padding:0;border:0;background:var(--tint);cursor:pointer;overflow:hidden}
+.svc-mx img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .5s var(--out)}
+.svc-mx img+img{opacity:0}
+.svc-mx.x img+img{opacity:1}
+.svc-mx .x-chip{position:absolute;left:12px;bottom:12px}
+.x-parts{display:none;list-style:none;margin:0 0 16px 10px;padding:0;flex-wrap:wrap;gap:6px}
+.x-parts li{padding:4px 10px;background:var(--tint);font-size:13px;font-weight:600;color:var(--ink-2)}
+@media (max-width:900px){.svc-item .svc-mx{display:block}.x-parts{display:flex}}
+@media (max-width:900px){.svc-item .svc-mx{aspect-ratio:4/5}}

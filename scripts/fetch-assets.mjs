@@ -38,6 +38,8 @@ const ASSETS = [
   ["m-cutter.webp", "hf_20261006_051400_8616e514-e826-409b-a087-69e7c51f0efa", { max: 900 }],
   ["m-lami.webp", "hf_20261006_051358_bf8b8dad-3e5e-4d57-99b7-4a03c0c0c1cd", { max: 900 }],
   ["m-punch.webp", "hf_20261006_051358_e2110e8f-155e-4b6c-a90f-1164d4952932", { max: 900 }],
+  ["l-spiral2.webp", "hf_20261006_081042_d10bb0dc-6dd8-4387-8227-7f63877b43bf", { max: 1100 }],
+  ["l-spiral-x.webp", "hf_20261006_081042_0426b607-a67b-4e2a-b3f8-57e611fc4e9a", { max: 1400 }],
   ["paper-mcopy.webp", "hf_20261006_051358_c636bbe0-84d1-4e09-857f-8ee39116155c", { max: 1100 }],
   ["paper-mcopy-use.webp", "hf_20261006_051359_c930b50e-082f-4564-a314-c3034b4d1a83", { max: 1100 }],
   ["paper-rdv-use.webp", "hf_20261005_152323_8b74e69e-b132-4bc3-8928-e425fa3a62ad"],
