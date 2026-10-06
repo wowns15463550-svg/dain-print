@@ -5,9 +5,9 @@ import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
 
 const SITE_URL = "https://www.dainprint.co.kr/";
-const TITLE = "다인인쇄소 | 서울 충무로 출력 · 제본 원스톱 인쇄소";
+const TITLE = "다인인쇄소 | 충무로 인쇄소 · 서울 출력 제본 원스톱";
 const DESC =
-  "충무로역 7번 출구 3분. 출력부터 제본까지 한곳에서 빠르고 정확하게. 무선 · 중철 · 스프링 제본, 전단지, 리플렛, 포스터, 명함.";
+  "서울 충무로 인쇄소, 충무로역 7번 출구 3분. 출력부터 제본까지 한곳에서 빠르고 정확하게. 무선 · 중철 · 스프링 제본, 전단지, 리플렛, 포스터, 명함.";
 
 rmSync("dist", { recursive: true, force: true });
 mkdirSync("dist", { recursive: true });
@@ -80,7 +80,14 @@ const html = `<!doctype html>
   url: SITE_URL,
   telephone: "010-8244-4590",
   email: "dain969@naver.com",
+  description: DESC,
+  image: SITE_URL + "assets/og2.jpg",
   address: { "@type": "PostalAddress", streetAddress: "마른내로4길 27 1층", addressLocality: "중구", addressRegion: "서울", addressCountry: "KR" },
+  areaServed: "서울",
+  openingHoursSpecification: [{ "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "09:30", closes: "19:00" }],
+  paymentAccepted: "계좌이체, 카드",
+  sameAs: ["https://blog.naver.com/dainsystem969", "https://www.instagram.com/dain969_/", "http://pf.kakao.com/_rGKVn"],
+  makesOffer: ["무선제본", "중철제본", "스프링제본", "전단지", "리플렛", "명함", "엽서", "청첩장", "포스터"].map((n) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: n } })),
 })}</script>
 </head>
 <body style="margin:0;background:#F4F5F7">
