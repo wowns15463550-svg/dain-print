@@ -81,6 +81,9 @@ const html = `<!doctype html>
 <body style="margin:0;background:#F4F5F7">
 <div id="root">${body}</div>
 <script type="module" src="app.js?v=${JS_V}"></script>
+<!-- 네이버 애널리틱스 (통계는 사장님 계정에서만 보입니다) -->
+<script src="https://wcs.naver.net/wcslog.js"></script>
+<script>if(!window.wcs_add) window.wcs_add = {}; wcs_add["wa"] = "125a7b92b7210d0"; if(window.wcs) { wcs_do(); }</script>
 </body>
 </html>
 `;
