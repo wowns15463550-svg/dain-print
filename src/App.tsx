@@ -368,9 +368,7 @@ export default function App() {
 
         <section className="sec" id="notice">
           <div className="wrap notice">
-            <div className="rv">
-              <h2 className="serif sec-title">공지사항</h2>
-              <p className="sec-lead">휴무, 택배 마감, 작업 안내를 이곳에 먼저 올립니다.</p>
+            <div className="ev-col rv">
               <div
                 className="ev"
                 aria-roledescription="carousel"
@@ -421,7 +419,10 @@ export default function App() {
                 </div>
               </div>
             </div>
-            <div className="nl rv">
+            <div className="nl-col rv">
+              <h2 className="serif sec-title">공지사항</h2>
+              <p className="sec-lead">휴무, 택배 마감, 작업 안내를 이곳에 먼저 올립니다.</p>
+              <div className="nl">
               {NOTICES.map((n, i) => (
                 <details className="ni" key={n.title} open={i === 0}>
                   <summary>
@@ -433,6 +434,7 @@ export default function App() {
                   <p className="ni-b">{n.body}</p>
                 </details>
               ))}
+              </div>
             </div>
           </div>
         </section>
