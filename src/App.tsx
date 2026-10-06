@@ -302,7 +302,12 @@ export default function App() {
                 </span>
               </h1>
               <p className="hero-sub">
-                최고급 디지털 프레스로 출력하고 그 자리에서 제본까지. 빠르고 정확한 원스톱 인쇄소입니다.
+                <span className="sub-ln">
+                  최고급 디지털 프레스로 출력하고 <span className="nw">그 자리에서 제본까지.</span>
+                </span>
+                <span className="sub-ln">
+                  빠르고 정확한 <strong className="onestop">원스톱 인쇄소</strong>입니다.
+                </span>
               </p>
               <div className="hero-cta">
                 <a className="btn" href="#order">
