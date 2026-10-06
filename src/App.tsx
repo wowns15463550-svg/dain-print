@@ -87,7 +87,7 @@ function Phone() {
     </svg>
   );
 }
-function Ico({ k }: { k: "talk" | "blog" | "insta" | "mail" | "pin" | "up" | "close" | "cloud" }) {
+function Ico({ k }: { k: "talk" | "blog" | "insta" | "mail" | "pin" | "up" | "close" | "cloud" | "bank" }) {
   const p = { stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, fill: "none" };
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
@@ -121,6 +121,12 @@ function Ico({ k }: { k: "talk" | "blog" | "insta" | "mail" | "pin" | "up" | "cl
         <>
           <path {...p} d="M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.6 4.5 4.5 0 0 0 7 18.5Z" />
           <path {...p} d="M12 15.5v-5M9.8 12.5 12 10.3l2.2 2.2" />
+        </>
+      )}
+      {k === "bank" && (
+        <>
+          <path {...p} d="M3.5 9 12 4.5 20.5 9M5 19.5h14M4 9h16" />
+          <path {...p} d="M6.5 10v7M10.5 10v7M13.5 10v7M17.5 10v7" />
         </>
       )}
       {k === "up" && <path {...p} d="M12 19V5M6 11l6-6 6 6" />}
@@ -330,7 +336,7 @@ export default function App() {
           <a className="btn btn-accent" href={`tel:${tel}`}>
             <Phone /> {CONTACT.phone}
           </a>
-          <span>영업시간 {CONTACT.hours}</span>
+          <span>영업시간 {CONTACT.hours} · {CONTACT.closed}</span>
         </div>
       </nav>
 
@@ -783,6 +789,24 @@ export default function App() {
                     웹하드 열기 <Arrow />
                   </a>
                 </div>
+                <div className="wh bank" id="bank">
+                  <div className="wh-h">
+                    <Ico k="bank" />
+                    <b>입금 계좌</b>
+                  </div>
+                  <dl>
+                    <dt>{CONTACT.bankName}</dt>
+                    <dd>
+                      {CONTACT.bankNo}
+                      <button type="button" className={copied === "bank" ? "mini done" : "mini"} onClick={() => copy("bank", CONTACT.bankNo)}>
+                        {copied === "bank" ? "복사됨" : "복사"}
+                      </button>
+                    </dd>
+                    <dt>예금주</dt>
+                    <dd>{CONTACT.bankHolder}</dd>
+                  </dl>
+                  <p>견적을 확인하신 뒤 입금해 주시면 작업 순서에 올립니다. 입금자명이 주문자와 다르면 알려주세요.</p>
+                </div>
                 <a className="link-line fmt" href="#check">
                   인쇄 전 확인 사항 보기 <Arrow />
                 </a>
@@ -857,7 +881,15 @@ export default function App() {
                   <small>{CONTACT.addressDetail} · {CONTACT.subway}</small>
                 </dd>
                 <dt>영업시간</dt>
-                <dd>{CONTACT.hours}</dd>
+                <dd>
+                  {CONTACT.hours}
+                  <small>{CONTACT.closed} · 주말 작업은 미리 협의</small>
+                </dd>
+                <dt>입금 계좌</dt>
+                <dd>
+                  {CONTACT.bankName} {CONTACT.bankNo}
+                  <small>예금주 {CONTACT.bankHolder}</small>
+                </dd>
                 <dt>전화</dt>
                 <dd>
                   {CONTACT.phone}
@@ -911,15 +943,22 @@ export default function App() {
             <span>
               {CONTACT.address} {CONTACT.addressDetail}
             </span>
-            <span>영업시간 {CONTACT.hours}</span>
+            <span>영업시간 {CONTACT.hours} · {CONTACT.closed}</span>
             <span>전화 {CONTACT.phone}</span>
             <span>메일 {CONTACT.email}</span>
+            <span>
+              입금 계좌 {CONTACT.bankName} {CONTACT.bankNo} {CONTACT.bankHolder}
+            </span>
           </div>
           <p className="ftr-copy">© 2026 다인인쇄소</p>
         </div>
       </footer>
 
       <nav className={solid ? "qm" : "qm top"} aria-label="빠른 문의" hidden={menu || visit || !!zoom}>
+        <a className="qm-hot" href="#notice" aria-label="진행 중인 이벤트 보기">
+          <b>HOT</b>
+          <span>EVENT</span>
+        </a>
         <a className="qm-i qm-kakao" href={CONTACT.kakao} target="_blank" rel="noreferrer">
           <Ico k="talk" />
           <span>카톡상담</span>
@@ -993,7 +1032,15 @@ export default function App() {
                 <dt>지하철</dt>
                 <dd>{CONTACT.subway}</dd>
                 <dt>영업시간</dt>
-                <dd>{CONTACT.hours}</dd>
+                <dd>
+                  {CONTACT.hours}
+                  <small>{CONTACT.closed} · 주말 작업은 미리 협의</small>
+                </dd>
+                <dt>입금 계좌</dt>
+                <dd>
+                  {CONTACT.bankName} {CONTACT.bankNo}
+                  <small>예금주 {CONTACT.bankHolder}</small>
+                </dd>
                 <dt>전화</dt>
                 <dd>
                   <a href={`tel:${tel}`}>{CONTACT.phone}</a>
