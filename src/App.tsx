@@ -25,6 +25,11 @@ function EvCard({ e, hidden, label }: { e: Ev; hidden?: boolean; label?: string 
           <strong>{e.title[1]}</strong>
         </h3>
         <p>{e.sub}</p>
+        {"link" in e && e.link && (
+          <a className="ev-link" href={e.link} target="_blank" rel="noreferrer" tabIndex={hidden ? -1 : undefined}>
+            {e.linkText} <Arrow />
+          </a>
+        )}
       </div>
     </article>
   );

@@ -86,7 +86,7 @@ const html = `<!doctype html>
   areaServed: "서울",
   openingHoursSpecification: [{ "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "09:30", closes: "19:00" }],
   paymentAccepted: "계좌이체, 카드",
-  sameAs: ["https://blog.naver.com/dainsystem969", "https://www.instagram.com/dain969_/", "http://pf.kakao.com/_rGKVn"],
+  sameAs: ["https://naver.me/FDnCx1Wx", "https://blog.naver.com/dainsystem969", "https://www.instagram.com/dain969_/", "http://pf.kakao.com/_rGKVn"],
   makesOffer: ["무선제본", "중철제본", "스프링제본", "전단지", "리플렛", "명함", "엽서", "청첩장", "포스터"].map((n) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: n } })),
 })}</script>
 </head>

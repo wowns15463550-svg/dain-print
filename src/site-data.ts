@@ -25,7 +25,8 @@ export const CONTACT = {
   // 카카오 개발자센터에서 받은 JavaScript 키. 넣으면 오시는 길 지도가 카카오맵으로 바뀝니다 (비어 있으면 구글 지도).
   kakaoMapKey: "25275005fc01012009bcd9f4854e8d4a",
   kakaoMapUrl: "https://map.kakao.com/link/search/%EC%84%9C%EC%9A%B8%20%EC%A4%91%EA%B5%AC%20%EB%A7%88%EB%A5%B8%EB%82%B4%EB%A1%9C4%EA%B8%B8%2027",
-  mapUrl: "https://map.naver.com/p/search/%EB%A7%88%EB%A5%B8%EB%82%B4%EB%A1%9C4%EA%B8%B8%2027",
+  mapUrl: "https://naver.me/FDnCx1Wx",
+  placeReview: "https://naver.me/FDnCx1Wx",
 };
 
 export type Notice = { date: string; tag: string; hot?: boolean; title: string; body: string };
@@ -199,5 +200,5 @@ export const GALLERY = [
 export const EVENTS = [
   { no: "EVENT 01", tag: "무선제본", title: ["무선책 100부 이상", "무선 제본비 1,000원"], sub: "무선책을 100부 이상 주문하시면 무선 제본비를 1,000원으로 해드립니다.", img: "assets/ev1.webp", theme: "blue" },
   { no: "EVENT 02", tag: "택배", title: ["5만 원 이상 주문 시", "택배비 지원"], sub: "CJ대한통운으로 전국 어디든 보내드립니다.", img: "assets/ev2.webp", theme: "mint" },
-  { no: "EVENT 03", tag: "리뷰", title: ["네이버 플레이스 리뷰 쓰고", "아이스 아메리카노 한 잔"], sub: "리뷰 등록 시 스타벅스 아이스 아메리카노를 드립니다. 간이영수증 요청 주시면 됩니다.", img: "assets/ev3.webp", theme: "cream" },
+  { no: "EVENT 03", tag: "리뷰", title: ["네이버 플레이스 리뷰 쓰고", "아이스 아메리카노 한 잔"], sub: "리뷰 등록 시 스타벅스 아이스 아메리카노를 드립니다. 간이영수증 요청 주시면 됩니다.", img: "assets/ev3.webp", theme: "cream", link: "https://naver.me/FDnCx1Wx", linkText: "네이버 플레이스에서 리뷰 쓰기" },
 ];

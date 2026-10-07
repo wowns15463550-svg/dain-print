@@ -492,3 +492,7 @@ details[open] .plus::after{transform:scaleY(0)}
   .evm-box{max-height:92svh;padding:20px 16px 18px}
   .evm-grid{grid-template-columns:minmax(0,1fr);gap:14px}
 }
+
+.ev-link{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:7px 12px;background:var(--fg);color:var(--bgc);font-size:13px;font-weight:700;position:relative;z-index:3}
+.ev-link svg{width:14px;height:14px}
+.ev-link:hover{opacity:.88}
