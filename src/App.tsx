@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { SERVICE_PAGES } from "./service-pages";
+import BLOG from "./blog-data.json";
 import { CHECKS, CONTACT, EQUIPMENT, EVENTS, FAQ, FINISHING, GALLERY, MAIL_TEMPLATE, NOTICES, ORDER_NOTES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
 
 const HERO_SLIDES = [
@@ -309,6 +310,10 @@ export default function App() {
     e.currentTarget.style.setProperty("--zy", `${((e.clientY - r.top) / r.height) * 100}%`);
   };
 
+  // 휴대폰에서 종이 · 후가공 목록 접기
+  const [paperMore, setPaperMore] = useState(false);
+  const [finMore, setFinMore] = useState(false);
+
   // HOT EVENT 창
   const [evPop, setEvPop] = useState(false);
   const evPopClose = useRef<HTMLButtonElement>(null);
@@ -600,7 +605,7 @@ export default function App() {
                   해 주세요.
                 </p>
               </div>
-              <div className="paper-grid">
+              <div className={paperMore ? "paper-grid more" : "paper-grid"}>
                 {PAPER_GUIDE.map((pp, i) => (
                   <article className={paperOpen === i ? "pc rv open" : "pc rv"} key={pp.name} data-d={i}>
                     <button
@@ -632,6 +637,11 @@ export default function App() {
                   </article>
                 ))}
               </div>
+              {!paperMore && (
+                <button type="button" className="mob-more" onClick={() => setPaperMore(true)}>
+                  종이 {PAPER_GUIDE.length - 2}종 더 보기
+                </button>
+              )}
               <p className="paper-note">※ 종이 사진은 이해를 돕기 위한 참고 이미지입니다. 실제 종이의 색과 질감은 다르게 보일 수 있습니다.</p>
             </div>
           </div>
@@ -665,7 +675,7 @@ export default function App() {
               <h3>후가공 장비</h3>
               <p>재단, 오시, 제본, 코팅까지 작업실 안에서 바로 이어집니다.</p>
             </div>
-            <div className="eq-sub">
+            <div className={finMore ? "eq-sub more" : "eq-sub"}>
               {FINISHING.map((e) => (
                 <article className="eq-card eq-mini rv" key={e.name}>
                   <figure>
@@ -681,6 +691,11 @@ export default function App() {
                 </article>
               ))}
             </div>
+            {!finMore && (
+              <button type="button" className="mob-more" onClick={() => setFinMore(true)}>
+                후가공 장비 {FINISHING.length - 2}대 더 보기
+              </button>
+            )}
           </div>
         </section>
 
@@ -840,6 +855,9 @@ export default function App() {
                   </dl>
                   <p>견적을 확인하신 뒤 입금해 주시면 작업 순서에 올립니다. 입금자명이 주문자와 다르면 알려주세요.</p>
                 </div>
+                <a className="link-line fmt" href="/templates/">
+                  작업 템플릿 받기 (3단 리플렛 · 명함 · A4 전단) <Arrow />
+                </a>
                 <a className="link-line fmt" href="#check">
                   인쇄 전 확인 사항 보기 <Arrow />
                 </a>
@@ -878,6 +896,39 @@ export default function App() {
             </div>
           </div>
         </section>
+
+        {BLOG.length > 0 && (
+          <section className="sec blog-sec" id="blog">
+            <div className="wrap">
+              <div className="blog-head rv">
+                <div>
+                  <h2 className="serif sec-title">작업 이야기</h2>
+                  <p className="sec-lead">네이버 블로그에 올린 최근 작업과 소식입니다.</p>
+                </div>
+                <a className="link-line" href={CONTACT.blog} target="_blank" rel="noreferrer">
+                  블로그 전체 보기 <Arrow />
+                </a>
+              </div>
+              <ul className="blog-list">
+                {(BLOG as { title: string; link: string; date: string; category: string; excerpt: string }[]).map((b) => (
+                  <li key={b.link} className="rv">
+                    <a href={b.link} target="_blank" rel="noreferrer">
+                      <span className="blog-meta">
+                        {b.category && <em>{b.category}</em>}
+                        <time>{b.date}</time>
+                      </span>
+                      <b>{b.title}</b>
+                      {b.excerpt && <p>{b.excerpt}</p>}
+                      <span className="blog-go">
+                        읽어보기 <Arrow />
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )}
 
         <section className="sec" id="faq">
           <div className="wrap faq">
@@ -922,6 +973,11 @@ export default function App() {
                 <dd>
                   {CONTACT.bankName} {CONTACT.bankNo}
                   <small>예금주 {CONTACT.bankHolder}</small>
+                </dd>
+                <dt>주차</dt>
+                <dd>
+                  픽업 시 매장 앞 잠깐 정차
+                  <small>따로 주차장은 없습니다</small>
                 </dd>
                 <dt>전화</dt>
                 <dd>
@@ -989,6 +1045,7 @@ export default function App() {
                 {o.name}
               </a>
             ))}
+            <a href="/templates/">작업 템플릿</a>
           </nav>
           <p className="ftr-copy">© 2026 다인인쇄소</p>
         </div>
@@ -1114,6 +1171,11 @@ export default function App() {
                 <dd>
                   {CONTACT.bankName} {CONTACT.bankNo}
                   <small>예금주 {CONTACT.bankHolder}</small>
+                </dd>
+                <dt>주차</dt>
+                <dd>
+                  픽업 시 매장 앞 잠깐 정차
+                  <small>따로 주차장은 없습니다</small>
                 </dd>
                 <dt>전화</dt>
                 <dd>

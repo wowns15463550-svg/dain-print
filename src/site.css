@@ -566,3 +566,45 @@ details[open] .plus::after{transform:scaleY(0)}
   .sp-cta .btn{flex:1 1 auto}
   .sp .ftr{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 }
+/* 품목 페이지: 납기 · 템플릿 */
+.sp-eta{margin-top:24px;padding:16px 20px;background:var(--bg);border-left:3px solid var(--accent);color:var(--ink-2);font-size:15px}
+.sp-eta b{color:var(--ink)}
+.sp-tpl{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.sp-tpl a{display:flex;flex-direction:column;gap:4px;height:100%;padding:16px;background:var(--surface);border:1px solid var(--line-2);transition:border-color .3s,transform .4s var(--out)}
+.sp-tpl a:hover{border-color:var(--accent);transform:translateY(-3px)}
+.sp-tpl-img{display:flex;align-items:center;justify-content:center;height:200px;margin-bottom:10px;background:var(--tint);padding:14px}
+.sp-tpl .sp-tpl-img img{max-height:100%;max-width:100%;width:auto;height:auto;box-shadow:0 6px 16px rgba(13,21,38,.12)}
+.sp-tpl b{font-size:17px;font-weight:600}
+.sp-tpl span{font-size:14px;color:var(--ink-2)}
+.sp-tpl small{font-size:13px;color:var(--ink-3)}
+.sp-tpl em{margin-top:auto;padding-top:12px;display:inline-flex;align-items:center;gap:8px;font-style:normal;font-weight:700;font-size:14px;color:var(--accent)}
+.sp-hero-solo{grid-template-columns:minmax(0,1fr)}
+.sp-tpl-help{margin-top:72px}
+.sp-legend{list-style:none;margin:24px 0 0;padding:0;display:grid;gap:14px;color:var(--ink-2);font-size:15px}
+.sp-legend i{display:inline-block;width:28px;height:0;vertical-align:middle;margin-right:8px}
+.sp-legend b{color:var(--ink);margin-right:6px}
+.lg-trim{border-top:1.5px solid #111}.lg-safe{border-top:1.5px dashed #1E4BD2}.lg-fold{border-top:1.5px dashed #D6338A}
+.lg-bleed{height:10px!important;background:repeating-linear-gradient(45deg,#F5B5B5 0 3px,#fff 3px 6px)}
+.sp-p{margin-top:20px;color:var(--ink-2)}
+@media (max-width:900px){.sp-hero-solo{padding-top:28px}.sp-tpl-help{margin-top:48px}}
+/* 휴대폰: 종이 · 후가공 목록은 2개만 보이고 나머지는 더 보기 */
+.mob-more{display:none}
+@media (max-width:900px){
+  .paper-grid:not(.more)>:nth-child(n+3),.eq-sub:not(.more)>:nth-child(n+3){display:none}
+  .mob-more{display:flex;align-items:center;justify-content:center;width:100%;height:52px;margin-top:16px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+  .mob-more::after{content:"";width:8px;height:8px;margin-left:10px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+}
+/* 블로그 최신 글 */
+.blog-sec{background:var(--surface);border-top:1px solid var(--line)}
+.blog-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 40px}
+.blog-list{list-style:none;margin:40px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.blog-list a{display:flex;flex-direction:column;gap:10px;height:100%;padding:24px 22px;background:var(--bg);border-top:2px solid var(--ink);transition:border-color .3s,transform .4s var(--out)}
+.blog-list a:hover{border-color:var(--accent);transform:translateY(-3px)}
+.blog-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.blog-meta em{font-style:normal;font-weight:700;color:var(--accent)}
+.blog-list b{font-size:17px;font-weight:600;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.blog-list p{font-size:14px;color:var(--ink-2);line-height:1.65;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.blog-go{margin-top:auto;padding-top:6px;display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink)}
+.blog-list a:hover .blog-go{color:var(--accent)}
+@media (max-width:1080px){.blog-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.blog-list{grid-template-columns:minmax(0,1fr);gap:12px}.blog-list p{-webkit-line-clamp:2}}

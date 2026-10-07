@@ -9,6 +9,39 @@ const TITLE = "다인인쇄소 | 충무로 인쇄소 · 서울 출력 제본 원
 const DESC =
   "서울 충무로 인쇄소, 충무로역 7번 출구 3분. 출력부터 제본까지 한곳에서 빠르고 정확하게. 무선 · 중철 · 스프링 제본, 전단지, 리플렛, 포스터, 명함.";
 
+// 네이버 블로그 최신 글 (빌드할 때마다 RSS에서 가져와 src/blog-data.json 에 저장, 실패하면 이전 내용 유지)
+async function fetchBlog() {
+  try {
+    const res = await fetch("https://rss.blog.naver.com/dainsystem969.xml", { signal: AbortSignal.timeout(10000) });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const xml = await res.text();
+    const pick = (block, tag) => {
+      const m = block.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`));
+      return m ? m[1].replace(/^<!\[CDATA\[|\]\]>$/g, "").trim() : "";
+    };
+    const clean = (t) =>
+      t.replace(/<(br|\/p|\/div|\/li|img)[^>]*>/gi, " ").replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+    const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].slice(0, 4).map(([, b]) => {
+      const d = new Date(pick(b, "pubDate"));
+      const date = isNaN(d) ? "" : new Date(d.getTime() + 9 * 3600e3).toISOString().slice(0, 10).replace(/-/g, ".");
+      const text = clean(pick(b, "description"));
+      return {
+        title: clean(pick(b, "title")),
+        link: pick(b, "link").replace(/[?&]fromRss=true.*$/, ""),
+        date,
+        category: clean(pick(b, "category")),
+        excerpt: text.length > 90 ? text.slice(0, 90) + "…" : text,
+      };
+    }).filter((x) => x.title && x.link.startsWith("https://"));
+    if (!items.length) throw new Error("글이 없음");
+    writeFileSync("src/blog-data.json", JSON.stringify(items, null, 2) + "\n");
+    console.log(`blog: ${items.length}개 글 가져옴`);
+  } catch (e) {
+    console.log("blog: 가져오기 실패, 이전 내용 사용 (" + e.message + ")");
+  }
+}
+await fetchBlog();
+
 rmSync("dist", { recursive: true, force: true });
 mkdirSync("dist", { recursive: true });
 
@@ -41,7 +74,7 @@ await esbuild.build({
   define: { "process.env.NODE_ENV": '"production"' },
 });
 const require = createRequire(import.meta.url);
-const { render, renderService, servicePages } = require("../.build/render.cjs");
+const { render, renderService, renderTemplates, servicePages } = require("../.build/render.cjs");
 
 const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 const BUSINESS = {
@@ -149,10 +182,29 @@ for (const p of servicePages) {
   );
 }
 
+// 작업 템플릿 페이지
+mkdirSync("dist/templates", { recursive: true });
+writeFileSync(
+  "dist/templates/index.html",
+  page({
+    title: "인쇄 작업 템플릿 무료 받기 · 3단 리플렛 · 명함 · A4 전단 | 다인인쇄소",
+    desc: "A4 3단 리플렛(97 · 100 · 100mm), 명함(92 × 52mm), A4 전단(216 × 303mm) 작업 템플릿 PDF. 재단선 · 안전선 · 접는 선이 그려져 있어 바로 쓸 수 있습니다. 충무로 다인인쇄소.",
+    url: `${SITE_URL}templates/`,
+    body: renderTemplates(),
+    ld: {
+      "@context": "https://schema.org",
+      "@graph": [
+        BUSINESS,
+        { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "다인인쇄소", item: SITE_URL }, { "@type": "ListItem", position: 2, name: "작업 템플릿", item: `${SITE_URL}templates/` }] },
+      ],
+    },
+  }),
+);
+
 writeFileSync("dist/.nojekyll", "");
 writeFileSync("dist/robots.txt", `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}sitemap.xml\n`);
 const today = new Date().toISOString().slice(0, 10);
-const urls = [SITE_URL, ...servicePages.map((p) => `${SITE_URL}${p.slug}/`)];
+const urls = [SITE_URL, ...servicePages.map((p) => `${SITE_URL}${p.slug}/`), `${SITE_URL}templates/`];
 writeFileSync(
   "dist/sitemap.xml",
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `<url><loc>${u}</loc><lastmod>${today}</lastmod></url>`).join("\n")}\n</urlset>\n`,

@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # 블로그 최신 글을 반영하려고 하루 두 번(오전 9시 · 오후 6시) 다시 만듭니다
+  schedule:
+    - cron: "0 0,9 * * *"
 
 permissions:
   contents: write
