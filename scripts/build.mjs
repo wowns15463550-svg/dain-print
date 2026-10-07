@@ -1,5 +1,6 @@
 // 정적 사이트 빌드: dist/ 에 index.html, app.js, site.css, assets/ 를 만든다.
 import * as esbuild from "esbuild";
+import sharp from "sharp";
 import { cpSync, mkdirSync, rmSync, writeFileSync, existsSync, readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
@@ -22,18 +23,42 @@ async function fetchBlog() {
     const clean = (t) =>
       t.replace(/<(br|\/p|\/div|\/li|img)[^>]*>/gi, " ").replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
     const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].slice(0, 4).map(([, b]) => {
+      const rawDesc = pick(b, "description");
+      const firstImg = (rawDesc.match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1] || "";
       const d = new Date(pick(b, "pubDate"));
       const date = isNaN(d) ? "" : new Date(d.getTime() + 9 * 3600e3).toISOString().slice(0, 10).replace(/-/g, ".");
-      const text = clean(pick(b, "description"));
+      const text = clean(rawDesc);
       return {
         title: clean(pick(b, "title")),
         link: pick(b, "link").replace(/[?&]fromRss=true.*$/, ""),
         date,
         category: clean(pick(b, "category")),
         excerpt: text.length > 90 ? text.slice(0, 90) + "…" : text,
+        firstImg,
       };
     }).filter((x) => x.title && x.link.startsWith("https://"));
     if (!items.length) throw new Error("글이 없음");
+    // 대표 사진: 글 본문 첫 사진 → 없으면 글 페이지의 대표 이미지(og:image). 네이버 사진은 바로 링크하면 막히므로 받아서 저장
+    const UA = { "User-Agent": "Mozilla/5.0 (dainprint.co.kr build)", Referer: "https://blog.naver.com/" };
+    mkdirSync("public/blog-thumbs", { recursive: true });
+    for (const it of items) {
+      try {
+        let src = it.firstImg;
+        if (!src) {
+          const html = await (await fetch(it.link.replace("https://blog.naver.com/", "https://m.blog.naver.com/"), { headers: UA, signal: AbortSignal.timeout(8000) })).text();
+          src = (html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i) || [])[1] || "";
+        }
+        if (!src) continue;
+        const res2 = await fetch(src.replace(/&amp;/g, "&"), { headers: UA, signal: AbortSignal.timeout(8000) });
+        if (!res2.ok) throw new Error("사진 HTTP " + res2.status);
+        const id = (it.link.match(/(\d+)\/?$/) || [, String(items.indexOf(it))])[1];
+        await sharp(Buffer.from(await res2.arrayBuffer())).resize(640, 640, { fit: "cover" }).webp({ quality: 80 }).toFile(`public/blog-thumbs/${id}.webp`);
+        it.img = `blog-thumbs/${id}.webp`;
+      } catch (e) {
+        console.log("blog 사진 실패:", it.title, e.message);
+      }
+    }
+    for (const it of items) delete it.firstImg;
     writeFileSync("src/blog-data.json", JSON.stringify(items, null, 2) + "\n");
     console.log(`blog: ${items.length}개 글 가져옴`);
   } catch (e) {

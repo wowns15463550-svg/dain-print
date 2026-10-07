@@ -192,6 +192,35 @@ export default function App() {
   const [paperOpen, setPaperOpen] = useState<number | null>(null);
   const [checkOpen, setCheckOpen] = useState<number | null>(null);
   const [solid, setSolid] = useState(false);
+  // 지금 보고 있는 섹션 → 위쪽 메뉴에 표시
+  const [here, setHere] = useState("");
+  useEffect(() => {
+    const ids = ["notice", "service", "equipment", "gallery", "process", "order", "check", "blog", "faq", "visit"];
+    const alias: Record<string, string> = { check: "order" };
+    let raf = 0;
+    const calc = () => {
+      raf = 0;
+      const line = window.innerHeight * 0.35;
+      let cur = "";
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= line) cur = id;
+      }
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) cur = "visit";
+      setHere(alias[cur] ?? cur);
+    };
+    const on = () => {
+      if (!raf) raf = requestAnimationFrame(calc);
+    };
+    calc();
+    window.addEventListener("scroll", on, { passive: true });
+    window.addEventListener("resize", on);
+    return () => {
+      window.removeEventListener("scroll", on);
+      window.removeEventListener("resize", on);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
   const [svc, setSvc] = useState(0);
   const [svcX, setSvcX] = useState(false);
   const [ev, setEv] = useState(0);
@@ -313,6 +342,7 @@ export default function App() {
   // 휴대폰에서 종이 · 후가공 목록 접기
   const [paperMore, setPaperMore] = useState(false);
   const [finMore, setFinMore] = useState(false);
+  const [faqMore, setFaqMore] = useState(false);
 
   // HOT EVENT 창
   const [evPop, setEvPop] = useState(false);
@@ -350,7 +380,7 @@ export default function App() {
           <Mark />
           <nav className="nav" aria-label="주요 메뉴">
             {NAV.map(([h, l]) => (
-              <a key={h} href={h} onClick={h === "#visit" ? openVisit : undefined}>
+              <a key={h} href={h} onClick={h === "#visit" ? openVisit : undefined} className={here === h.slice(1) ? "on" : undefined} aria-current={here === h.slice(1) ? "true" : undefined}>
                 {l}
               </a>
             ))}
@@ -535,7 +565,7 @@ export default function App() {
           <div className="wrap">
             <div className="rv">
               <h2 className="serif sec-title">인쇄 · 제본</h2>
-              <p className="sec-lead">출력, 재단, 제본을 한 작업실에서 끝냅니다. 색과 마감을 마지막까지 직접 확인합니다.</p>
+              <p className="sec-lead">출력, 재단, 제본을 한 작업실에서 끝냅니다.</p>
             </div>
             <div className="svc">
               <ul className="svc-list">
@@ -704,7 +734,7 @@ export default function App() {
             <h2 className="serif sec-title" id="gal-h">
               이렇게 만들어 드립니다
             </h2>
-            <p className="sec-lead">다인인쇄소에서 자주 만드는 책자와 인쇄물입니다. 사진을 누르면 크게 보고 사양을 확인할 수 있어요.</p>
+            <p className="sec-lead">다인인쇄소에서 자주 만드는 책자와 인쇄물입니다. 실제 작업물을 토대로 다시 만든 사진입니다.</p>
           </div>
           <div className="gal">
             <ul className="gal-track">
@@ -725,14 +755,13 @@ export default function App() {
               ))}
             </ul>
           </div>
-          <p className="wrap gal-note">※ 손님 디자인 보호를 위해 실제 작업 사양으로 다시 만든 예시 이미지입니다.</p>
         </section>
 
         <section className="sec proc" id="process">
           <div className="wrap">
             <div className="rv rv-soft">
               <h2 className="serif sec-title">작업은 이렇게 진행됩니다</h2>
-              <p className="sec-lead">파일을 보내주시면 그다음은 저희가 챙깁니다. 단계마다 연락드립니다.</p>
+              <p className="sec-lead">파일을 보내주시면 그다음은 저희가 챙깁니다.</p>
             </div>
             <ol className={stepAnim ? "steps anim" : "steps"} ref={stepsRef}>
               {STEPS.map((s, i) => (
@@ -870,7 +899,7 @@ export default function App() {
           <div className="wrap">
             <div className="rv">
               <h2 className="serif sec-title">인쇄 전 꼭 확인하세요</h2>
-              <p className="sec-lead">디자인 파일은 직접 준비해 주셔야 해요. 카드에 마우스를 올리거나 누르면 자세한 설명이 나옵니다.</p>
+              <p className="sec-lead sec-lead-1">카드에 마우스를 올리거나 누르면 자세한 설명이 나옵니다.</p>
             </div>
             <div className="ck-grid">
               {CHECKS.map((c, i) => (
@@ -910,9 +939,12 @@ export default function App() {
                 </a>
               </div>
               <ul className="blog-list">
-                {(BLOG as { title: string; link: string; date: string; category: string; excerpt: string }[]).map((b) => (
+                {(BLOG as { title: string; link: string; date: string; category: string; excerpt: string; img?: string }[]).map((b) => (
                   <li key={b.link} className="rv">
                     <a href={b.link} target="_blank" rel="noreferrer">
+                      <span className={b.img ? "blog-img" : "blog-img none"}>
+                        {b.img ? <img src={b.img} alt="" loading="lazy" width={640} height={640} /> : <span>DAIN PRINT</span>}
+                      </span>
                       <span className="blog-meta">
                         {b.category && <em>{b.category}</em>}
                         <time>{b.date}</time>
@@ -934,7 +966,7 @@ export default function App() {
           <div className="wrap faq">
             <h2 className="serif sec-title rv">자주 묻는 질문</h2>
             <div className="rv">
-              {FAQ.map((f) => (
+              {(faqMore ? FAQ : FAQ.slice(0, 5)).map((f) => (
                 <details className="qa" key={f.q}>
                   <summary>
                     <span>{f.q}</span>
@@ -943,6 +975,11 @@ export default function App() {
                   <p>{f.a}</p>
                 </details>
               ))}
+              {!faqMore && (
+                <button type="button" className="faq-more" onClick={() => setFaqMore(true)}>
+                  질문 {FAQ.length - 5}개 더 보기
+                </button>
+              )}
             </div>
           </div>
         </section>
