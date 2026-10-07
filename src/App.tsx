@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { SERVICE_PAGES } from "./service-pages";
 import { CHECKS, CONTACT, EQUIPMENT, EVENTS, FAQ, FINISHING, GALLERY, MAIL_TEMPLATE, NOTICES, ORDER_NOTES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
 
 const HERO_SLIDES = [
@@ -93,14 +94,14 @@ const NAV = [
   ["#visit", "오시는 길"],
 ] as const;
 
-function Arrow() {
+export function Arrow() {
   return (
     <svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true">
       <path d="M0 5h14.5M10.5 1l4 4-4 4" stroke="currentColor" strokeWidth="1.2" />
     </svg>
   );
 }
-function Phone() {
+export function Phone() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
@@ -112,7 +113,7 @@ function Phone() {
     </svg>
   );
 }
-function Ico({ k }: { k: "talk" | "blog" | "insta" | "mail" | "pin" | "up" | "close" | "cloud" | "bank" }) {
+export function Ico({ k }: { k: "talk" | "blog" | "insta" | "mail" | "pin" | "up" | "close" | "cloud" | "bank" }) {
   const p = { stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, fill: "none" };
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
@@ -558,6 +559,11 @@ export default function App() {
                           </ol>
                         )}
                         <p>{s.desc}</p>
+                        {SERVICE_PAGES.find((x) => x.name === s.name) && (
+                          <a className="svc-more" href={`/${SERVICE_PAGES.find((x) => x.name === s.name)!.slug}/`}>
+                            {s.name} 자세히 보기 <Arrow />
+                          </a>
+                        )}
                       </div>
                     </div>
                   </li>
@@ -977,6 +983,13 @@ export default function App() {
               입금 계좌 {CONTACT.bankName} {CONTACT.bankNo} {CONTACT.bankHolder}
             </span>
           </div>
+          <nav className="ftr-svc" aria-label="품목별 안내">
+            {SERVICE_PAGES.map((o) => (
+              <a key={o.slug} href={`/${o.slug}/`}>
+                {o.name}
+              </a>
+            ))}
+          </nav>
           <p className="ftr-copy">© 2026 다인인쇄소</p>
         </div>
       </footer>

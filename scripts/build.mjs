@@ -41,40 +41,12 @@ await esbuild.build({
   define: { "process.env.NODE_ENV": '"production"' },
 });
 const require = createRequire(import.meta.url);
-const { render } = require("../.build/render.cjs");
-const body = render();
+const { render, renderService, servicePages } = require("../.build/render.cjs");
 
-const html = `<!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>${TITLE}</title>
-<meta name="description" content="${DESC}">
-<meta name="theme-color" content="#F4F5F7">
-<link rel="canonical" href="${SITE_URL}">
-<meta name="naver-site-verification" content="5041c298fea45ba971dc2cc87150db9972907da1" />
-<meta property="og:type" content="website">
-<meta property="og:title" content="${TITLE}">
-<meta property="og:description" content="${DESC}">
-<meta property="og:url" content="${SITE_URL}">
-<meta property="og:site_name" content="다인인쇄소">
-<meta property="og:locale" content="ko_KR">
-<meta property="og:image" content="${SITE_URL}assets/og2.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="다인인쇄소 — 서울 충무로, 출력과 제본을 한 번에">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400&family=Noto+Serif+KR:wght@300;400&display=swap">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="site.css?v=${CSS_V}">
-<link rel="preload" as="image" href="assets/hero-presses-r.webp">
-<script type="application/ld+json">${JSON.stringify({
-  "@context": "https://schema.org",
+const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+const BUSINESS = {
   "@type": "LocalBusiness",
+  "@id": SITE_URL + "#business",
   name: "다인인쇄소",
   legalName: "다인시스템",
   url: SITE_URL,
@@ -87,26 +59,103 @@ const html = `<!doctype html>
   openingHoursSpecification: [{ "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "09:30", closes: "19:00" }],
   paymentAccepted: "계좌이체, 카드",
   sameAs: ["https://naver.me/FDnCx1Wx", "https://blog.naver.com/dainsystem969", "https://www.instagram.com/dain969_/", "http://pf.kakao.com/_rGKVn"],
-  makesOffer: ["무선제본", "중철제본", "스프링제본", "전단지", "리플렛", "명함", "엽서", "청첩장", "포스터"].map((n) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: n } })),
-})}</script>
+  makesOffer: servicePages.map((p) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: p.name, url: SITE_URL + p.slug + "/" } })),
+};
+
+// 모든 페이지가 같이 쓰는 머리 부분
+function page({ title, desc, url, body, ld, image = "assets/og2.jpg", app = false, preload = "" }) {
+  return `<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>${esc(title)}</title>
+<meta name="description" content="${esc(desc)}">
+<meta name="theme-color" content="#F4F5F7">
+<link rel="canonical" href="${url}">
+<meta name="naver-site-verification" content="5041c298fea45ba971dc2cc87150db9972907da1" />
+<meta property="og:type" content="website">
+<meta property="og:title" content="${esc(title)}">
+<meta property="og:description" content="${esc(desc)}">
+<meta property="og:url" content="${url}">
+<meta property="og:site_name" content="다인인쇄소">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="${SITE_URL}${image}">
+${image === "assets/og2.jpg" ? `<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+` : ""}<meta property="og:image:alt" content="${esc(title)}">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400&family=Noto+Serif+KR:wght@300;400&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="/site.css?v=${CSS_V}">
+${preload}<script type="application/ld+json">${JSON.stringify(ld)}</script>
 </head>
 <body style="margin:0;background:#F4F5F7">
 <div id="root">${body}</div>
-<script type="module" src="app.js?v=${JS_V}"></script>
-<!-- 네이버 애널리틱스 (통계는 사장님 계정에서만 보입니다) -->
+${app ? `<script type="module" src="/app.js?v=${JS_V}"></script>\n` : ""}<!-- 네이버 애널리틱스 (통계는 사장님 계정에서만 보입니다) -->
 <script src="https://wcs.naver.net/wcslog.js"></script>
 <script>if(!window.wcs_add) window.wcs_add = {}; wcs_add["wa"] = "125a7b92b7210d0"; if(window.wcs) { wcs_do(); }</script>
 </body>
 </html>
 `;
-writeFileSync("dist/index.html", html);
+}
+
+// 첫 화면
+writeFileSync(
+  "dist/index.html",
+  page({
+    title: TITLE,
+    desc: DESC,
+    url: SITE_URL,
+    body: render(),
+    ld: { "@context": "https://schema.org", ...BUSINESS },
+    app: true,
+    preload: `<link rel="preload" as="image" href="/assets/hero-presses-r.webp">\n`,
+  }),
+);
 cpSync("src/site.css", "dist/site.css");
 if (existsSync("public")) cpSync("public", "dist", { recursive: true });
+
+// 품목별 페이지: dist/{slug}/index.html
+for (const p of servicePages) {
+  const url = `${SITE_URL}${p.slug}/`;
+  mkdirSync(`dist/${p.slug}`, { recursive: true });
+  writeFileSync(
+    `dist/${p.slug}/index.html`,
+    page({
+      title: p.title,
+      desc: p.desc,
+      url,
+      body: renderService(p.slug),
+      ld: {
+        "@context": "https://schema.org",
+        "@graph": [
+          BUSINESS,
+          { "@type": "Service", name: p.name, serviceType: p.name, description: p.desc, url, image: SITE_URL + p.img, areaServed: "서울", provider: { "@id": SITE_URL + "#business" } },
+          {
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "다인인쇄소", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: p.name, item: url },
+            ],
+          },
+          { "@type": "FAQPage", mainEntity: p.faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
+        ],
+      },
+    }),
+  );
+}
+
 writeFileSync("dist/.nojekyll", "");
 writeFileSync("dist/robots.txt", `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}sitemap.xml\n`);
+const today = new Date().toISOString().slice(0, 10);
+const urls = [SITE_URL, ...servicePages.map((p) => `${SITE_URL}${p.slug}/`)];
 writeFileSync(
   "dist/sitemap.xml",
-  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${SITE_URL}</loc></url></urlset>\n`,
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `<url><loc>${u}</loc><lastmod>${today}</lastmod></url>`).join("\n")}\n</urlset>\n`,
 );
 rmSync(".build", { recursive: true, force: true });
 console.log("built dist/");
