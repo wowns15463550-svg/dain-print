@@ -16,6 +16,7 @@
 - 품목별 페이지: `src/service-pages.ts`(내용) + `src/ServicePage.tsx`(화면) → `/{slug}/`. 무선 perfect-binding, 중철 saddle-stitch, 스프링 spring-binding, 양식 form-stapling, 전단 flyer-leaflet, 명함 business-card, 엽서 postcard-invitation, 포스터 poster
 - 작업 템플릿: `/templates/` 페이지, PDF는 `public/templates/` (`python3 scripts/make-templates.py`로 다시 만듦)
 - 블로그 최신 글: 빌드 때 네이버 RSS에서 4개 + 대표 사진을 받아 `src/blog-data.json`·`public/blog-thumbs/`에 씀. 저장소의 blog-data.json은 `[]`로 둔다(로컬 샘플 데이터 커밋 금지).
+- 사이트 아이콘: 노란 다인 로고(웃는 종이) — `public/favicon.ico`, `public/apple-touch-icon.png`, `public/assets/icon-192/512.png`. 사이트 이름 "다인인쇄소"는 og:site_name + WebSite 구조화 데이터 두 곳에 넣어 둠.
 - 검색: 네이버 서치어드바이저 등록·소유확인 완료, 네이버 애널리틱스(125a7b92b7210d0), sitemap.xml 자동 생성. 구글 서치 콘솔은 코드 받으면 추가.
 - 카카오맵: CONTACT.kakaoMapKey (JS 키, 도메인 등록 완료). 네이버 플레이스 https://naver.me/FDnCx1Wx
 
