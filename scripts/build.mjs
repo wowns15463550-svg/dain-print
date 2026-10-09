@@ -6,9 +6,9 @@ import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
 
 const SITE_URL = "https://www.dainprint.co.kr/";
-const TITLE = "다인인쇄소 | 충무로 인쇄소 · 서울 출력 제본 원스톱";
+const TITLE = "다인인쇄소 | 충무로 인쇄소 · 서울 당일 출력 · 제본";
 const DESC =
-  "서울 충무로 인쇄소, 충무로역 7번 출구 3분. 출력부터 제본까지 한곳에서 빠르고 정확하게. 무선 · 중철 · 스프링 제본, 전단지, 리플렛, 포스터, 명함.";
+  "서울 충무로 인쇄소, 충무로역 7번 출구 3분. 오전에 주문하시면 당일 출력 · 제본(중철 · 명함 · 접지 제외). 무선 · 스프링 제본, 전단지, 리플렛, 포스터, 명함까지 빠르고 정확하게.";
 
 // 네이버 블로그 최신 글 (빌드할 때마다 RSS에서 가져와 src/blog-data.json 에 저장, 실패하면 이전 내용 유지)
 async function fetchBlog() {
@@ -143,7 +143,10 @@ ${image === "assets/og2.jpg" ? `<meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 ` : ""}<meta property="og:image:alt" content="${esc(title)}">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<meta name="application-name" content="다인인쇄소">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/assets/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400&family=Noto+Serif+KR:wght@300;400&display=swap">
@@ -169,7 +172,13 @@ writeFileSync(
     desc: DESC,
     url: SITE_URL,
     body: render(),
-    ld: { "@context": "https://schema.org", ...BUSINESS },
+    ld: {
+      "@context": "https://schema.org",
+      "@graph": [
+        { "@type": "WebSite", "@id": SITE_URL + "#website", name: "다인인쇄소", alternateName: ["다인시스템", "충무로 다인인쇄소"], url: SITE_URL, inLanguage: "ko-KR", publisher: { "@id": SITE_URL + "#business" } },
+        { ...BUSINESS, logo: SITE_URL + "assets/icon-512.png" },
+      ],
+    },
     app: true,
     preload: `<link rel="preload" as="image" href="/assets/hero-presses-r.webp">\n`,
   }),
