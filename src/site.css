@@ -284,6 +284,7 @@ details[open] .plus::after{transform:scaleY(0)}
 .qa summary::-webkit-details-marker{display:none}
 .qa summary:hover{color:var(--accent)}
 .qa p{color:var(--ink-2);padding-bottom:26px;max-width:44em}
+.qa-link{color:var(--accent);font-weight:500;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
 @media (max-width:900px){.faq{grid-template-columns:minmax(0,1fr)}}
 
 /* visit */

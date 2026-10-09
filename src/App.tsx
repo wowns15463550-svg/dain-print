@@ -972,7 +972,17 @@ export default function App() {
                     <span>{f.q}</span>
                     <span className="plus" aria-hidden="true" />
                   </summary>
-                  <p>{f.a}</p>
+                  <p>
+                    {f.a}
+                    {f.link && (
+                      <>
+                        {" "}
+                        <a className="qa-link" href={f.link.href} target="_blank" rel="noreferrer">
+                          {f.link.label} →
+                        </a>
+                      </>
+                    )}
+                  </p>
                 </details>
               ))}
               {!faqMore && (
