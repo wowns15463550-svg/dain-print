@@ -1055,6 +1055,9 @@ export default function App() {
               <a href={CONTACT.blog} target="_blank" rel="noreferrer">
                 블로그
               </a>
+              <a href={CONTACT.tistory} target="_blank" rel="noreferrer">
+                티스토리
+              </a>
               <a href={CONTACT.insta} target="_blank" rel="noreferrer">
                 인스타그램
               </a>

@@ -116,7 +116,7 @@ const BUSINESS = {
   areaServed: "서울",
   openingHoursSpecification: [{ "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "09:30", closes: "19:00" }],
   paymentAccepted: "계좌이체, 카드",
-  sameAs: ["https://naver.me/FDnCx1Wx", "https://blog.naver.com/dainsystem969", "https://www.instagram.com/dain969_/", "http://pf.kakao.com/_rGKVn"],
+  sameAs: ["https://naver.me/FDnCx1Wx", "https://blog.naver.com/dainsystem969", "https://dain969.tistory.com/", "https://www.instagram.com/dain969_/", "http://pf.kakao.com/_rGKVn"],
   makesOffer: servicePages.map((p) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: p.name, url: SITE_URL + p.slug + "/" } })),
 };
 

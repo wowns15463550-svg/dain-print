@@ -36,7 +36,7 @@
 - 다인인쇄소(상호 다인시스템), 서울 중구 마른내로4길 27 다인시스템 1층, 충무로역 7번 출구 도보 3분
 - 평일(월~금) 09:30~19:00, 주말·공휴일 휴무(주말 작업은 협의 시 주말 출근 수당)
 - 010-8244-4590 / dain969@naver.com / 사업자 205-03-58831 / 입금 하나은행 131-910156-81407 다인(한덕순)
-- 카톡 http://pf.kakao.com/_rGKVn/chat (dain969), 블로그 https://blog.naver.com/dainsystem969, 인스타 https://www.instagram.com/dain969_/
+- 카톡 http://pf.kakao.com/_rGKVn/chat (dain969), 블로그 https://blog.naver.com/dainsystem969, 티스토리 https://dain969.tistory.com/ (구글용 정보형 글), 인스타 https://www.instagram.com/dain969_/
 - 납기: 오전 주문 + 파일 이상 없으면 보통 오후 5시쯤 (중철·명함·접지 제외)
 - 세금계산서·현금영수증 가능, 견적은 현금가 기준이라 미리 말해야 함
 - 주차장 없음, 픽업 시 매장 앞 잠깐 정차 가능 / 종이 견본 보러 오는 방문 안 받음

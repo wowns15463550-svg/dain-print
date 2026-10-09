@@ -13,6 +13,7 @@ export const CONTACT = {
   bankHolder: "다인(한덕순)",
   bizNo: "205-03-58831",
   blog: "https://blog.naver.com/dainsystem969",
+  tistory: "https://dain969.tistory.com/",
   kakao: "http://pf.kakao.com/_rGKVn/chat",
   kakaoId: "dain969",
   insta: "https://www.instagram.com/dain969_/",
