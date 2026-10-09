@@ -17,7 +17,7 @@
 - 작업 템플릿: `/templates/` 페이지, PDF는 `public/templates/` (`python3 scripts/make-templates.py`로 다시 만듦)
 - 블로그 최신 글: 빌드 때 네이버 RSS에서 4개 + 대표 사진을 받아 `src/blog-data.json`·`public/blog-thumbs/`에 씀. 저장소의 blog-data.json은 `[]`로 둔다(로컬 샘플 데이터 커밋 금지).
 - 사이트 아이콘: 노란 다인 로고(웃는 종이) — `public/favicon.ico`, `public/apple-touch-icon.png`, `public/assets/icon-192/512.png`. 사이트 이름 "다인인쇄소"는 og:site_name + WebSite 구조화 데이터 두 곳에 넣어 둠.
-- 검색: 네이버 서치어드바이저 등록·소유확인 완료, 네이버 애널리틱스(125a7b92b7210d0), sitemap.xml 자동 생성. 구글 서치 콘솔은 코드 받으면 추가.
+- 검색: 네이버 서치어드바이저 등록·소유확인 완료, 네이버 애널리틱스(125a7b92b7210d0), sitemap.xml 자동 생성. 구글 서치 콘솔은 HTML 파일 방식으로 확인(`public/google5ea7644a1cd874ff.html` — 지우면 안 됨).
 - 카카오맵: CONTACT.kakaoMapKey (JS 키, 도메인 등록 완료). 네이버 플레이스 https://naver.me/FDnCx1Wx
 
 ## 이미지
@@ -49,7 +49,6 @@
 
 ## 남은 것
 - 중철 페이지 문구: 하청이라 "한 작업실에서 재단까지" 같은 직접 작업 표현 정리 (사장님이 어디까지 직접 하는지 확인 후)
-- 구글 서치 콘솔 확인 코드 받으면 head에 추가
 - 무선 표지 템플릿(책등 두께 기준 받으면), 실제 사진 교체, 오시기 정확한 모델명, 웹하드 실제 주소
 - 웹하드 비밀번호가 사이트에 공개돼 있음 → 올리기 전용 계정 여부 사장님 확인 필요
 - 네이버 리뷰 버튼을 리뷰 탭으로 바로 보내려면 플레이스 숫자 ID 필요
