@@ -2,6 +2,7 @@ import { renderToString } from "react-dom/server";
 import App from "./App";
 import ServiceView, { TemplatesView } from "./ServicePage";
 import { SERVICE_PAGES } from "./service-pages";
+import { OrderRoot } from "./OrderPage";
 
 export function render() {
   return renderToString(<App />);
@@ -15,4 +16,8 @@ export function renderService(slug: string) {
 
 export function renderTemplates() {
   return renderToString(<TemplatesView />);
+}
+
+export function renderOrder() {
+  return renderToString(<OrderRoot />);
 }

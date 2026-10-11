@@ -83,10 +83,22 @@ await esbuild.build({
   target: ["es2019"],
   define: { "process.env.NODE_ENV": '"production"' },
 });
+// 주문서 도우미 페이지용 스크립트
+await esbuild.build({
+  ...common,
+  entryPoints: ["src/order-client.tsx"],
+  outfile: "dist/order.js",
+  platform: "browser",
+  format: "esm",
+  minify: true,
+  target: ["es2019"],
+  define: { "process.env.NODE_ENV": '"production"' },
+});
 
 // 파일이 바뀌면 주소 뒤 ?v= 값도 바뀌어서, 방문자 브라우저가 옛 파일을 쓰지 않는다
 const ver = (f) => createHash("sha1").update(readFileSync(f)).digest("hex").slice(0, 8);
 const JS_V = ver("dist/app.js");
+const ORDER_V = ver("dist/order.js");
 const CSS_V = ver("src/site.css");
 
 // 2) 미리 그린 HTML (검색 노출과 빠른 첫 화면용)
@@ -99,7 +111,7 @@ await esbuild.build({
   define: { "process.env.NODE_ENV": '"production"' },
 });
 const require = createRequire(import.meta.url);
-const { render, renderService, renderTemplates, servicePages } = require("../.build/render.cjs");
+const { render, renderService, renderTemplates, renderOrder, servicePages } = require("../.build/render.cjs");
 
 const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 const BUSINESS = {
@@ -121,7 +133,7 @@ const BUSINESS = {
 };
 
 // 모든 페이지가 같이 쓰는 머리 부분
-function page({ title, desc, url, body, ld, image = "assets/og2.jpg", app = false, preload = "" }) {
+function page({ title, desc, url, body, ld, image = "assets/og2.jpg", app = false, script = "", preload = "" }) {
   return `<!doctype html>
 <html lang="ko">
 <head>
@@ -156,7 +168,7 @@ ${preload}<script type="application/ld+json">${JSON.stringify(ld)}</script>
 </head>
 <body style="margin:0;background:#F4F5F7">
 <div id="root">${body}</div>
-${app ? `<script type="module" src="/app.js?v=${JS_V}"></script>\n` : ""}<!-- 네이버 애널리틱스 (통계는 사장님 계정에서만 보입니다) -->
+${app ? `<script type="module" src="/app.js?v=${JS_V}"></script>\n` : ""}${script ? `<script type="module" src="${script}"></script>\n` : ""}<!-- 네이버 애널리틱스 (통계는 사장님 계정에서만 보입니다) -->
 <script src="https://wcs.naver.net/wcslog.js"></script>
 <script>if(!window.wcs_add) window.wcs_add = {}; wcs_add["wa"] = "125a7b92b7210d0"; if(window.wcs) { wcs_do(); }</script>
 </body>
@@ -235,10 +247,24 @@ writeFileSync(
   }),
 );
 
+// 주문서 도우미
+mkdirSync("dist/order", { recursive: true });
+writeFileSync(
+  "dist/order/index.html",
+  page({
+    title: "주문서 작성 · 눌러서 만드는 인쇄 주문서 | 다인인쇄소",
+    desc: "무선 · 스프링 · 중철 제본, 전단지, 리플렛, 명함, 포스터 주문 사양을 눌러서 고르면 주문 내용이 자동으로 정리됩니다. 카톡이나 메일로 바로 보내세요. 충무로 다인인쇄소.",
+    url: `${SITE_URL}order/`,
+    body: renderOrder(),
+    ld: { "@context": "https://schema.org", "@graph": [BUSINESS, { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "다인인쇄소", item: SITE_URL }, { "@type": "ListItem", position: 2, name: "주문서 작성", item: `${SITE_URL}order/` }] }] },
+    script: `/order.js?v=${ORDER_V}`,
+  }),
+);
+
 writeFileSync("dist/.nojekyll", "");
 writeFileSync("dist/robots.txt", `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}sitemap.xml\n`);
 const today = new Date().toISOString().slice(0, 10);
-const urls = [SITE_URL, ...servicePages.map((p) => `${SITE_URL}${p.slug}/`), `${SITE_URL}templates/`];
+const urls = [SITE_URL, ...servicePages.map((p) => `${SITE_URL}${p.slug}/`), `${SITE_URL}templates/`, `${SITE_URL}order/`];
 writeFileSync(
   "dist/sitemap.xml",
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `<url><loc>${u}</loc><lastmod>${today}</lastmod></url>`).join("\n")}\n</urlset>\n`,

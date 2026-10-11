@@ -21,6 +21,7 @@ export function Shell({ children }: { children: ReactNode }) {
             <a href="/#gallery">갤러리</a>
             <a href="/#equipment">장비</a>
             <a href="/#order">주문 방법</a>
+            <a href="/order/">주문서 작성</a>
             <a href="/templates/">작업 템플릿</a>
             <a href="/#visit">오시는 길</a>
           </nav>
@@ -50,6 +51,7 @@ export function Shell({ children }: { children: ReactNode }) {
                 </a>
               ))}
               <a href="/templates/">작업 템플릿</a>
+              <a href="/order/">주문서 작성</a>
             </nav>
           </div>
           <div className="ftr-info">
@@ -130,8 +132,8 @@ export default function ServiceView({ p }: { p: ServicePage }) {
                 <a className="btn btn-accent" href={CONTACT.kakao} target="_blank" rel="noreferrer">
                   <Ico k="talk" /> 카톡으로 문의하기
                 </a>
-                <a className="btn" href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
-                  파일 보내기 <Arrow />
+                <a className="btn" href={`/order/?item=${p.slug}`}>
+                  주문서 작성 <Arrow />
                 </a>
               </div>
               <p className="sp-meta">
@@ -270,8 +272,8 @@ export default function ServiceView({ p }: { p: ServicePage }) {
               <a className="btn" href={`tel:${tel}`}>
                 <Phone /> {CONTACT.phone}
               </a>
-              <a className="btn" href="/#order">
-                주문 방법 자세히 <Arrow />
+              <a className="btn" href={`/order/?item=${p.slug}`}>
+                주문서 작성 <Arrow />
               </a>
             </div>
           </div>
