@@ -680,3 +680,31 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .order-helper b{font-size:18px;font-weight:700}
 .order-helper small{font-size:14px;opacity:.88}
 .order-helper em{display:inline-flex;align-items:center;gap:10px;font-style:normal;font-weight:700;font-size:15px;padding:10px 18px;background:#fff;color:var(--accent)}
+/* 주문서: 흑백은 검정, 칼라는 빨강으로 / 막힌 선택지 */
+.od-chips button.bk.on{background:#111;border-color:#111;color:#fff}
+.od-chips button.red.on{background:#D7262E;border-color:#D7262E;color:#fff}
+.od-chips button.bk:not(.on):hover{border-color:#111;color:#111}
+.od-chips button.red:not(.on):hover{border-color:#D7262E;color:#D7262E}
+.od-chips button:disabled{opacity:.38;cursor:not-allowed;background:var(--bg)}
+.od-chips button:disabled:hover{border-color:var(--line-2);color:var(--ink-2)}
+/* 간단하게 주문하기 버튼 (붉은 강조) */
+.btn-order{position:relative;background:#C2544A;border-color:#C2544A;color:#fff;box-shadow:0 10px 24px rgba(194,84,74,.28)}
+.btn-order:hover{background:#A9433B;border-color:#A9433B;color:#fff}
+.btn-order::before{content:"NEW";position:absolute;top:-10px;right:-8px;padding:2px 7px;background:#111;color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;line-height:1.4}
+.nav a[href="/order/"]{color:#C2544A;font-weight:700}
+/* 주문서 페이지 첫 화면 */
+.od-hero{background:linear-gradient(180deg,#EEF2FB 0%,#F4F5F7 100%)}
+.od-hero-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(24px,4vw,56px);align-items:center;padding-block:clamp(36px,5vw,72px)}
+.od-hero h1 strong{color:#C2544A}
+.od-hero-img img{width:100%;height:auto;border-radius:20px;box-shadow:0 30px 60px rgba(30,75,210,.14)}
+.od-steps{list-style:none;margin:28px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+.od-steps li{display:flex;align-items:center;gap:10px;padding:10px 16px 10px 10px;background:var(--surface);border:1px solid var(--line);box-shadow:0 6px 16px rgba(13,21,38,.05)}
+.od-steps b{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:14px}
+.od-steps li:last-child b{background:#C2544A}
+.od-steps span{font-size:14px;font-weight:600;color:var(--ink-2)}
+.od-steps em{font-style:normal;color:var(--ink)}
+@media (max-width:900px){
+  .od-hero-grid{grid-template-columns:minmax(0,1fr);padding-block:24px 36px}
+  .od-hero-img{order:-1}
+  .od-steps li{flex:1 1 100%}
+}

@@ -440,11 +440,11 @@ export default function App() {
                 </span>
               </p>
               <div className="hero-cta">
-                <a className="btn" href="/order/">
-                  주문서 작성
+                <a className="btn btn-order" href="/order/">
+                  간단하게 주문하기 <Arrow />
                 </a>
-                <a className="btn btn-accent" href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
-                  파일 보내기 <Arrow />
+                <a className="btn" href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
+                  파일 보내기
                 </a>
               </div>
               <div className="presses">
@@ -789,11 +789,11 @@ export default function App() {
               <p className="sec-lead">양식을 복사해서 채운 뒤 파일과 함께 보내주세요. 모르는 칸은 비워두셔도 됩니다.</p>
               <a className="order-helper" href="/order/">
                 <span>
-                  <b>주문서, 눌러서 만드세요</b>
+                  <b>간단하게 주문하기</b>
                   <small>품목 · 사양 · 필요한 날짜를 고르면 주문 내용이 자동으로 완성돼요</small>
                 </span>
                 <em>
-                  주문서 작성 <Arrow />
+                  간단하게 주문하기 <Arrow />
                 </em>
               </a>
             </div>
@@ -1105,7 +1105,7 @@ export default function App() {
               </a>
             ))}
             <a href="/templates/">작업 템플릿</a>
-            <a href="/order/">주문서 작성</a>
+            <a href="/order/">간단하게 주문하기</a>
           </nav>
           <p className="ftr-copy">© 2026 다인인쇄소</p>
         </div>

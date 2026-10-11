@@ -252,11 +252,11 @@ mkdirSync("dist/order", { recursive: true });
 writeFileSync(
   "dist/order/index.html",
   page({
-    title: "주문서 작성 · 눌러서 만드는 인쇄 주문서 | 다인인쇄소",
+    title: "간단하게 주문하기 · 눌러서 만드는 인쇄 주문서 | 다인인쇄소",
     desc: "무선 · 스프링 · 중철 제본, 전단지, 리플렛, 명함, 포스터 주문 사양을 눌러서 고르면 주문 내용이 자동으로 정리됩니다. 카톡이나 메일로 바로 보내세요. 충무로 다인인쇄소.",
     url: `${SITE_URL}order/`,
     body: renderOrder(),
-    ld: { "@context": "https://schema.org", "@graph": [BUSINESS, { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "다인인쇄소", item: SITE_URL }, { "@type": "ListItem", position: 2, name: "주문서 작성", item: `${SITE_URL}order/` }] }] },
+    ld: { "@context": "https://schema.org", "@graph": [BUSINESS, { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "다인인쇄소", item: SITE_URL }, { "@type": "ListItem", position: 2, name: "간단하게 주문하기", item: `${SITE_URL}order/` }] }] },
     script: `/order.js?v=${ORDER_V}`,
   }),
 );

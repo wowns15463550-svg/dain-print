@@ -3,9 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Arrow, Ico } from "./App";
 import { Shell } from "./ServicePage";
 import { CONTACT } from "./site-data";
-import { PRODUCTS, SLOW_IDS, type Field, type Product } from "./order-options";
+import { PRODUCTS, SLOW_IDS, type Field, type Product, type Vals } from "./order-options";
 
-type Vals = Record<string, string | number | boolean>;
 type Item = { key: number; pid: string; vals: Vals };
 
 const defaults = (p: Product): Vals => Object.fromEntries(p.fields.map((f) => [f.k, f.def]));
@@ -22,34 +21,59 @@ function describe(it: Item) {
   const v = it.vals;
   const parts: string[] = [];
   for (const f of p.fields) {
-    if (f.k === "coverPaper" && !v.sepCover) continue;
-    const val = v[f.k];
+    let val = v[f.k];
+    if (f.type === "pick" && f.custom && val === f.custom) val = String(v[f.k + "_txt"] || "").trim() || "다른 종이 (요청사항 참고)";
     if (f.type === "check") {
       if (val) parts.push(f.text.replace(/ \(.*\)$/, ""));
       continue;
     }
     const lab = f.label.replace(/ \(.*\)$/, "");
     if (f.type === "num") parts.push(`${lab} ${val}${f.unit}`);
+    else if (f.k === "weight") parts[parts.length - 1] += ` ${val}`;
     else if (val !== "없음") parts.push(`${lab} ${val}`);
   }
   return { name: p.name.replace(/ \(.*\)$/, ""), spec: parts.join(" / ") };
 }
 
+// 고른 값에 따라 선택지 · 막힘 상태 정리 (포스터 평량, 코팅 조건)
+export function settle(p: Product, v: Vals): Vals {
+  const o = { ...v };
+  for (const f of p.fields) {
+    if (f.type !== "pick") continue;
+    if (f.dep) {
+      const opts = f.dep.map[String(o[f.dep.k])] ?? f.opts;
+      if (!opts.includes(String(o[f.k]))) o[f.k] = opts[Math.min(1, opts.length - 1)];
+    }
+    if (f.block && f.block(o) && o[f.k] !== "없음") o[f.k] = "없음";
+  }
+  return o;
+}
+
 function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | number | boolean) => void }) {
-  if (f.type === "pick")
+  if (f.type === "pick") {
+    const opts = f.dep ? (f.dep.map[String(v[f.dep.k])] ?? f.opts) : f.opts;
+    const why = f.block ? f.block(v) : null;
+    const tone = (o: string) => (f.k === "color" ? (o === "흑백" ? " bk" : o === "칼라" ? " red" : "") : "");
     return (
       <div className="od-field">
         <span className="od-lab">{f.label}</span>
         <div className="od-chips" role="radiogroup" aria-label={f.label}>
-          {f.opts.map((o) => (
-            <button type="button" key={o} role="radio" aria-checked={v[f.k] === o} className={v[f.k] === o ? "on" : undefined} onClick={() => set(f.k, o)}>
-              {o}
-            </button>
-          ))}
+          {opts.map((o) => {
+            const off = !!why && o !== "없음";
+            return (
+              <button type="button" key={o} role="radio" aria-checked={v[f.k] === o} disabled={off} className={(v[f.k] === o ? "on" : "") + tone(o) || undefined} onClick={() => set(f.k, o)}>
+                {o}
+              </button>
+            );
+          })}
         </div>
-        {f.hint && <small className="od-hint">{f.hint}</small>}
+        {f.custom && v[f.k] === f.custom && (
+          <input className="od-in" value={String(v[f.k + "_txt"] ?? "")} onChange={(e) => set(f.k + "_txt", e.target.value)} placeholder="원하시는 종이를 적어 주세요 (예: 랑데뷰 130g)" />
+        )}
+        {why ? <small className="od-warn">{why}</small> : f.hint && <small className="od-hint">{f.hint}</small>}
       </div>
     );
+  }
   if (f.type === "num") {
     const n = Number(v[f.k]) || 0;
     const fix = (x: number) => {
@@ -156,7 +180,6 @@ export default function OrderView() {
     return lines.join("\n");
   }, [items, name, phone, due, dueTime, recv, addr, tax, taxInfo, file, memo]);
 
-  const subject = text.split("\n")[0];
   const copy = async (tag: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -175,20 +198,43 @@ export default function OrderView() {
 
   return (
     <>
-      <section className="sp-hero">
-        <div className="wrap sp-hero-grid sp-hero-solo">
+      <section className="sp-hero od-hero">
+        <div className="wrap od-hero-grid">
           <div className="sp-hero-copy">
             <nav className="sp-crumb" aria-label="현재 위치">
               <a href="/">다인인쇄소</a>
               <span aria-hidden="true">/</span>
-              <span aria-current="page">주문서 작성</span>
+              <span aria-current="page">간단하게 주문하기</span>
             </nav>
             <h1 className="serif">
-              주문서,
+              간단하게 주문하기,
               <br />
-              <strong>눌러서 만드세요</strong>
+              <strong>눌러서 고르면 끝</strong>
             </h1>
-            <p className="sp-lead">원하는 사양을 고르면 주문 내용이 자동으로 정리됩니다. 카톡이나 메일로 보내주시면 파일을 확인하고 견적과 일정을 알려드려요.</p>
+            <p className="sp-lead">원하는 사양을 고르면 주문 내용이 자동으로 정리됩니다. 카톡이나 네이버 메일로 보내주시면 파일을 확인하고 견적과 일정을 알려드려요.</p>
+            <ol className="od-steps">
+              <li>
+                <b>1</b>
+                <span>
+                  품목 · 사양 <em>고르기</em>
+                </span>
+              </li>
+              <li>
+                <b>2</b>
+                <span>
+                  날짜 · 받는 방법 <em>적기</em>
+                </span>
+              </li>
+              <li>
+                <b>3</b>
+                <span>
+                  카톡 · 메일로 <em>보내기</em>
+                </span>
+              </li>
+            </ol>
+          </div>
+          <div className="od-hero-img">
+            <img src="/assets/order-hero.webp" alt="휴대폰으로 인쇄 주문서를 고르고 보내는 모습" width={847} height={752} />
           </div>
         </div>
       </section>
@@ -219,11 +265,9 @@ export default function OrderView() {
                     </div>
                   </div>
                   {p.note && <p className="od-note">{p.note}</p>}
-                  {p.fields
-                    .filter((f) => !(f.k === "coverPaper" && !it.vals.sepCover))
-                    .map((f) => (
-                      <Ctl key={f.k} f={f} v={it.vals} set={(k, x) => upd(it.key, (o) => ({ ...o, vals: { ...o.vals, [k]: x } }))} />
-                    ))}
+                  {p.fields.map((f) => (
+                    <Ctl key={f.k} f={f} v={it.vals} set={(k, x) => upd(it.key, (o) => ({ ...o, vals: settle(p, { ...o.vals, [k]: x }) }))} />
+                  ))}
                   {p.slug && (
                     <a className="od-more" href={`/${p.slug}/`} target="_blank" rel="noreferrer">
                       이 품목 안내 보기 <Arrow />
@@ -340,9 +384,16 @@ export default function OrderView() {
                 >
                   <Ico k="talk" /> {copied === "kakao" ? "복사됨 · 채팅창에 붙여넣기" : "카톡으로 보내기"}
                 </button>
-                <a className="btn" href={`mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`} onClick={() => copy("mail")}>
-                  <Ico k="mail" /> 메일로 보내기
-                </a>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => {
+                    copy("mail");
+                    window.open(CONTACT.mailWrite, "_blank", "noopener");
+                  }}
+                >
+                  <Ico k="mail" /> {copied === "mail" ? "복사됨 · 메일 본문에 붙여넣기" : "네이버 메일로 보내기"}
+                </button>
                 <button type="button" className="btn od-copy" onClick={() => copy("copy")}>
                   {copied === "copy" ? "복사됐어요" : "내용만 복사"}
                 </button>
@@ -352,7 +403,7 @@ export default function OrderView() {
                   <b>카톡</b>은 내용이 복사된 채로 상담창이 열려요. 채팅창에 붙여넣기만 하면 됩니다.
                 </li>
                 <li>
-                  <b>메일</b>은 내용이 채워진 메일 창이 열려요. 파일을 첨부해서 보내 주세요. 열리지 않으면 복사해서 {CONTACT.email}로 보내 주세요.
+                  <b>네이버 메일</b>은 받는 사람({CONTACT.email})이 채워진 메일 쓰기 창이 열려요. 복사된 내용을 본문에 붙여넣고 파일을 첨부해서 보내 주세요.
                 </li>
                 <li>가격은 파일을 확인한 뒤 견적으로 알려드립니다.</li>
               </ul>
