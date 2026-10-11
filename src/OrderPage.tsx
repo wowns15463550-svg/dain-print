@@ -126,6 +126,7 @@ export default function OrderView() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [due, setDue] = useState("");
+  const [sameDay, setSameDay] = useState(false);
   const [dueTime, setDueTime] = useState("상관없음");
   const [recv, setRecv] = useState("방문 픽업");
   const [addr, setAddr] = useState("");
@@ -147,7 +148,9 @@ export default function OrderView() {
   const upd = (key: number, fn: (it: Item) => Item) => setItems((xs) => xs.map((x) => (x.key === key ? fn(x) : x)));
 
   const warns: string[] = [];
-  if (due && today) {
+  const dueD = sameDay ? today : due;
+  if (dueD && today) {
+    const due = dueD;
     const wd = new Date(due + "T12:00:00+09:00").getUTCDay();
     if (due < today) warns.push("지난 날짜를 고르셨어요.");
     if (wd === 0 || wd === 6) warns.push("주말은 쉽니다. 주말 작업이 꼭 필요하면 미리 상의해 주세요 (협의 시 주말 출근 수당).");
@@ -163,7 +166,8 @@ export default function OrderView() {
 
   const text = useMemo(() => {
     const lines: string[] = [];
-    lines.push(`[주문] ${name || "성함"} / ${items.map((it) => describe(it).name).join(", ")}`);
+    lines.push(`[주문]${sameDay ? "[당일]" : ""} ${name || "성함"} / ${items.map((it) => describe(it).name).join(", ")}`);
+    if (sameDay) lines.push("", "■■■ 당일 필요 (오늘 받아야 해요) ■■■");
     lines.push("");
     lines.push(`· 성함: ${name}`);
     lines.push(`· 연락처: ${phone}`);
@@ -172,13 +176,15 @@ export default function OrderView() {
       lines.push(`· 품목${items.length > 1 ? " " + (i + 1) : ""}: ${d.name}`);
       lines.push(`   ${d.spec}`);
     });
-    lines.push(`· 필요한 날: ${due ? `${due.replace(/-/g, ".")} (${dayName(due)}) ${dueTime === "상관없음" ? "" : dueTime}`.trim() : "급하지 않음"}`);
+    const dd = sameDay ? today : due;
+    lines.push(`· 필요한 날: ${dd ? `${sameDay ? "★당일★ " : ""}${dd.replace(/-/g, ".")} (${dayName(dd)}) ${dueTime === "상관없음" ? "" : dueTime}`.trim() : "급하지 않음"}`);
     lines.push(`· 받는 방법: ${recv}${recv !== "방문 픽업" && addr ? ` — ${addr}` : ""}`);
-    lines.push(`· 증빙: ${tax}${tax !== "필요 없음" && taxInfo ? ` — ${taxInfo}` : ""}`);
+    lines.push(`· 증빙: ${tax}${tax === "현금영수증" && taxInfo ? ` — ${taxInfo}` : ""}`);
+    if (tax === "세금계산서") lines.push("   (사업자등록증 사본과 세금계산서 받을 메일 주소를 메일로 보내드릴게요)");
     lines.push(`· 파일: ${file}`);
     if (memo.trim()) lines.push(`· 요청사항: ${memo.trim()}`);
     return lines.join("\n");
-  }, [items, name, phone, due, dueTime, recv, addr, tax, taxInfo, file, memo]);
+  }, [items, name, phone, due, sameDay, today, dueTime, recv, addr, tax, taxInfo, file, memo]);
 
   const copy = async (tag: string) => {
     try {
@@ -297,8 +303,11 @@ export default function OrderView() {
               <div className="od-row">
                 <label className="od-field">
                   <span className="od-lab">언제까지 필요하세요?</span>
-                  <input className="od-in" type="date" value={due} min={today || undefined} onChange={(e) => setDue(e.target.value)} />
-                  <small className="od-hint">비워 두면 "급하지 않음"으로 보냅니다.</small>
+                  <button type="button" className={sameDay ? "od-today on" : "od-today"} aria-pressed={sameDay} onClick={() => setSameDay((x) => !x)}>
+                    <i aria-hidden="true">{sameDay ? "✓" : ""}</i> 당일 (오늘 필요해요)
+                  </button>
+                  <input className="od-in" type="date" value={sameDay ? today : due} min={today || undefined} disabled={sameDay} onChange={(e) => setDue(e.target.value)} />
+                  {!sameDay && <small className="od-hint">비워 두면 "급하지 않음"으로 보냅니다.</small>}
                 </label>
                 <div className="od-field">
                   <span className="od-lab">시간</span>
@@ -341,8 +350,11 @@ export default function OrderView() {
                     </button>
                   ))}
                 </div>
-                {tax !== "필요 없음" && (
-                  <input className="od-in" value={taxInfo} onChange={(e) => setTaxInfo(e.target.value)} placeholder={tax === "세금계산서" ? "사업자등록번호 · 상호 · 받을 메일" : "휴대폰 번호 또는 사업자번호"} />
+                {tax === "현금영수증" && <input className="od-in" value={taxInfo} onChange={(e) => setTaxInfo(e.target.value)} placeholder="휴대폰 번호 또는 사업자번호" />}
+                {tax === "세금계산서" && (
+                  <p className="od-warn od-warn-box">
+                    세금계산서는 <b>사업자등록증 사본</b>과 <b>세금계산서 받으실 메일 주소</b>를 메일({CONTACT.email})로 보내 주셔야 발행됩니다.
+                  </p>
                 )}
                 <small className="od-hint">견적은 현금가 기준이라, 필요하시면 꼭 체크해 주세요.</small>
               </div>

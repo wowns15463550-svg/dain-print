@@ -708,3 +708,9 @@ textarea.od-in{resize:vertical;line-height:1.6}
   .od-hero-img{order:-1}
   .od-steps li{flex:1 1 100%}
 }
+/* 당일 체크 */
+.od-today{display:flex;align-items:center;gap:10px;width:max-content;min-height:46px;padding:8px 16px 8px 10px;border:1.5px solid #C2544A;background:var(--surface);color:#C2544A;font:inherit;font-size:15px;font-weight:700;cursor:pointer}
+.od-today i{display:grid;place-items:center;width:22px;height:22px;border:1.5px solid currentColor;font-style:normal;font-size:14px;line-height:1}
+.od-today.on{background:#C2544A;color:#fff}
+.od-today.on i{background:#fff;color:#C2544A;border-color:#fff}
+.od-in:disabled{background:var(--bg);color:var(--ink-3)}

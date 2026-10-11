@@ -27,11 +27,11 @@ const DIRECT = "다른 종이 (직접 적기)";
 const UNSURE = "잘 모르겠어요";
 const SHEET_PAPERS = ["스노우지 250g", "스노우지 200g", "스노우지 150g", "랑데뷰 240g", "랑데뷰 190g", "랑데뷰 160g", UNSURE];
 
-// 코팅 조건: 200g 이상만 / 랑데뷰는 50권 이상만
+// 코팅 조건: 190g 이상만 / 랑데뷰는 50권 이상만
 const gsm = (p: unknown) => Number(String(p).match(/(\d+)\s*g/)?.[1] || 0);
 const coat200 = (v: Vals) => {
   const g = gsm(v.paper);
-  if (g && g < 200) return "코팅은 200g 이상 종이만 가능해요.";
+  if (g && g < 190) return "코팅은 190g 이상 종이만 가능해요.";
   return null;
 };
 const saddleCoat = (v: Vals) => {
@@ -89,7 +89,7 @@ export const PRODUCTS: Product[] = [
       { k: "pages", label: "쪽수 (표지 포함)", type: "num", def: 8, min: 8, step: 4, unit: "쪽", mult4: true },
       { k: "paper", label: "용지", type: "pick", opts: ["모조 100g", "스노우지 250g", "스노우지 200g", "스노우지 150g", "랑데뷰 240g", "랑데뷰 190g", "랑데뷰 160g", UNSURE], def: "모조 100g" },
       { k: "qty", label: "권수", type: "num", def: 10, min: 1, step: 1, unit: "권" },
-      { k: "coat", label: "표지 코팅", type: "pick", opts: ["없음", "무광", "유광"], def: "없음", block: saddleCoat, hint: "코팅은 200g 이상 종이만, 랑데뷰는 50권 이상부터 가능해요." },
+      { k: "coat", label: "표지 코팅", type: "pick", opts: ["없음", "무광", "유광"], def: "없음", block: saddleCoat, hint: "코팅은 190g 이상 종이만, 랑데뷰는 50권 이상부터 가능해요." },
     ],
   },
   {
@@ -135,7 +135,7 @@ export const PRODUCTS: Product[] = [
     slug: "poster",
     note: "B2보다 큰 크기(A1 · A0 · B1 · B0)는 제작하지 않아요.",
     fields: [
-      { k: "size", label: "크기", type: "pick", opts: ["A3", "A2", "B3", "B2"], def: "A2" },
+      { k: "size", label: "크기", type: "pick", opts: ["A2", "B3", "B2"], def: "A2" },
       { k: "paper", label: "종이", type: "pick", opts: Object.keys(POSTER_PAPERS), def: "스노우" },
       { k: "weight", label: "두께 (평량)", type: "pick", opts: POSTER_PAPERS["스노우"], def: "150g", dep: { k: "paper", map: POSTER_PAPERS } },
       { k: "coat", label: "코팅", type: "pick", opts: ["없음", "무광", "유광"], def: "없음" },
