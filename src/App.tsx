@@ -12,6 +12,13 @@ const HERO_SLIDES = [
 ];
 const SLIDE_MS = 5500;
 
+// 사장님이 직접 찍은 실제 매장 사진 (전화번호 지움, 사람 흐림 처리)
+const SHOP_PHOTOS = [
+  { src: "assets/shop-front.webp", w: 960, h: 1280, cap: "매장 외관 · 마른내로4길 27", alt: "다인인쇄소(다인시스템) 충무로 매장 외관 — 서울 중구 마른내로4길 27, 파란 다인시스템 간판" },
+  { src: "assets/shop-inside.webp", w: 1200, h: 1265, cap: "작업실 · 코니카미놀타 C14000과 제본기", alt: "다인인쇄소(다인시스템) 작업실 내부 — 코니카미놀타 AccurioPress C14000과 호리존 무선제본기" },
+  { src: "assets/shop-books.webp", w: 960, h: 960, cap: "제본을 마치고 나가는 책", alt: "다인인쇄소(다인시스템)에서 무선제본을 마친 책 묶음" },
+];
+
 type Ev = (typeof EVENTS)[number];
 function EvCard({ e, hidden, label }: { e: Ev; hidden?: boolean; label?: string }) {
   return (
@@ -1056,6 +1063,22 @@ export default function App() {
                   <Phone /> 전화하기
                 </a>
               </div>
+            </div>
+          </div>
+          <div className="wrap shop-photos rv">
+            <div className="shop-head">
+              <h3>실제 매장 사진</h3>
+              <p>간판 이름은 <b>'다인시스템'</b>입니다. 충무로 골목의 파란 간판을 찾아오세요.</p>
+            </div>
+            <div className="shop-grid">
+              {SHOP_PHOTOS.map((p) => (
+                <figure key={p.src}>
+                  <button type="button" className="zoomable" onClick={() => setZoom({ src: p.src, alt: p.alt })} aria-label={`${p.cap} 사진 크게 보기`}>
+                    <img src={p.src} alt={p.alt} loading="lazy" width={p.w} height={p.h} />
+                  </button>
+                  <figcaption>{p.cap}</figcaption>
+                </figure>
+              ))}
             </div>
           </div>
         </section>

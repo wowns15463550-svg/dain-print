@@ -714,3 +714,21 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .od-today.on{background:#C2544A;color:#fff}
 .od-today.on i{background:#fff;color:#C2544A;border-color:#fff}
 .od-in:disabled{background:var(--bg);color:var(--ink-3)}
+
+/* 실제 매장 사진 (오시는 길 아래) */
+.shop-photos{margin-top:clamp(48px,6vw,80px)}
+.shop-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin-bottom:16px}
+.shop-head h3{font-size:18px;font-weight:700;color:var(--ink)}
+.shop-head p{font-size:14px;color:var(--ink-2)}
+.shop-head b{color:var(--ink)}
+.shop-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.shop-grid figure{margin:0}
+.shop-grid button{display:block;width:100%;padding:0;border:0;background:var(--tint);cursor:zoom-in;overflow:hidden;aspect-ratio:4/5}
+.shop-grid img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--out)}
+.shop-grid button:hover img{transform:scale(1.03)}
+.shop-grid figcaption{font-size:13px;color:var(--ink-3);margin-top:8px}
+@media (max-width:700px){
+  .shop-grid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:72%;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:calc(var(--gut)*-1);padding-inline:var(--gut);scrollbar-width:none}
+  .shop-grid::-webkit-scrollbar{display:none}
+  .shop-grid figure{scroll-snap-align:start}
+}
