@@ -841,7 +841,7 @@ export default function App() {
                   <li>
                     <b>급한 작업</b>
                     <span>
-                      전화나 문자({CONTACT.phone})로 먼저 알려주세요.
+                      전화({CONTACT.phone})나 카톡으로 먼저 알려주세요.
                     </span>
                   </li>
                 </ul>
@@ -870,7 +870,7 @@ export default function App() {
                       <span className="wh-folder">{CONTACT.webhardFolder}</span>
                     </dd>
                   </dl>
-                  <p>올리신 뒤 메일이나 문자로 성함과 파일 이름을 알려주세요.</p>
+                  <p>올리신 뒤 메일이나 카톡으로 성함과 파일 이름을 알려주세요.</p>
                   <a className="btn btn-accent" href={CONTACT.webhard} target="_blank" rel="noreferrer">
                     웹하드 열기 <Arrow />
                   </a>
@@ -1038,7 +1038,7 @@ export default function App() {
                 <dt>전화</dt>
                 <dd>
                   {CONTACT.phone}
-                  <small>문자도 받습니다</small>
+                  <small>카톡 상담도 받습니다</small>
                 </dd>
                 <dt>메일</dt>
                 <dd>{CONTACT.email}</dd>
@@ -1240,7 +1240,7 @@ export default function App() {
                 <dt>전화</dt>
                 <dd>
                   <a href={`tel:${tel}`}>{CONTACT.phone}</a>
-                  <small>문자도 받습니다</small>
+                  <small>카톡 상담도 받습니다</small>
                 </dd>
                 <dt>카카오톡</dt>
                 <dd>

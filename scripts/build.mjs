@@ -120,7 +120,7 @@ const BUSINESS = {
   name: "다인인쇄소",
   legalName: "다인시스템",
   url: SITE_URL,
-  telephone: "010-8244-4590",
+  telephone: "0507-1461-0552",
   email: "dain969@naver.com",
   description: DESC,
   image: SITE_URL + "assets/og2.jpg",

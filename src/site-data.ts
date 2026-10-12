@@ -2,7 +2,7 @@
 import notices from "../content/notices.json";
 
 export const CONTACT = {
-  phone: "010-8244-4590",
+  phone: "0507-1461-0552",
   email: "dain969@naver.com",
   address: "서울 중구 마른내로4길 27",
   addressDetail: "다인시스템 1층",
