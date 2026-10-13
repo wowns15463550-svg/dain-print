@@ -1,15 +1,40 @@
-// 다인이 챗봇 — 모든 페이지 오른쪽 아래. 서버 없이 chat-kb.ts에 적힌 확인된 답만 보여줍니다.
-import { byId, FALLBACK, findIntent, GREETING, Intent, L, Link, MORE_CHIPS, START_CHIPS } from "./chat-kb";
+// 다인 AI 챗봇 — 모든 페이지 오른쪽 아래. 서버 없이 chat-kb.ts에 적힌 확인된 답만 보여줍니다.
+// 로봇 표정: 되는 답 = 웃음, 안 되는 답 = 울음, 모르는 질문 = 갸우뚱
+import { byId, FALLBACK, findIntent, GREETING, Intent, L, Link, Mood, MORE_CHIPS, START_CHIPS } from "./chat-kb";
 
-// 다인이 얼굴 (웃는 종이 + CMYK 점)
-export const FACE = `<svg class="dc-face" viewBox="0 0 100 100" aria-hidden="true">
-<path d="M22 10h42l16 16v62a4 4 0 0 1-4 4H22a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z" fill="#FAF7EF" stroke="#1A1A1A" stroke-width="5" stroke-linejoin="round"/>
-<path d="M64 10v16h16" fill="#E9E3D6" stroke="#1A1A1A" stroke-width="5" stroke-linejoin="round"/>
-<circle cx="30" cy="24" r="3.6" fill="#00AEEF"/><circle cx="39.5" cy="24" r="3.6" fill="#EC008C"/><circle cx="49" cy="24" r="3.6" fill="#FFC20E"/><circle cx="58.5" cy="24" r="3.6" fill="#1A1A1A"/>
-<g class="dc-eyes"><circle cx="40" cy="57" r="5.2" fill="#1A1A1A"/><circle cx="60" cy="57" r="5.2" fill="#1A1A1A"/></g>
-<circle cx="31.5" cy="67" r="4.6" fill="#FFC20E"/><circle cx="68.5" cy="67" r="4.6" fill="#FFC20E"/>
-<path d="M39 69q11 10 22 0" fill="none" stroke="#1A1A1A" stroke-width="4.2" stroke-linecap="round"/>
-</svg>`;
+type Face = Mood | "idle";
+
+// 하얀 로봇 머리 + 검은 화면 얼굴 (표정만 바뀜)
+export function robot(face: Face = "idle") {
+  const eye = "#62E6FF";
+  let f = "";
+  if (face === "happy") {
+    f = `<path d="M33 51q6-8 12 0M55 51q6-8 12 0" stroke="${eye}" stroke-width="4.2" fill="none" stroke-linecap="round"/>
+<path d="M44 59q6 6 12 0" stroke="${eye}" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+<circle cx="31" cy="58" r="3.4" fill="#FF8FB1" opacity=".75"/><circle cx="69" cy="58" r="3.4" fill="#FF8FB1" opacity=".75"/>`;
+  } else if (face === "sad") {
+    f = `<path d="M33 51q5-5 11-4M67 51q-5-5-11-4" stroke="${eye}" stroke-width="4" fill="none" stroke-linecap="round"/>
+<path d="M44 62q6-5 12 0" stroke="${eye}" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+<path class="dc-tear" d="M36 54q-4 6 0 9q4-3 0-9z" fill="#7DD3FC"/><path class="dc-tear r" d="M64 54q-4 6 0 9q4-3 0-9z" fill="#7DD3FC"/>`;
+  } else if (face === "unsure") {
+    f = `<circle cx="39" cy="49" r="4.4" fill="${eye}"/><path d="M55 49h11" stroke="${eye}" stroke-width="4" stroke-linecap="round"/>
+<path d="M42 60q3-3 6 0t6 0t6 0" stroke="${eye}" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+<text x="84" y="22" font-size="22" font-weight="800" fill="#2F6BFF" font-family="system-ui,sans-serif">?</text>`;
+  } else {
+    f = `<g class="dc-eyes"><ellipse cx="39" cy="49" rx="4.4" ry="5.2" fill="${eye}"/><ellipse cx="61" cy="49" rx="4.4" ry="5.2" fill="${eye}"/></g>
+<path d="M44 58q6 5 12 0" stroke="${eye}" stroke-width="3.6" fill="none" stroke-linecap="round"/>`;
+  }
+  return `<svg class="dc-bot" viewBox="0 0 100 100" aria-hidden="true">
+<line x1="50" y1="9" x2="50" y2="20" stroke="#B7C3DA" stroke-width="3.5" stroke-linecap="round"/><circle cx="50" cy="8" r="5.5" fill="#2F6BFF"/>
+<rect x="9" y="40" width="9" height="20" rx="4.5" fill="#D6DFEE"/><rect x="82" y="40" width="9" height="20" rx="4.5" fill="#D6DFEE"/>
+<rect x="15" y="19" width="70" height="62" rx="27" fill="#fff" stroke="#DCE4F2" stroke-width="2.5"/>
+<rect x="23" y="31" width="54" height="40" rx="18" fill="#17203D"/>
+${f}</svg>`;
+}
+
+const ICON_OUT = `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const ICON_TEL = `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`;
+const ICON_GO = `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const reduce = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -40,29 +65,29 @@ function mount() {
   const root = el("div", "dc");
   if (document.querySelector(".qm-hot")) root.classList.add("dc-up");
 
-  const launch = el("button", "dc-launch", FACE) as HTMLButtonElement;
+  const launch = el("button", "dc-launch", `<span class="dc-l-av">${robot()}</span><span class="dc-l-tx"><b>AI 챗봇</b><small>바로 물어보기</small></span><i class="dc-l-badge">AI</i>`) as HTMLButtonElement;
   launch.type = "button";
-  launch.setAttribute("aria-label", "다인이에게 물어보기 (자동 안내)");
+  launch.setAttribute("aria-label", "AI 챗봇 이용하기");
   launch.setAttribute("aria-expanded", "false");
 
-  const tip = el("div", "dc-tip", `<b>다인이</b>에게 물어보세요!<button type="button" aria-label="닫기">×</button>`);
+  const tip = el("div", "dc-tip", `<span>궁금한 건 <b>AI 챗봇</b>에게 물어보세요!</span><button type="button" aria-label="닫기">×</button>`);
 
   const panel = el("section", "dc-panel");
   panel.setAttribute("role", "dialog");
-  panel.setAttribute("aria-label", "다인이 안내 챗봇");
+  panel.setAttribute("aria-label", "다인 AI 챗봇");
   panel.hidden = true;
   panel.innerHTML = `
 <header class="dc-hd">
-  <span class="dc-av">${FACE}</span>
-  <div><b>다인이</b><small>다인인쇄소 안내 도우미</small></div>
-  <button type="button" class="dc-x" aria-label="닫기"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  <span class="dc-av hd">${robot("happy")}</span>
+  <div><b>다인 AI 챗봇</b><small>무엇을 도와드릴까요?</small></div>
+  <button type="button" class="dc-x" aria-label="닫기"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
 </header>
 <div class="dc-log" aria-live="polite"></div>
 <form class="dc-in">
-  <input type="text" placeholder="궁금한 걸 적어 주세요" aria-label="질문 입력" maxlength="200" autocomplete="off">
-  <button type="submit" aria-label="보내기"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 12l16-8-6 16-2-6-8-2z" fill="currentColor"/></svg></button>
+  <input type="text" placeholder="궁금한 내용을 입력하세요" aria-label="질문 입력" maxlength="200" autocomplete="off">
+  <button type="submit" aria-label="보내기"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a.7.7 0 0 0-1 .8L4 10.7l9 1.3-9 1.3-1.6 6.3a.7.7 0 0 0 1 .8z" fill="currentColor"/></svg></button>
 </form>
-<p class="dc-note">자동 안내예요. 정확한 견적·일정은 사장님께 확인해 주세요.</p>`;
+<p class="dc-note">자동 응답이에요. 정확한 견적·일정은 사장님께 확인해 주세요.</p>`;
 
   root.append(panel, tip, launch);
   document.body.appendChild(root);
@@ -80,9 +105,9 @@ function mount() {
   function linkBtns(links: Link[]) {
     const wrap = el("div", "dc-acts");
     for (const l of links) {
-      const a = el("a", l.href.startsWith("tel:") ? "dc-act tel" : "dc-act") as HTMLAnchorElement;
+      const tel = l.href.startsWith("tel:");
+      const a = el("a", "dc-act", `${tel ? ICON_TEL : l.ext ? ICON_OUT : ICON_GO}<span>${esc(l.label)}</span>`) as HTMLAnchorElement;
       a.href = l.href;
-      a.textContent = l.label;
       if (l.ext) {
         a.target = "_blank";
         a.rel = "noreferrer";
@@ -106,11 +131,10 @@ function mount() {
     if (more) {
       const b = el("button", "dc-chip ghost") as HTMLButtonElement;
       b.type = "button";
-      b.textContent = "다른 질문 더 보기";
+      b.textContent = "+ 더 보기";
       b.onclick = () => {
         b.remove();
-        const m = chips(MORE_CHIPS);
-        wrap.after(m);
+        wrap.after(chips(MORE_CHIPS));
         scroll();
       };
       wrap.appendChild(b);
@@ -118,9 +142,9 @@ function mount() {
     return wrap;
   }
 
-  function bot(text: string, links?: Link[], next?: string[], more = false) {
+  function bot(text: string, face: Face, links?: Link[], next?: string[], more = false) {
     const row = el("div", "dc-row bot");
-    row.appendChild(el("span", "dc-av sm", FACE));
+    row.appendChild(el("span", `dc-av ${face}`, robot(face)));
     const col = el("div", "dc-col");
     col.appendChild(el("div", "dc-msg", esc(text).replace(/\n/g, "<br>")));
     if (links?.length) col.appendChild(linkBtns(links));
@@ -139,18 +163,18 @@ function mount() {
 
   function answer(it: Intent | undefined, also: Intent[] = []) {
     if (!it) {
-      bot(FALLBACK, [L.kakao, L.tel, L.mail], START_CHIPS.filter((id) => id !== "kakao").slice(0, 4));
+      bot(FALLBACK, "unsure", [L.kakao, L.tel]);
       return;
     }
     const next = [...also.map((a) => a.id), ...(it.next || [])].filter((id, i, a) => id !== it.id && a.indexOf(id) === i).slice(0, 3);
-    bot(it.a, it.links, next);
+    bot(it.a, it.mood || "happy", it.links, next);
   }
 
   function ask(text: string, it?: Intent) {
     if (busy) return;
     user(text);
     busy = true;
-    const typing = el("div", "dc-row bot dc-typing", `<span class="dc-av sm">${FACE}</span><div class="dc-msg"><i></i><i></i><i></i></div>`);
+    const typing = el("div", "dc-row bot dc-typing", `<span class="dc-av">${robot()}</span><div class="dc-msg"><i></i><i></i><i></i></div>`);
     log.appendChild(typing);
     scroll();
     const r = it ? { best: it, also: [] as Intent[] } : findIntent(text);
@@ -158,7 +182,7 @@ function mount() {
       typing.remove();
       answer(r.best, r.also);
       busy = false;
-    }, reduce ? 0 : 450);
+    }, reduce ? 0 : 500);
   }
 
   function open() {
@@ -169,7 +193,7 @@ function mount() {
     ss.set("dc-tip", "1");
     if (!started) {
       started = true;
-      bot(GREETING, undefined, START_CHIPS, true);
+      bot(GREETING, "happy", undefined, START_CHIPS, true);
     }
     if (matchMedia("(min-width: 701px)").matches) setTimeout(() => input.focus(), 50);
   }
@@ -199,7 +223,6 @@ function mount() {
     ask(v);
   };
 
-  // 말풍선 안내: 처음 들어온 방문자에게 잠깐 보여주기
   if (ss.get("dc-tip")) tip.remove();
   else {
     setTimeout(() => tip.classList.add("show"), 2500);

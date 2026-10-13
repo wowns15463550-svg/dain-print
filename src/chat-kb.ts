@@ -4,7 +4,8 @@
 import { CONTACT, EVENTS, FAQ } from "./site-data";
 
 export type Link = { label: string; href: string; ext?: boolean };
-export type Intent = { id: string; chip?: string; keys: string[]; a: string; links?: Link[]; next?: string[] };
+export type Mood = "happy" | "sad" | "unsure";
+export type Intent = { id: string; chip?: string; keys: string[]; a: string; links?: Link[]; next?: string[]; mood?: Mood };
 
 export const L = {
   order: { label: "간단하게 주문하기", href: "/order/" },
@@ -31,7 +32,7 @@ export const NOPE: [string, string[]][] = [
   ["PUR 제본", ["pur"]],
   ["떡제본(패드 제본)", ["떡제본", "패드제본", "접착식패드", "떡메", "메모지", "포스트잇", "점착메모"]],
   ["수첩 제본", ["수첩", "다이어리"]],
-  ["특수 접지", ["십자접지", "지도접지", "경제형접지", "롤접지", "두루마리접지", "창문접지", "대문접지", "이중병풍", "병풍접지", "다단접지", "교차접지", "조합접지", "특수접지"]],
+  ["특수 접지", ["십자접지", "지도접지", "경제형접지", "롤접지", "두루마리접지", "창문접지", "대문접지", "이중병풍", "다단접지", "교차접지", "조합접지", "특수접지"]],
   ["모양 재단(도무송·톰슨)", ["도무송", "톰슨", "목형", "레이저커팅", "레이저컷", "cnc", "칼선", "모양재단", "모양커팅", "원형재단", "타원재단", "다이컷", "반칼", "완칼", "하프컷", "커팅"]],
   ["박 가공", ["금박", "은박", "먹박", "유색박", "투명박", "홀로그램박", "박가공", "박작업", "박인쇄", "박찍", "포일", "핫스탬핑"]],
   ["형압·엠보싱", ["형압", "엠보", "디보싱", "양각", "음각", "블라인드", "레터프레스", "활판"]],
@@ -43,7 +44,6 @@ export const NOPE: [string, string[]][] = [
   ["패키징·박스", ["패키지", "패키징", "박스", "상자", "단상자", "싸바리", "케이스"]],
   ["접착·부착 작업", ["양면테이프", "테이프", "부착", "풀칠", "접착", "조립", "동봉", "개별포장", "포장"]],
   ["넘버링(번호 인쇄)", ["넘버링", "일련번호", "번호인쇄", "쿠폰번호", "가변데이터", "가변인쇄", "주소인쇄", "주소라벨"]],
-  ["미싱(절취선)", ["미싱", "절취선", "천공"]],
   ["NCR(무탄소) 양식", ["ncr", "무탄소", "먹지", "복사식양식"]],
   ["분류·소분 포장", ["분류", "소분", "세트포장"]],
   ["신문지 인쇄", ["신문지", "신문용지"]],
@@ -208,6 +208,23 @@ export const INTENTS: Intent[] = [
     links: [{ label: "엽서·초대장 안내", href: "/postcard-invitation/" }],
   },
   {
+    id: "mising",
+    keys: ["미싱", "절취선", "천공", "뜯는선"],
+    a: "미싱(절취선) 돼요. 다만 소량은 안 돼요.",
+  },
+  {
+    id: "zfold",
+    keys: ["병풍접지", "병풍", "z접지", "지그재그"],
+    a: "병풍접지(Z자 접지) 돼요. 사이즈만 맞으면 가능해요.",
+  },
+  {
+    id: "typo",
+    keys: ["오타", "수정해", "고쳐", "틀린글자", "잘못썼", "수정가능", "수정요청"],
+    a: "파일 수정(오타 고치기)은 해 드리지 않아요. 고친 파일을 다시 보내 주세요.",
+    mood: "sad",
+    links: [L.mail],
+  },
+  {
     id: "label",
     keys: ["라벨지", "라벨용지", "라벨인쇄"],
     a: "라벨지 인쇄는 돼요. (모양 재단은 안 해요)",
@@ -220,7 +237,7 @@ export const INTENTS: Intent[] = [
   {
     id: "uv",
     keys: ["부분uv", "부분코팅", "스팟uv", "uv코팅", "uv"],
-    a: "부분 UV(부분 코팅)는 대량만 돼요. 수량을 알려주세요.",
+    a: "부분 UV(부분 코팅) 돼요. 다만 소량은 안 돼요. 수량을 알려주세요.",
     links: [L.kakao],
   },
   {
@@ -249,7 +266,7 @@ export const INTENTS: Intent[] = [
   {
     id: "design",
     chip: "디자인",
-    keys: ["디자인", "편집", "시안", "만들어주", "제작해주", "그려", "로고"],
+    keys: ["디자인", "편집디자인", "시안", "로고"],
     a: "디자인은 전단지 위주로 해요. 1만 원이에요.",
     links: [L.mail],
   },
@@ -285,6 +302,7 @@ export const INTENTS: Intent[] = [
     chip: "안 하는 작업",
     keys: ["안되", "안돼", "불가", "못하", "못해", "안하", "특수"],
     a: "스티커·현수막·박·형압·모양 재단·하드커버·패키징 같은 특수 작업은 하지 않아요.\n궁금한 작업 이름을 적어 주시면 바로 알려드려요.",
+    mood: "sad",
   },
   {
     id: "kakao",
@@ -296,7 +314,7 @@ export const INTENTS: Intent[] = [
   {
     id: "hello",
     keys: ["안녕", "hello", "반가", "누구", "다인이"],
-    a: "안녕하세요, 다인인쇄소 다인이예요! 궁금한 걸 물어보세요.",
+    a: "안녕하세요! 다인인쇄소 AI 챗봇이에요. 궁금한 걸 물어보세요.",
     next: ["eta", "price", "order"],
   },
   {
@@ -308,8 +326,8 @@ export const INTENTS: Intent[] = [
 // FAQ는 홈페이지에 그대로 쓰고, 챗봇은 짧은 답을 씁니다 (FAQ 가져다 쓰지 않음)
 void FAQ;
 
-export const GREETING = "안녕하세요, 다인이예요!\n궁금한 걸 누르거나 적어 주세요.";
-export const FALLBACK = "그건 다인이가 잘 몰라요. 사장님께 물어봐 주세요!";
+export const GREETING = "안녕하세요! 다인인쇄소 AI 챗봇입니다.\n궁금한 내용을 자유롭게 물어보세요 😊";
+export const FALLBACK = "음… 그건 잘 모르겠어요. 사장님께 직접 물어봐 주세요!";
 export const START_CHIPS = ["eta", "price", "order", "file", "location", "hours", "binding", "kakao"];
 export const MORE_CHIPS = ["print", "pay", "tax", "ship", "pickup", "card", "flyer", "poster", "form", "paper", "design", "color", "template", "event", "cant"];
 
@@ -336,7 +354,7 @@ export function findIntent(text: string): { best?: Intent; also: Intent[] } {
     if (s > 0 && (!nope || s > nope.s)) nope = { name, s };
   }
   if (nope && (!hits[0] || nope.s > hits[0].s || ["cant", "small", "kakao"].includes(hits[0].it.id))) {
-    return { best: { id: "nope", keys: [], a: nopeAnswer(nope.name) }, also: [] };
+    return { best: { id: "nope", keys: [], a: nopeAnswer(nope.name), mood: "sad" }, also: [] };
   }
   return { best: hits[0]?.it, also: hits.slice(1, 2).map((x) => x.it) };
 }
