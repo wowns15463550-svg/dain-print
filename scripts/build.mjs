@@ -95,10 +95,22 @@ await esbuild.build({
   define: { "process.env.NODE_ENV": '"production"' },
 });
 
+// 다인이 챗봇 (모든 페이지)
+await esbuild.build({
+  ...common,
+  entryPoints: ["src/chat.ts"],
+  outfile: "dist/chat.js",
+  platform: "browser",
+  format: "esm",
+  minify: true,
+  target: ["es2019"],
+});
+
 // 파일이 바뀌면 주소 뒤 ?v= 값도 바뀌어서, 방문자 브라우저가 옛 파일을 쓰지 않는다
 const ver = (f) => createHash("sha1").update(readFileSync(f)).digest("hex").slice(0, 8);
 const JS_V = ver("dist/app.js");
 const ORDER_V = ver("dist/order.js");
+const CHAT_V = ver("dist/chat.js");
 const CSS_V = ver("src/site.css");
 
 // 2) 미리 그린 HTML (검색 노출과 빠른 첫 화면용)
@@ -169,7 +181,8 @@ ${preload}<script type="application/ld+json">${JSON.stringify(ld)}</script>
 </head>
 <body style="margin:0;background:#F4F5F7">
 <div id="root">${body}</div>
-${app ? `<script type="module" src="/app.js?v=${JS_V}"></script>\n` : ""}${script ? `<script type="module" src="${script}"></script>\n` : ""}<!-- 네이버 애널리틱스 (통계는 사장님 계정에서만 보입니다) -->
+${app ? `<script type="module" src="/app.js?v=${JS_V}"></script>\n` : ""}${script ? `<script type="module" src="${script}"></script>\n` : ""}<script type="module" src="/chat.js?v=${CHAT_V}"></script>
+<!-- 네이버 애널리틱스 (통계는 사장님 계정에서만 보입니다) -->
 <script src="https://wcs.naver.net/wcslog.js"></script>
 <script>if(!window.wcs_add) window.wcs_add = {}; wcs_add["wa"] = "125a7b92b7210d0"; if(window.wcs) { wcs_do(); }</script>
 </body>

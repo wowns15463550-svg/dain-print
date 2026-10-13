@@ -15,6 +15,7 @@
 - `content/notices.json` 공지 (모두 접힌 상태로 시작)
 - 품목별 페이지: `src/service-pages.ts`(내용) + `src/ServicePage.tsx`(화면) → `/{slug}/`. 무선 perfect-binding, 중철 saddle-stitch, 스프링 spring-binding, 양식 form-stapling, 전단 flyer-leaflet, 명함 business-card, 엽서 postcard-invitation, 포스터 poster
 - 주문서 도우미: `/order/` — `src/order-options.ts`(품목·선택지, 사장님 단가 계산기 기준, 가격 없음) + `src/OrderPage.tsx`, 따로 `order.js`로 hydrate. 품목 페이지에서 `/order/?item={slug}`로 들어오면 그 품목이 먼저 선택됨
+- 다인이 챗봇: 모든 페이지 오른쪽 아래 노란 웃는 종이 버튼. `src/chat.ts`(화면, 따로 `chat.js`) + `src/chat-kb.ts`(질문 낱말 → 답). 서버·AI 없이 확인된 답만, 모르면 카톡·전화로 안내. 답 고칠 땐 chat-kb.ts만 수정(FAQ와 같은 내용은 site-data FAQ를 그대로 씀)
 - 작업 템플릿: `/templates/` 페이지, PDF는 `public/templates/` (`python3 scripts/make-templates.py`로 다시 만듦)
 - 블로그 최신 글: 빌드 때 네이버 RSS에서 4개 + 대표 사진을 받아 `src/blog-data.json`·`public/blog-thumbs/`에 씀. 저장소의 blog-data.json은 `[]`로 둔다(로컬 샘플 데이터 커밋 금지).
 - 사이트 아이콘: 노란 다인 로고(웃는 종이) — `public/favicon.ico`, `public/apple-touch-icon.png`, `public/assets/icon-192/512.png`. 사이트 이름 "다인인쇄소"는 og:site_name + WebSite 구조화 데이터 두 곳에 넣어 둠.
