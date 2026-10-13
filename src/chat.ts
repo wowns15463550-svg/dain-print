@@ -85,6 +85,7 @@ function mount() {
 <div class="dc-log" aria-live="polite"></div>
 <form class="dc-in">
   <input type="text" placeholder="궁금한 내용을 입력하세요" aria-label="질문 입력" maxlength="200" autocomplete="off">
+  <button type="button" class="dc-mic" aria-label="말로 물어보기" hidden><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
   <button type="submit" aria-label="보내기"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a.7.7 0 0 0-1 .8L4 10.7l9 1.3-9 1.3-1.6 6.3a.7.7 0 0 0 1 .8z" fill="currentColor"/></svg></button>
 </form>
 <p class="dc-note">자동 응답이에요. 정확한 견적·일정은 사장님께 확인해 주세요.</p>`;
@@ -215,6 +216,59 @@ function mount() {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && !panel.hidden) close();
   });
+  // 마이크: 말하면 글자로 바꿔 질문 (브라우저 음성 인식, 서버로 보내지 않음)
+  const mic = form.querySelector(".dc-mic") as HTMLButtonElement;
+  const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+  const inApp = /NAVER|KAKAOTALK|Instagram|FBAN|FBAV|Line\//i.test(navigator.userAgent);
+  if (SR && !inApp) {
+    mic.hidden = false;
+    let rec: any = null;
+    let heard = "";
+    const stop = () => {
+      mic.classList.remove("on");
+      mic.setAttribute("aria-label", "말로 물어보기");
+      input.placeholder = "궁금한 내용을 입력하세요";
+    };
+    mic.onclick = () => {
+      if (rec) {
+        rec.stop();
+        return;
+      }
+      rec = new SR();
+      rec.lang = "ko-KR";
+      rec.interimResults = true;
+      rec.maxAlternatives = 1;
+      heard = "";
+      rec.onresult = (ev: any) => {
+        heard = Array.from(ev.results as ArrayLike<any>).map((r: any) => r[0].transcript).join("");
+        input.value = heard;
+      };
+      rec.onerror = (ev: any) => {
+        if (ev.error === "not-allowed" || ev.error === "service-not-allowed") bot("마이크 사용이 막혀 있어요. 브라우저에서 마이크를 허용하거나 글로 적어 주세요.", "unsure");
+        else if (ev.error === "no-speech") bot("잘 안 들렸어요. 다시 한번 말씀해 주세요!", "unsure");
+      };
+      rec.onend = () => {
+        rec = null;
+        stop();
+        const v = heard.trim();
+        if (v) {
+          input.value = "";
+          ask(v);
+        }
+      };
+      try {
+        rec.start();
+        mic.classList.add("on");
+        mic.setAttribute("aria-label", "듣는 중 · 누르면 멈춤");
+        input.value = "";
+        input.placeholder = "듣고 있어요… 말씀해 주세요";
+      } catch {
+        rec = null;
+        stop();
+      }
+    };
+  }
+
   form.onsubmit = (e) => {
     e.preventDefault();
     const v = input.value.trim();
