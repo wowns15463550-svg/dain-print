@@ -54,7 +54,7 @@ export const PRODUCTS: Product[] = [
     id: "perfect",
     name: "무선제본 (책 · 교재 · 포트폴리오)",
     slug: "perfect-binding",
-    note: "표지는 스노우지 250g 코팅으로 고정입니다. 표지는 단면이라 내지 1쪽은 오른쪽부터 시작해요.",
+    note: "표지는 스노우지 250g 코팅으로 고정입니다. 표지는 단면이라 내지 1쪽은 오른쪽부터 시작해요. A4 가로형은 안 되고, A5 가로형은 가능해요.",
     fields: [
       { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B5", "그 외 (요청사항에 적기)"], def: "A4" },
       { k: "color", label: "내지 인쇄", type: "pick", opts: ["흑백", "칼라", "섞여 있음"], def: "흑백" },
@@ -107,7 +107,7 @@ export const PRODUCTS: Product[] = [
     id: "sheet",
     name: "리플렛 · 엽서 · 카드 · 낱장 인쇄",
     slug: "postcard-invitation",
-    note: "아르떼 · 랑데뷰 소량 코팅과 박 · 미싱 · 귀도리 같은 극소량 후가공은 하지 않아요.",
+    note: "박(금박 등)은 하지 않아요. 아르떼 · 랑데뷰 소량 코팅과 미싱 · 귀도리 같은 극소량 후가공도 하지 않아요.",
     fields: [
       { k: "size", label: "펼쳤을 때 크기", type: "pick", opts: ["A3", "A4", "A5", "A6", "그 외 (요청사항에 적기)"], def: "A4" },
       { k: "side", label: "면", type: "pick", opts: ["단면", "양면"], def: "양면" },
