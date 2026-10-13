@@ -64,6 +64,12 @@ const nopeAnswer = (name: string) => `죄송하지만 저희 업체는 ${name}${
 
 export const INTENTS: Intent[] = [
   {
+    id: "check",
+    chip: "📎 파일 확인",
+    keys: ["파일확인", "파일검사", "파일체크", "사이즈확인", "도련확인", "화질확인", "해상도", "확인해줄", "봐줄수", "검토"],
+    a: "PDF나 이미지를 올려 주시면 사이즈·도련·가장자리 글씨·화질·쪽수를 바로 봐 드려요.\n파일은 이 기기 안에서만 확인하고 어디로도 보내지 않아요.",
+  },
+  {
     id: "eta",
     chip: "언제 받아요?",
     keys: ["언제", "당일", "오늘", "빨리", "급해", "급한", "급하", "납기", "얼마나걸", "며칠", "내일", "받을수있", "나와요", "나오나", "완성", "소요", "걸리"],
@@ -328,7 +334,7 @@ void FAQ;
 
 export const GREETING = "안녕하세요! 다인인쇄소 AI 챗봇입니다.\n궁금한 내용을 자유롭게 물어보세요 😊";
 export const FALLBACK = "음… 그건 잘 모르겠어요. 사장님께 직접 물어봐 주세요!";
-export const START_CHIPS = ["eta", "price", "order", "file", "location", "hours", "binding", "kakao"];
+export const START_CHIPS = ["check", "eta", "price", "order", "file", "location", "hours", "binding", "kakao"];
 export const MORE_CHIPS = ["print", "pay", "tax", "ship", "pickup", "card", "flyer", "poster", "form", "paper", "design", "color", "template", "event", "cant"];
 
 const norm = (s: string) => s.toLowerCase().replace(/[\s.,!?~·'"()\-]/g, "");

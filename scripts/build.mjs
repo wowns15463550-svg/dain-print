@@ -211,6 +211,9 @@ writeFileSync(
 );
 cpSync("src/site.css", "dist/site.css");
 if (existsSync("public")) cpSync("public", "dist", { recursive: true });
+// 챗봇 파일 확인용 PDF 읽기 도구 (손님이 파일을 올릴 때만 불러옴)
+mkdirSync("dist/vendor/pdfjs", { recursive: true });
+for (const f of ["pdf.min.js", "pdf.worker.min.js"]) cpSync(`node_modules/pdfjs-dist/legacy/build/${f}`, `dist/vendor/pdfjs/${f}`);
 
 // 품목별 페이지: dist/{slug}/index.html
 for (const p of servicePages) {

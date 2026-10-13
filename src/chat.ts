@@ -1,5 +1,6 @@
 // 다인 AI 챗봇 — 모든 페이지 오른쪽 아래. 서버 없이 chat-kb.ts에 적힌 확인된 답만 보여줍니다.
 // 로봇 표정: 되는 답 = 웃음, 안 되는 답 = 울음, 모르는 질문 = 갸우뚱
+import { checkFile } from "./filecheck";
 import { byId, FALLBACK, findIntent, GREETING, Intent, L, Link, Mood, MORE_CHIPS, START_CHIPS } from "./chat-kb";
 
 type Face = Mood | "idle";
@@ -34,6 +35,7 @@ ${f}</svg>`;
 
 const ICON_OUT = `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const ICON_TEL = `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`;
+const ICON_CLIP = `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M20 11.5l-7.8 7.8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const ICON_GO = `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -85,6 +87,8 @@ function mount() {
 <div class="dc-log" aria-live="polite"></div>
 <form class="dc-in">
   <input type="text" placeholder="궁금한 내용을 입력하세요" aria-label="질문 입력" maxlength="200" autocomplete="off">
+  <button type="button" class="dc-clip" aria-label="파일 올려서 확인하기"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 11.5l-7.8 7.8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <input type="file" class="dc-file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" hidden>
   <button type="button" class="dc-mic" aria-label="말로 물어보기" hidden><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
   <button type="submit" aria-label="보내기"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a.7.7 0 0 0-1 .8L4 10.7l9 1.3-9 1.3-1.6 6.3a.7.7 0 0 0 1 .8z" fill="currentColor"/></svg></button>
 </form>
@@ -169,7 +173,43 @@ function mount() {
     }
     const next = [...also.map((a) => a.id), ...(it.next || [])].filter((id, i, a) => id !== it.id && a.indexOf(id) === i).slice(0, 3);
     bot(it.a, it.mood || "happy", it.links, next);
+    if (it.id === "check") {
+      const b = el("button", "dc-act dc-pick", `${ICON_CLIP}<span>파일 올리기</span>`) as HTMLButtonElement;
+      b.type = "button";
+      b.onclick = () => fileIn.click();
+      const acts = el("div", "dc-acts");
+      acts.appendChild(b);
+      const cols = log.querySelectorAll(".dc-row.bot .dc-col");
+      (cols[cols.length - 1] as HTMLElement)?.appendChild(acts);
+    }
   }
+
+  // 파일 확인: 손님 기기 안에서만 열어 봄
+  async function runCheck(file: File) {
+    if (busy) return;
+    busy = true;
+    user(`📎 ${file.name}`);
+    const typing = el("div", "dc-row bot dc-typing", `<span class="dc-av">${robot()}</span><div class="dc-msg"><i></i><i></i><i></i></div>`);
+    log.appendChild(typing);
+    scroll();
+    let r;
+    try {
+      r = await checkFile(file);
+    } catch {
+      r = { ok: false, unsure: true, lines: ["파일을 확인하지 못했어요."] };
+    }
+    typing.remove();
+    const head = r.ok ? "파일을 확인했어요. 큰 문제는 없어 보여요!" : "파일을 확인했어요. 아래 내용을 봐 주세요.";
+    bot(`${head}\n${r.lines.join("\n")}\n정확한 확인은 사장님이 해 드려요.`, r.ok ? "happy" : "unsure", [L.mail, L.webhard]);
+    busy = false;
+  }
+  const fileIn = form.querySelector(".dc-file") as HTMLInputElement;
+  (form.querySelector(".dc-clip") as HTMLButtonElement).onclick = () => fileIn.click();
+  fileIn.onchange = () => {
+    const f = fileIn.files?.[0];
+    fileIn.value = "";
+    if (f) runCheck(f);
+  };
 
   function ask(text: string, it?: Intent) {
     if (busy) return;
