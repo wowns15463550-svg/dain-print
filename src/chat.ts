@@ -87,9 +87,9 @@ function mount() {
 <div class="dc-log" aria-live="polite"></div>
 <form class="dc-in">
   <input type="text" placeholder="궁금한 내용을 입력하세요" aria-label="질문 입력" maxlength="200" autocomplete="off">
-  <button type="button" class="dc-clip" aria-label="파일 올려서 확인하기"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 11.5l-7.8 7.8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button type="button" class="dc-clip" aria-label="파일 올려서 확인하기" data-tip="간단하게 파일 확인해 드려요"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 11.5l-7.8 7.8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <input type="file" class="dc-file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" hidden>
-  <button type="button" class="dc-mic" aria-label="말로 물어보기" hidden><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  <button type="button" class="dc-mic" aria-label="말로 물어보기" data-tip="말로 물어보기" hidden><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
   <button type="submit" aria-label="보내기"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a.7.7 0 0 0-1 .8L4 10.7l9 1.3-9 1.3-1.6 6.3a.7.7 0 0 0 1 .8z" fill="currentColor"/></svg></button>
 </form>
 <p class="dc-note">자동 응답이에요. 정확한 견적·일정은 사장님께 확인해 주세요.</p>`;
@@ -200,7 +200,8 @@ function mount() {
     }
     typing.remove();
     const head = r.ok ? "파일을 확인했어요. 큰 문제는 없어 보여요!" : "파일을 확인했어요. 아래 내용을 봐 주세요.";
-    bot(`${head}\n${r.lines.join("\n")}\n정확한 확인은 사장님이 해 드려요.`, r.ok ? "happy" : "unsure", [L.mail, L.webhard]);
+    if (r.pages) lastPages = r.pages;
+    bot(`${head}\n${r.lines.join("\n")}\n보내실 때는 같은 크기·같은 수량끼리 PDF 하나로 묶어 주세요.\n정확한 확인은 사장님이 해 드려요.`, r.ok ? "happy" : "unsure", [L.mail, L.webhard]);
     busy = false;
   }
   const fileIn = form.querySelector(".dc-file") as HTMLInputElement;
@@ -211,8 +212,16 @@ function mount() {
     if (f) runCheck(f);
   };
 
+  let lastPages = 0; // 마지막으로 확인한 PDF 쪽수 (중철 쪽수 확인용)
   function ask(text: string, it?: Intent) {
     if (busy) return;
+    // 파일 확인 뒤 "중철로 할게요" → 쪽수가 모자랄 때만 알려줌
+    if (!it && lastPages > 1 && /중철/.test(text) && !(lastPages >= 8 && lastPages % 4 === 0)) {
+      const need = Math.max(8, Math.ceil(lastPages / 4) * 4);
+      user(text);
+      bot(`올려주신 파일이 ${lastPages}쪽이에요. 중철은 8쪽 이상 4의 배수여야 해서 ${need}쪽으로 맞춰 주셔야 해요. (빈 쪽을 넣어 맞추면 돼요)`, "sad", [{ label: "중철제본 안내", href: "/saddle-stitch/" }]);
+      return;
+    }
     user(text);
     busy = true;
     const typing = el("div", "dc-row bot dc-typing", `<span class="dc-av">${robot()}</span><div class="dc-msg"><i></i><i></i><i></i></div>`);

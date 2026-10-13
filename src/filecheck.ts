@@ -2,7 +2,7 @@
 // 보는 것: 사이즈(A4 등) · 도련 유무 · 가장자리 글씨 · 화질 · 쪽수(중철 가능 여부)
 // 모르는 건 모른다고 하고, 정확한 확인은 사장님이 합니다.
 
-export type CheckResult = { ok: boolean; lines: string[]; unsure?: boolean };
+export type CheckResult = { ok: boolean; lines: string[]; unsure?: boolean; pages?: number };
 
 const MM = 25.4 / 72; // pt → mm
 const SIZES: [string, number, number][] = [
@@ -212,15 +212,10 @@ export async function checkPdf(file: File): Promise<CheckResult> {
   } else lines.push(`✅ 화질 괜찮아요 (약 ${Math.round(low)}dpi 이상).`);
   if (n > last) lines.push(`(글씨·화질은 앞 ${last}쪽만 봤어요)`);
 
-  // 4) 쪽수 · 중철
-  if (n === 1) lines.push("📄 1쪽짜리 파일이에요.");
-  else if (n >= 8 && n % 4 === 0) lines.push(`✅ ${n}쪽 — 중철 가능한 쪽수예요.`);
-  else {
-    const need = Math.max(8, Math.ceil(n / 4) * 4);
-    lines.push(`📄 ${n}쪽 — 중철로 하시려면 ${need}쪽으로 맞춰야 해요 (8쪽 이상 4의 배수). 무선·스프링은 상관없어요.`);
-  }
+  // 4) 쪽수 (중철 여부는 손님이 중철이라고 할 때만 따로 알려줌)
+  lines.push(`📄 ${n}쪽`);
   doc.destroy?.();
-  return { ok, lines };
+  return { ok, lines, pages: n };
 }
 
 export async function checkImage(file: File): Promise<CheckResult> {

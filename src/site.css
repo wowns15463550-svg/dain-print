@@ -788,6 +788,9 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .dc-in button:hover{background:#EEF3FF}
 .dc-mic[hidden]{display:none}
 .dc-in .dc-mic,.dc-in .dc-clip{color:#5B6B8C}
+.dc-in [data-tip]{position:relative}
+.dc-in [data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 10px);right:-6px;padding:7px 11px;border-radius:10px;background:#17203D;color:#fff;font-size:12.5px;font-weight:600;white-space:nowrap;opacity:0;transform:translateY(4px);pointer-events:none;transition:opacity .2s,transform .2s}
+.dc-in [data-tip]:hover::after,.dc-in [data-tip]:focus-visible::after{opacity:1;transform:none}
 .dc-pick{cursor:pointer;font:inherit;font-size:13.5px;font-weight:700}
 .dc-in .dc-mic.on{color:#fff;background:#FF5A5F;animation:dcmic 1.2s ease-out infinite}
 @keyframes dcmic{0%{box-shadow:0 0 0 0 rgba(255,90,95,.5)}100%{box-shadow:0 0 0 12px rgba(255,90,95,0)}}
