@@ -135,8 +135,8 @@ export async function checkPdf(file: File): Promise<CheckResult> {
   try {
     doc = await lib.getDocument({ data: buf, isEvalSupported: false }).promise;
   } catch (e: any) {
-    if (e?.name === "PasswordException") return { ok: false, unsure: true, lines: ["비밀번호가 걸린 PDF라 열 수 없어요. 비밀번호를 풀고 다시 올려 주세요."] };
-    return { ok: false, unsure: true, lines: ["파일을 열지 못했어요. 파일이 깨졌을 수 있어요."] };
+    if (e?.name === "PasswordException") return { ok: false, unsure: true, lines: ["비밀번호가 걸린 PDF라 열 수 없습니다. 비밀번호를 풀고 다시 올려 주세요."] };
+    return { ok: false, unsure: true, lines: ["파일을 열지 못했습니다. 파일이 깨졌을 수 있습니다."] };
   }
   const n = doc.numPages;
   const lines: string[] = [];
@@ -165,18 +165,18 @@ export async function checkPdf(file: File): Promise<CheckResult> {
     if (hit.bleed > 0) lines.push(`✅ 사이즈: ${sizeLabel(hit)} (${fmt(hit.w)}×${fmt(hit.h)}mm) + 도련 ${hit.bleed}mm`);
     else {
       lines.push(`✅ 사이즈: ${sizeLabel(hit)} (${fmt(hit.w)}×${fmt(hit.h)}mm)`);
-      lines.push(`⚠️ 도련(재단 여백)이 없어요. 가장자리를 얇게 재단(약시)해서 ${hit.name}보다 조금 작아질 수 있어요.`);
+      lines.push(`⚠️ 도련(재단 여백)이 없습니다. 가장자리를 얇게 재단(약시)하면 ${hit.name}보다 조금 작아질 수 있습니다.`);
       ok = false;
     }
   } else if (half) {
-    lines.push(`⚠️ 두 쪽이 한 장에 붙은 펼침면 파일 같아요 (${fmt(wmm)}×${fmt(hmm)}mm). 낱장(한 쪽씩)으로 보내 주세요.`);
+    lines.push(`⚠️ 두 쪽이 한 장에 붙은 펼침면 파일로 보입니다 (${fmt(wmm)}×${fmt(hmm)}mm). 낱장(한 쪽씩)으로 보내 주세요.`);
     ok = false;
   } else {
-    lines.push(`🤔 사이즈: ${fmt(wmm)}×${fmt(hmm)}mm — 자주 쓰는 규격이 아니에요. 사장님이 확인해 드릴게요.`);
+    lines.push(`🤔 사이즈: ${fmt(wmm)}×${fmt(hmm)}mm — 자주 쓰는 규격이 아닙니다. 사장님께서 확인해 드립니다.`);
     ok = false;
   }
   if (mixed) {
-    lines.push("⚠️ 쪽마다 크기가 달라요.");
+    lines.push("⚠️ 쪽마다 크기가 다릅니다.");
     ok = false;
   }
 
@@ -199,18 +199,18 @@ export async function checkPdf(file: File): Promise<CheckResult> {
       if (d !== null && (low === null || d < low)) low = d;
     } catch {}
   }
-  if (!textSeen) lines.push("🤔 글씨 위치는 확인하지 못했어요. (글씨가 이미지·윤곽선으로 되어 있으면 확인이 어려워요)");
+  if (!textSeen) lines.push("🤔 글씨 위치는 확인하지 못했습니다. (글씨가 이미지·윤곽선으로 되어 있으면 확인이 어렵습니다)");
   else if (edge > 0) {
-    lines.push(`⚠️ 가장자리에 너무 붙은 글씨가 있어요. 재단할 때 잘릴 수 있어요. 재단선에서 ${SAFE}mm 이상 안쪽으로 옮겨 주세요.`);
+    lines.push(`⚠️ 가장자리에 너무 붙은 글씨가 있습니다. 재단 시 잘릴 수 있습니다. 재단선에서 ${SAFE}mm 이상 안쪽으로 옮겨 주세요.`);
     ok = false;
-  } else lines.push("✅ 글씨가 가장자리에서 충분히 떨어져 있어요.");
+  } else lines.push("✅ 글씨가 가장자리에서 충분히 떨어져 있습니다.");
 
-  if (low === null) lines.push("✅ 화질: 확인할 사진이 없어요.");
+  if (low === null) lines.push("✅ 화질: 확인할 사진이 없습니다.");
   else if (low < LOW_DPI) {
-    lines.push(`⚠️ 화질이 낮은 사진이 있어요 (약 ${Math.round(low)}dpi). 흐리게 나올 수 있어요. 300dpi 원본을 추천해요.`);
+    lines.push(`⚠️ 화질이 낮은 사진이 있습니다 (약 ${Math.round(low)}dpi). 흐리게 나올 수 있으니 300dpi 원본을 추천드립니다.`);
     ok = false;
-  } else lines.push(`✅ 화질 괜찮아요 (약 ${Math.round(low)}dpi 이상).`);
-  if (n > last) lines.push(`(글씨·화질은 앞 ${last}쪽만 봤어요)`);
+  } else lines.push(`✅ 화질 양호합니다 (약 ${Math.round(low)}dpi 이상).`);
+  if (n > last) lines.push(`(글씨·화질은 앞 ${last}쪽만 확인했습니다)`);
 
   // 4) 쪽수 (중철 여부는 손님이 중철이라고 할 때만 따로 알려줌)
   lines.push(`📄 ${n}쪽`);
@@ -236,29 +236,29 @@ export async function checkImage(file: File): Promise<CheckResult> {
     const ratio = long / short;
     if (Math.abs(ratio - Math.SQRT2) < 0.03) {
       const dpiA4 = Math.min(long / (297 / 25.4), short / (210 / 25.4));
-      if (dpiA4 >= LOW_DPI) lines.push(`✅ A4로 뽑으면 약 ${Math.round(dpiA4)}dpi — 화질 괜찮아요.`);
+      if (dpiA4 >= LOW_DPI) lines.push(`✅ A4로 뽑으면 약 ${Math.round(dpiA4)}dpi — 화질 양호합니다.`);
       else {
-        lines.push(`⚠️ A4로 뽑으면 약 ${Math.round(dpiA4)}dpi — 흐리게 나올 수 있어요.`);
+        lines.push(`⚠️ A4로 뽑으면 약 ${Math.round(dpiA4)}dpi — 흐리게 나올 수 있습니다.`);
         ok = false;
       }
     } else {
       const dpiA4 = Math.min(long / (297 / 25.4), short / (210 / 25.4));
-      lines.push(`🤔 A4 비율은 아니에요. 원하시는 인쇄 크기를 알려주시면 사장님이 확인해 드려요.${dpiA4 < LOW_DPI ? " (A4 크기로 키우면 흐리게 나올 수 있어요)" : ""}`);
+      lines.push(`🤔 A4 비율은 아닙니다. 원하시는 인쇄 크기를 알려 주시면 사장님께서 확인해 드립니다.${dpiA4 < LOW_DPI ? " (A4 크기로 키우면 흐리게 나올 수 있습니다)" : ""}`);
       if (dpiA4 < LOW_DPI) ok = false;
     }
-    lines.push("🤔 이미지 파일은 도련·글씨 위치를 확인하기 어려워요. PDF로 보내 주시면 더 정확해요.");
+    lines.push("🤔 이미지 파일은 도련·글씨 위치를 확인하기 어렵습니다. PDF로 보내 주시면 더 정확합니다.");
     return { ok, lines, unsure: !ok };
   } catch {
-    return { ok: false, unsure: true, lines: ["이미지를 열지 못했어요."] };
+    return { ok: false, unsure: true, lines: ["이미지를 열지 못했습니다."] };
   } finally {
     URL.revokeObjectURL(url);
   }
 }
 
 export async function checkFile(file: File): Promise<CheckResult> {
-  if (file.size > 150 * 1024 * 1024) return { ok: false, unsure: true, lines: ["파일이 너무 커서(150MB 이상) 여기서는 확인이 어려워요. 그대로 보내 주시면 사장님이 확인해 드려요."] };
+  if (file.size > 150 * 1024 * 1024) return { ok: false, unsure: true, lines: ["파일이 너무 커서(150MB 이상) 여기서는 확인이 어렵습니다. 그대로 보내 주시면 사장님께서 확인해 드립니다."] };
   const name = file.name.toLowerCase();
   if (file.type === "application/pdf" || name.endsWith(".pdf")) return checkPdf(file);
   if (/^image\/(jpeg|png)$/.test(file.type) || /\.(jpe?g|png)$/.test(name)) return checkImage(file);
-  return { ok: false, unsure: true, lines: ["PDF, JPG, PNG 파일만 확인할 수 있어요. AI 파일 등은 그대로 보내 주시면 사장님이 확인해 드려요."] };
+  return { ok: false, unsure: true, lines: ["PDF, JPG, PNG 파일만 확인할 수 있습니다. AI 파일 등은 그대로 보내 주시면 사장님께서 확인해 드립니다."] };
 }

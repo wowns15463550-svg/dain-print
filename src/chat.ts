@@ -92,7 +92,7 @@ function mount() {
   <button type="button" class="dc-mic" aria-label="말로 물어보기" data-tip="말로 물어보기" hidden><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
   <button type="submit" aria-label="보내기"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a.7.7 0 0 0-1 .8L4 10.7l9 1.3-9 1.3-1.6 6.3a.7.7 0 0 0 1 .8z" fill="currentColor"/></svg></button>
 </form>
-<p class="dc-note">자동 응답이에요. 정확한 견적·일정은 사장님께 확인해 주세요.</p>`;
+<p class="dc-note">자동 응답입니다. 정확한 견적·일정은 사장님께 확인해 주세요.</p>`;
 
   root.append(panel, tip, launch);
   document.body.appendChild(root);
@@ -103,8 +103,19 @@ function mount() {
   let started = false;
   let busy = false;
 
+  let lastPages = 0; // 마지막으로 확인한 PDF 쪽수 (중철 쪽수 확인용)
+  // 다른 페이지로 넘어가도 대화가 이어지도록 이 탭(sessionStorage)에 저장
+  const KEY = "dc-chat";
+  const save = (isOpen = !panel.hidden) => {
+    const c = log.cloneNode(true) as HTMLElement;
+    c.querySelectorAll(".dc-typing").forEach((n) => n.remove());
+    let html = c.innerHTML;
+    if (html.length > 200000) html = "";
+    ss.set(KEY, JSON.stringify({ html, open: isOpen, started, lastPages }));
+  };
   const scroll = () => {
     log.scrollTop = log.scrollHeight;
+    save();
   };
 
   function linkBtns(links: Link[]) {
@@ -130,18 +141,14 @@ function mount() {
       const b = el("button", "dc-chip") as HTMLButtonElement;
       b.type = "button";
       b.textContent = it.chip;
-      b.onclick = () => ask(it.chip!, it);
+      b.dataset.id = id;
       wrap.appendChild(b);
     }
     if (more) {
       const b = el("button", "dc-chip ghost") as HTMLButtonElement;
       b.type = "button";
       b.textContent = "+ 더 보기";
-      b.onclick = () => {
-        b.remove();
-        wrap.after(chips(MORE_CHIPS));
-        scroll();
-      };
+      b.dataset.more = "1";
       wrap.appendChild(b);
     }
     return wrap;
@@ -176,7 +183,6 @@ function mount() {
     if (it.id === "check") {
       const b = el("button", "dc-act dc-pick", `${ICON_CLIP}<span>파일 올리기</span>`) as HTMLButtonElement;
       b.type = "button";
-      b.onclick = () => fileIn.click();
       const acts = el("div", "dc-acts");
       acts.appendChild(b);
       const cols = log.querySelectorAll(".dc-row.bot .dc-col");
@@ -196,12 +202,12 @@ function mount() {
     try {
       r = await checkFile(file);
     } catch {
-      r = { ok: false, unsure: true, lines: ["파일을 확인하지 못했어요."] };
+      r = { ok: false, unsure: true, lines: ["파일을 확인하지 못했습니다."] };
     }
     typing.remove();
-    const head = r.ok ? "파일을 확인했어요. 큰 문제는 없어 보여요!" : "파일을 확인했어요. 아래 내용을 봐 주세요.";
+    const head = r.ok ? "파일을 확인했습니다. 큰 문제는 없어 보입니다." : "파일을 확인했습니다. 아래 내용을 확인해 주세요.";
     if (r.pages) lastPages = r.pages;
-    bot(`${head}\n${r.lines.join("\n")}\n보내실 때는 같은 크기·같은 수량끼리 PDF 하나로 묶어 주세요.\n정확한 확인은 사장님이 해 드려요.`, r.ok ? "happy" : "unsure", [L.mail, L.webhard]);
+    bot(`${head}\n${r.lines.join("\n")}\n보내실 때는 같은 크기·같은 수량끼리 PDF 하나로 묶어 주세요.\n정확한 확인은 사장님께서 해 드립니다.`, r.ok ? "happy" : "unsure", [L.mail, L.webhard]);
     busy = false;
   }
   const fileIn = form.querySelector(".dc-file") as HTMLInputElement;
@@ -212,14 +218,27 @@ function mount() {
     if (f) runCheck(f);
   };
 
-  let lastPages = 0; // 마지막으로 확인한 PDF 쪽수 (중철 쪽수 확인용)
+  log.addEventListener("click", (e) => {
+    const t = (e.target as HTMLElement).closest("button") as HTMLButtonElement | null;
+    if (!t) return;
+    if (t.classList.contains("dc-pick")) fileIn.click();
+    else if (t.dataset.more) {
+      const wrap = t.parentElement as HTMLElement;
+      t.remove();
+      wrap.after(chips(MORE_CHIPS));
+      scroll();
+    } else if (t.dataset.id) {
+      const it = byId(t.dataset.id);
+      if (it?.chip) ask(it.chip, it);
+    }
+  });
   function ask(text: string, it?: Intent) {
     if (busy) return;
     // 파일 확인 뒤 "중철로 할게요" → 쪽수가 모자랄 때만 알려줌
     if (!it && lastPages > 1 && /중철/.test(text) && !(lastPages >= 8 && lastPages % 4 === 0)) {
       const need = Math.max(8, Math.ceil(lastPages / 4) * 4);
       user(text);
-      bot(`올려주신 파일이 ${lastPages}쪽이에요. 중철은 8쪽 이상 4의 배수여야 해서 ${need}쪽으로 맞춰 주셔야 해요. (빈 쪽을 넣어 맞추면 돼요)`, "sad", [{ label: "중철제본 안내", href: "/saddle-stitch/" }]);
+      bot(`올려주신 파일은 ${lastPages}쪽이십니다. 중철은 8쪽 이상 4의 배수여야 하므로 ${need}쪽으로 맞춰 주셔야 합니다. (빈 쪽을 넣어 맞추시면 됩니다)`, "sad", [{ label: "중철제본 안내", href: "/saddle-stitch/" }]);
       return;
     }
     user(text);
@@ -245,12 +264,15 @@ function mount() {
       started = true;
       bot(GREETING, "happy", undefined, START_CHIPS, true);
     }
+    save(true);
+    scroll();
     if (matchMedia("(min-width: 701px)").matches) setTimeout(() => input.focus(), 50);
   }
   function close() {
     panel.hidden = true;
     root.classList.remove("open");
     launch.setAttribute("aria-expanded", "false");
+    save(false);
     launch.focus();
   }
 
@@ -293,8 +315,8 @@ function mount() {
         input.value = heard;
       };
       rec.onerror = (ev: any) => {
-        if (ev.error === "not-allowed" || ev.error === "service-not-allowed") bot("마이크 사용이 막혀 있어요. 브라우저에서 마이크를 허용하거나 글로 적어 주세요.", "unsure");
-        else if (ev.error === "no-speech") bot("잘 안 들렸어요. 다시 한번 말씀해 주세요!", "unsure");
+        if (ev.error === "not-allowed" || ev.error === "service-not-allowed") bot("마이크 사용이 막혀 있습니다. 브라우저에서 마이크를 허용하시거나 글로 적어 주세요.", "unsure");
+        else if (ev.error === "no-speech") bot("잘 들리지 않았습니다. 다시 한번 말씀해 주세요.", "unsure");
       };
       rec.onend = () => {
         rec = null;
@@ -310,7 +332,7 @@ function mount() {
         mic.classList.add("on");
         mic.setAttribute("aria-label", "듣는 중 · 누르면 멈춤");
         input.value = "";
-        input.placeholder = "듣고 있어요… 말씀해 주세요";
+        input.placeholder = "듣고 있습니다… 말씀해 주세요";
       } catch {
         rec = null;
         stop();
@@ -325,6 +347,25 @@ function mount() {
     input.value = "";
     ask(v);
   };
+
+  // 이전 페이지에서 하던 대화 복원
+  try {
+    const raw = ss.get(KEY);
+    const d = raw ? JSON.parse(raw) : null;
+    if (d && d.started && d.html) {
+      log.innerHTML = d.html;
+      started = true;
+      lastPages = d.lastPages || 0;
+      log.querySelectorAll(".dc-typing").forEach((n) => n.remove());
+      if (d.open) {
+        panel.hidden = false;
+        root.classList.add("open");
+        launch.setAttribute("aria-expanded", "true");
+        tip.remove();
+        scroll();
+      }
+    }
+  } catch {}
 
   if (ss.get("dc-tip")) tip.remove();
   else {
