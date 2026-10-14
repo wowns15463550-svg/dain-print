@@ -57,7 +57,7 @@ export const PRODUCTS: Product[] = [
     note: "표지는 스노우지 250g 코팅으로 고정입니다. 표지는 단면이라 내지 1쪽은 오른쪽부터 시작해요. A4 가로형은 안 되고, A5 가로형은 가능해요.",
     fields: [
       { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B5", "그 외 (요청사항에 적기)"], def: "A4" },
-      { k: "color", label: "내지 인쇄", type: "pick", opts: ["흑백", "칼라", "섞여 있음"], def: "흑백" },
+      { k: "color", label: "내지 인쇄", type: "pick", opts: ["흑백", "칼라"], def: "흑백" },
       { k: "side", label: "내지 면", type: "pick", opts: ["양면", "단면"], def: "양면" },
       { k: "paper", label: "내지 용지", type: "pick", opts: ["모조 100g", DIRECT, UNSURE], def: "모조 100g", custom: DIRECT },
       { k: "coat", label: "표지 코팅", type: "pick", opts: ["무광", "유광"], def: "무광" },
@@ -72,7 +72,7 @@ export const PRODUCTS: Product[] = [
     note: "검정 트윈링, 앞뒤 무광 반투명 PVC로 마감합니다. 표지도 양면으로 시작하고, 표지와 내지는 같은 용지예요.",
     fields: [
       { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B5", "그 외 (요청사항에 적기)"], def: "A4" },
-      { k: "color", label: "인쇄", type: "pick", opts: ["흑백", "칼라", "섞여 있음"], def: "흑백" },
+      { k: "color", label: "인쇄", type: "pick", opts: ["흑백", "칼라"], def: "흑백" },
       { k: "side", label: "면", type: "pick", opts: ["양면", "단면"], def: "양면" },
       { k: "paper", label: "용지", type: "pick", opts: ["복사용지 (무림 M COPY 80g)", DIRECT, UNSURE], def: "복사용지 (무림 M COPY 80g)", custom: DIRECT },
       { k: "pages", label: "쪽수 (표지 포함)", type: "num", def: 50, min: 1, step: 1, unit: "쪽" },

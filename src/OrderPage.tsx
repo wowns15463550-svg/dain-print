@@ -16,23 +16,68 @@ const newItem = (pid = PRODUCTS[0].id): Item => ({ key: seq++, pid, vals: defaul
 const todayKST = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
 const dayName = (d: string) => "일월화수목금토"[new Date(d + "T12:00:00+09:00").getUTCDay()];
 
+// 사장님이 한눈에 보기 쉽게: 품목마다 "항목 : 값" 줄로 정리
+const NUM = "①②③④⑤⑥⑦⑧⑨⑩";
+const paperOf = (v: Vals) => {
+  const p = String(v.paper ?? "");
+  if (p.startsWith("다른 종이")) return String(v.paper_txt || "").trim() || "다른 종이 (요청사항 참고)";
+  return p.replace(/^복사용지 \(무림 M COPY 80g\)$/, "복사용지 80g");
+};
+const join = (...xs: unknown[]) => xs.filter((x) => x && x !== "없음").join(" · ");
+
 function describe(it: Item) {
   const p = prod(it.pid);
   const v = it.vals;
-  const parts: string[] = [];
-  for (const f of p.fields) {
-    let val = v[f.k];
-    if (f.type === "pick" && f.custom && val === f.custom) val = String(v[f.k + "_txt"] || "").trim() || "다른 종이 (요청사항 참고)";
-    if (f.type === "check") {
-      if (val) parts.push(f.text.replace(/ \(.*\)$/, ""));
-      continue;
-    }
-    const lab = f.label.replace(/ \(.*\)$/, "");
-    if (f.type === "num") parts.push(`${lab} ${val}${f.unit}`);
-    else if (f.k === "weight") parts[parts.length - 1] += ` ${val}`;
-    else if (val !== "없음") parts.push(`${lab} ${val}`);
+  const r: [string, string][] = [];
+  const size = String(v.size ?? "").startsWith("그 외") ? "그 외 (요청사항 참고)" : String(v.size ?? "");
+  switch (p.id) {
+    case "perfect":
+      r.push(["크기", size], ["내지", join(paperOf(v), v.side, v.color)], ["표지", `스노우지 250g · ${v.coat}코팅`], ["페이지", `${v.pages}p`], ["권수", `${v.qty}권`]);
+      break;
+    case "spring":
+      r.push(["크기", size], ["내지", join(paperOf(v), v.side, v.color)], ["페이지", `${v.pages}p (표지 포함)`], ["권수", `${v.qty}권`]);
+      break;
+    case "saddle":
+      r.push(["크기", size], ["용지", paperOf(v)], ["표지", v.coat === "없음" ? "코팅 없음" : `${v.coat}코팅`], ["페이지", `${v.pages}p (표지 포함)`], ["권수", `${v.qty}권`]);
+      break;
+    case "flyer":
+      r.push(["크기", size], ["용지", join(paperOf(v), v.side)], ["수량", `${v.qty}장`]);
+      break;
+    case "sheet":
+      r.push(["크기", size], ["용지", join(paperOf(v), v.side)]);
+      if (v.coat !== "없음") r.push(["코팅", String(v.coat)]);
+      if (v.fold !== "없음") r.push(["접지", String(v.fold)]);
+      if (v.cut) r.push(["재단", "필요"]);
+      r.push(["수량", `${v.qty}장`]);
+      break;
+    case "card":
+      r.push(["용지", paperOf(v)], ["수량", `${v.kinds}종 × ${v.qty}장`]);
+      break;
+    case "poster":
+      r.push(["크기", size], ["용지", `${v.paper} ${v.weight}`]);
+      if (v.coat !== "없음") r.push(["코팅", String(v.coat)]);
+      r.push(["수량", `${v.kinds}종 × ${v.qty}장`]);
+      break;
+    case "form":
+      r.push(["크기", size], ["용지", join(paperOf(v), v.side, v.color)], ["페이지", `${v.pages}p (한 부당)`], ["부수", `${v.qty}부`]);
+      if (v.staple) r.push(["스테이플", "왼쪽 위"]);
+      break;
+    default:
+      r.push(["수량", `${v.qty}개`]);
   }
-  return { name: p.name.replace(/ \(.*\)$/, ""), spec: parts.join(" / ") };
+  return { name: p.name.replace(/ \(.*\)$/, ""), rows: r };
+}
+
+// 따로 봐야 할 것 (특이사항으로 맨 위에 강조)
+function flags(it: Item): string[] {
+  const v = it.vals;
+  const f: string[] = [];
+  if (String(v.paper ?? "").startsWith("다른 종이")) f.push(`종이 직접 지정: ${paperOf(v)}`);
+  if (v.paper === "잘 모르겠어요") f.push("종이 추천 필요 (손님이 잘 모름)");
+  if (String(v.size ?? "").startsWith("그 외")) f.push("규격 외 크기 (요청사항 확인)");
+  if (it.pid === "saddle" && Number(v.pages) % 4 !== 0) f.push(`중철 쪽수 ${v.pages}p — 4의 배수 아님`);
+  if (it.pid === "etc") f.push("품목 미정 (요청사항 확인)");
+  return f;
 }
 
 // 고른 값에 따라 선택지 · 막힘 상태 정리 (포스터 평량, 코팅 조건)
@@ -130,9 +175,6 @@ export default function OrderView() {
   const [dueTime, setDueTime] = useState("상관없음");
   const [recv, setRecv] = useState("방문 픽업");
   const [addr, setAddr] = useState("");
-  const [tax, setTax] = useState("필요 없음");
-  const [taxInfo, setTaxInfo] = useState("");
-  const [file, setFile] = useState("메일에 첨부");
   const [memo, setMemo] = useState("");
   const [copied, setCopied] = useState("");
   const [today, setToday] = useState("");
@@ -165,26 +207,31 @@ export default function OrderView() {
   }
 
   const text = useMemo(() => {
-    const lines: string[] = [];
-    lines.push(`[주문]${sameDay ? "[당일]" : ""} ${name || "성함"} / ${items.map((it) => describe(it).name).join(", ")}`);
-    if (sameDay) lines.push("", "■■■ 당일 필요 (오늘 받아야 해요) ■■■");
-    lines.push("");
-    lines.push(`· 성함: ${name}`);
-    lines.push(`· 연락처: ${phone}`);
+    const L: string[] = [];
+    const dd = sameDay ? today : due;
+    const when = dd ? `${dd.slice(5).replace("-", ".")}(${dayName(dd)})${dueTime === "상관없음" ? "" : " " + dueTime}` : "급하지 않음";
+    L.push(`[주문] ${name || "성함"} · ${phone || "연락처"}`);
+    L.push(`${sameDay ? "★당일★ " : ""}${when} · ${recv.replace(/ \(.*\)$/, "")}`);
+    if (recv !== "방문 픽업" && addr.trim()) L.push(`주소: ${addr.trim()}`);
+    const special: string[] = [];
+    if (sameDay) special.push("당일 필요 (오늘 받아야 함)");
+    if (dd) {
+      const wd = new Date(dd + "T12:00:00+09:00").getUTCDay();
+      if (wd === 0 || wd === 6) special.push("주말 날짜");
+    }
+    items.forEach((it, i) => flags(it).forEach((x) => special.push(items.length > 1 ? `${NUM[i] ?? i + 1} ${x}` : x)));
+    if (memo.trim()) special.push(`요청: ${memo.trim()}`);
+    if (special.length) {
+      L.push("", "⚠️ 특이사항");
+      special.forEach((x) => L.push(`· ${x}`));
+    }
     items.forEach((it, i) => {
       const d = describe(it);
-      lines.push(`· 품목${items.length > 1 ? " " + (i + 1) : ""}: ${d.name}`);
-      lines.push(`   ${d.spec}`);
+      L.push("", "━━━━━━━━━━", `${items.length > 1 ? (NUM[i] ?? i + 1) + " " : ""}${d.name}`);
+      d.rows.forEach(([k, v]) => L.push(`${k} : ${v}`));
     });
-    const dd = sameDay ? today : due;
-    lines.push(`· 필요한 날: ${dd ? `${sameDay ? "★당일★ " : ""}${dd.replace(/-/g, ".")} (${dayName(dd)}) ${dueTime === "상관없음" ? "" : dueTime}`.trim() : "급하지 않음"}`);
-    lines.push(`· 받는 방법: ${recv}${recv !== "방문 픽업" && addr ? ` — ${addr}` : ""}`);
-    lines.push(`· 증빙: ${tax}${tax === "현금영수증" && taxInfo ? ` — ${taxInfo}` : ""}`);
-    if (tax === "세금계산서") lines.push("   (사업자등록증 사본과 세금계산서 받을 메일 주소를 메일로 보내드릴게요)");
-    lines.push(`· 파일: ${file}`);
-    if (memo.trim()) lines.push(`· 요청사항: ${memo.trim()}`);
-    return lines.join("\n");
-  }, [items, name, phone, due, sameDay, today, dueTime, recv, addr, tax, taxInfo, file, memo]);
+    return L.join("\n");
+  }, [items, name, phone, due, sameDay, today, dueTime, recv, addr, memo]);
 
   const copy = async (tag: string) => {
     try {
@@ -340,38 +387,6 @@ export default function OrderView() {
                   <small className="od-hint">충무로역 7번 출구 도보 3분. 주차장은 없고 매장 앞에 잠깐 정차 가능합니다.</small>
                 )}
                 {recv.startsWith("택배") && <small className="od-hint">발송 후 1~2일 걸리고 하루 더 걸릴 수 있어요. 날짜가 정해진 급한 인쇄물은 퀵을 권합니다.</small>}
-              </div>
-              <div className="od-field">
-                <span className="od-lab">세금계산서 · 현금영수증</span>
-                <div className="od-chips">
-                  {["필요 없음", "세금계산서", "현금영수증"].map((o) => (
-                    <button type="button" key={o} className={tax === o ? "on" : undefined} onClick={() => setTax(o)}>
-                      {o}
-                    </button>
-                  ))}
-                </div>
-                {tax === "현금영수증" && <input className="od-in" value={taxInfo} onChange={(e) => setTaxInfo(e.target.value)} placeholder="휴대폰 번호 또는 사업자번호" />}
-                {tax === "세금계산서" && (
-                  <p className="od-warn od-warn-box">
-                    세금계산서는 <b>사업자등록증 사본</b>과 <b>세금계산서 받으실 메일 주소</b>를 메일({CONTACT.email})로 보내 주셔야 발행됩니다.
-                  </p>
-                )}
-                <small className="od-hint">견적은 현금가 기준이라, 필요하시면 꼭 체크해 주세요.</small>
-              </div>
-              <div className="od-field">
-                <span className="od-lab">파일은 어떻게 보내세요?</span>
-                <div className="od-chips">
-                  {["메일에 첨부", "웹하드에 올림", "카톡으로 보냄", "아직 준비 중"].map((o) => (
-                    <button type="button" key={o} className={file === o ? "on" : undefined} onClick={() => setFile(o)}>
-                      {o}
-                    </button>
-                  ))}
-                </div>
-                {file === "웹하드에 올림" && (
-                  <small className="od-hint">
-                    웹하드 아이디 {CONTACT.webhardId}, '{CONTACT.webhardFolder}' 폴더에 올려 주세요. <a href="/#webhard">웹하드 안내</a>
-                  </small>
-                )}
               </div>
               <label className="od-field">
                 <span className="od-lab">요청사항</span>
