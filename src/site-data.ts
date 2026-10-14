@@ -200,7 +200,7 @@ export const GALLERY = [
   { img: "assets/g4.webp", t: "무선 책", spec: "표지 랑데뷰 240g 무광코팅 · 내지 랑데뷰 130g" },
   { img: "assets/g5.webp", t: "3단 리플렛", spec: "스노우 200g · 오시 접지" },
   { img: "assets/g6.webp", t: "중철 브로슈어", spec: "스노우 200g" },
-  { img: "assets/g7.webp", t: "무선 만화책", spec: "표지 스노우 250g 유광코팅 · 내지 모조 100g" },
+  { img: "assets/g7.webp", t: "무선 만화책", spec: "표지 스노우 250g 무광코팅 · 내지 모조 100g" },
   { img: "assets/g8.webp", t: "중철 브로슈어", spec: "모조 100g" },
   { img: "assets/g9.webp", t: "무선 작품집", spec: "표지 스노우 250g 무광코팅 · 내지 모조 100g" },
 ];

@@ -32,7 +32,7 @@ function describe(it: Item) {
   const size = String(v.size ?? "").startsWith("그 외") ? "그 외 (요청사항 참고)" : String(v.size ?? "");
   switch (p.id) {
     case "perfect":
-      r.push(["크기", size], ["내지", join(paperOf(v), v.side, v.color)], ["표지", `스노우지 250g · ${v.coat}코팅`], ["페이지", `${v.pages}p`], ["권수", `${v.qty}권`]);
+      r.push(["크기", size], ["내지", join(paperOf(v), v.side, v.color)], ["표지", "스노우지 250g · 단면 · 무광코팅"], ["페이지", `${v.pages}p`], ["권수", `${v.qty}권`]);
       break;
     case "spring":
       r.push(["크기", size], ["내지", join(paperOf(v), v.side, v.color)], ["페이지", `${v.pages}p (표지 포함)`], ["권수", `${v.qty}권`]);
