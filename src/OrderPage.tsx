@@ -23,7 +23,14 @@ const paperOf = (v: Vals) => {
   if (p.startsWith("다른 종이")) return String(v.paper_txt || "").trim() || "다른 종이 (요청사항 참고)";
   return p.replace(/^복사용지 \(무림 M COPY 80g\)$/, "복사용지 80g");
 };
-const join = (...xs: unknown[]) => xs.filter((x) => x && x !== "없음").join(" · ");
+const join = (...xs: unknown[]) => xs.filter((x) => x && x !== "없음").map((x) => (x === "단면" ? "★단면" : x)).join(" · ");
+// 세네카(책등 두께): 모조 100g만, 100쪽(양면 50장) ≈ 5.9mm 기준
+export const spineMM = (v: Vals) => {
+  if (v.paper !== "모조 100g") return null;
+  const pages = Number(v.pages) || 0;
+  const sheets = v.side === "단면" ? pages : Math.ceil(pages / 2);
+  return sheets ? Math.round(sheets * 0.118 * 10) / 10 : null;
+};
 
 function describe(it: Item) {
   const p = prod(it.pid);
@@ -32,7 +39,11 @@ function describe(it: Item) {
   const size = String(v.size ?? "").startsWith("그 외") ? "그 외 (요청사항 참고)" : String(v.size ?? "");
   switch (p.id) {
     case "perfect":
-      r.push(["크기", size], ["내지", join(paperOf(v), v.side, v.color)], ["표지", "스노우지 250g · 단면 · 무광코팅"], ["페이지", `${v.pages}p`], ["권수", `${v.qty}권`]);
+      r.push(["크기", size]);
+      if (v.orient === "가로형") r.push(["방향", `가로형 · ${String(v.bind).replace(/ \(.*\)$/, "")}`]);
+      r.push(["내지", join(paperOf(v), v.side, v.color)], ["표지", "스노우지 250g · 단면 · 무광코팅"], ["페이지", `${v.pages}p`]);
+      if (spineMM(v)) r.push(["세네카", `약 ${spineMM(v)}mm`]);
+      r.push(["권수", `${v.qty}권`]);
       break;
     case "spring":
       r.push(["크기", size], ["내지", join(paperOf(v), v.side, v.color)], ["페이지", `${v.pages}p (표지 포함)`], ["권수", `${v.qty}권`]);
@@ -77,6 +88,7 @@ function flags(it: Item): string[] {
   if (String(v.size ?? "").startsWith("그 외")) f.push("규격 외 크기 (요청사항 확인)");
   if (it.pid === "saddle" && Number(v.pages) % 4 !== 0) f.push(`중철 쪽수 ${v.pages}p — 4의 배수 아님`);
   if (it.pid === "etc") f.push("품목 미정 (요청사항 확인)");
+  if (it.pid === "perfect" && v.orient === "가로형") f.push(`가로형 ${String(v.bind).replace(/ \(.*\)$/, "")}`);
   return f;
 }
 
@@ -102,6 +114,7 @@ export function settle(p: Product, v: Vals): Vals {
 
 function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | number | boolean) => void }) {
   if (f.type === "pick") {
+    if (f.showIf && !f.showIf(v)) return null;
     const opts = f.optsOf ? f.optsOf(v) : f.opts;
     const why = f.block ? f.block(v) : null;
     const tone = (o: string) => (f.k === "color" ? (o === "흑백" ? " bk" : o === "칼라" ? " red" : "") : "");
@@ -121,7 +134,7 @@ function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | nu
         {f.custom && v[f.k] === f.custom && (
           <input className="od-in" value={String(v[f.k + "_txt"] ?? "")} onChange={(e) => set(f.k + "_txt", e.target.value)} placeholder="원하시는 종이를 적어 주세요 (예: 랑데뷰 130g)" />
         )}
-        {why ? <small className="od-warn">{why}</small> : f.hint && <small className="od-hint">{f.hint}</small>}
+        {why ? <small className="od-warn">{why}</small> : (f.hintOf?.(v) ?? f.hint) && <small className="od-hint">{f.hintOf?.(v) ?? f.hint}</small>}
       </div>
     );
   }
@@ -153,6 +166,7 @@ function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | nu
         {f.minWhy && n > 0 && n < f.min && <small className="od-warn">{f.minWhy}</small>}
         {f.maxOf && n > f.maxOf(v) && <small className="od-warn">최대 {f.maxOf(v)}{f.unit}까지 가능해요.</small>}
         {f.hint && <small className="od-hint">{f.hint}</small>}
+        {f.k === "pages" && v.orient && spineMM(v) && <small className="od-spine">세네카(책등) 약 {spineMM(v)}mm · 표지 만들 때 참고</small>}
       </div>
     );
   }
@@ -399,7 +413,7 @@ export default function OrderView() {
               </div>
               <label className="od-field">
                 <span className="od-lab">요청사항</span>
-                <textarea className="od-in" rows={3} value={memo} onChange={(e) => setMemo(e.target.value)} placeholder="예) 표지는 따로 보내요 / 3단 리플렛은 접어서" />
+                <textarea className="od-in" rows={3} value={memo} onChange={(e) => setMemo(e.target.value)} placeholder="" />
               </label>
             </div>
           </div>

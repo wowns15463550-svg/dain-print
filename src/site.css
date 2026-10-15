@@ -811,3 +811,5 @@ textarea.od-in{resize:vertical;line-height:1.6}
   .dc-hd{padding-top:calc(16px + env(safe-area-inset-top,0px))}
   .dc.open .dc-launch,.dc.open .dc-tip{display:none}
 }
+
+.od-spine{display:inline-block;align-self:flex-start;width:fit-content;margin-top:8px;padding:4px 10px;background:#EEF2FD;color:#1E4BD2;font-size:13px;font-weight:600;border-radius:4px}

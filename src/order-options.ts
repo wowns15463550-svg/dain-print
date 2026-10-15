@@ -15,6 +15,9 @@ export type Field =
       custom?: string;
       // 다른 칸 값에 따라 선택지가 바뀜 (예: 포스터 종이 종류 · 크기 → 평량)
       optsOf?: (v: Vals) => string[];
+      // 조건에 따라 보이기 / 안내 문구 바꾸기
+      showIf?: (v: Vals) => boolean;
+      hintOf?: (v: Vals) => string | null;
       // "없음"이 아닌 선택지를 막는 조건. 막히면 이유를 돌려줌
       block?: (v: Vals) => string | null;
     }
@@ -24,6 +27,8 @@ export type Field =
 export type Product = { id: string; name: string; slug?: string; note?: string; fields: Field[] };
 
 const DIRECT = "다른 종이 (직접 적기)";
+export const SIDE_BIND = "좌철 (옆으로 넘김)";
+export const TOP_BIND = "상철 (위로 넘김)";
 const UNSURE = "잘 모르겠어요";
 const SHEET_PAPERS = ["스노우지 250g", "스노우지 200g", "스노우지 150g", "랑데뷰 240g", "랑데뷰 190g", "랑데뷰 160g", UNSURE];
 
@@ -75,9 +80,20 @@ export const PRODUCTS: Product[] = [
     id: "perfect",
     name: "무선제본 (책 · 교재 · 포트폴리오)",
     slug: "perfect-binding",
-    note: "표지는 스노우지 250g 단면 무광코팅으로 고정입니다. 표지는 단면이라 내지 1쪽은 오른쪽부터 시작해요. A4 가로형은 안 되고, A5 가로형은 가능해요.",
+    note: "표지는 스노우지 250g 단면 무광코팅으로 고정입니다. 표지는 단면이라 내지 1쪽은 오른쪽부터 시작해요. A4 가로형은 위로 넘기는 상철만 가능하고, A5 가로형은 좌철도 가능해요.",
     fields: [
       { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B5", "그 외 (요청사항에 적기)"], def: "A4" },
+      { k: "orient", label: "책 방향", type: "pick", opts: ["세로형", "가로형"], def: "세로형" },
+      {
+        k: "bind",
+        label: "넘기는 방향",
+        type: "pick",
+        opts: [SIDE_BIND, TOP_BIND],
+        def: TOP_BIND,
+        showIf: (v) => v.orient === "가로형",
+        optsOf: (v) => (v.size === "A5" ? [SIDE_BIND, TOP_BIND] : [TOP_BIND]),
+        hintOf: (v) => (v.size === "A5" ? "A5 가로형은 좌철 · 상철 둘 다 가능해요." : `${String(v.size).startsWith("그 외") ? "" : v.size + " "}가로형은 위로 넘기는 상철만 가능해요. (좌철은 A5만)`),
+      },
       { k: "color", label: "내지 인쇄", type: "pick", opts: ["흑백", "칼라"], def: "흑백" },
       { k: "side", label: "내지 면", type: "pick", opts: ["양면", "단면"], def: "양면" },
       { k: "paper", label: "내지 용지", type: "pick", opts: ["모조 100g", DIRECT, UNSURE], def: "모조 100g", custom: DIRECT },
@@ -103,12 +119,12 @@ export const PRODUCTS: Product[] = [
     id: "saddle",
     name: "중철제본 (소책자 · 카탈로그)",
     slug: "saddle-stitch",
-    note: "중철은 50부 이상부터 받아요 (모조 100g 기준). 쪽수는 표지 포함 8쪽부터 4의 배수이고, 표지도 양면으로 인쇄합니다.",
+    note: "쪽수는 표지 포함 8쪽부터 4의 배수예요. 표지도 양면으로 인쇄합니다.",
     fields: [
       { k: "size", label: "접었을 때 크기", type: "pick", opts: ["A4", "A5"], def: "A4" },
       { k: "pages", label: "쪽수 (표지 포함)", type: "num", def: 8, min: 8, step: 4, unit: "쪽", mult4: true },
       { k: "paper", label: "용지", type: "pick", opts: ["모조 100g", "스노우지 250g", "스노우지 200g", "스노우지 150g", "랑데뷰 240g", "랑데뷰 190g", "랑데뷰 160g", UNSURE], def: "모조 100g" },
-      { k: "qty", label: "권수", type: "num", def: 50, min: 50, step: 1, unit: "권", minWhy: "중철은 50부 이상부터 받아요." },
+      { k: "qty", label: "권수", type: "num", def: 10, min: 1, step: 1, unit: "권" },
       { k: "coat", label: "표지 코팅", type: "pick", opts: ["없음", "무광", "유광"], def: "없음", block: saddleCoat, hint: "코팅은 190g 이상 종이만 가능해요. 랑데뷰는 A4 책 50부 · A5 책 100부 이상부터." },
     ],
   },
