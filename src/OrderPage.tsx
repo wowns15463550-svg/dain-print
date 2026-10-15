@@ -85,18 +85,24 @@ export function settle(p: Product, v: Vals): Vals {
   const o = { ...v };
   for (const f of p.fields) {
     if (f.type !== "pick") continue;
-    if (f.dep) {
-      const opts = f.dep.map[String(o[f.dep.k])] ?? f.opts;
-      if (!opts.includes(String(o[f.k]))) o[f.k] = opts[Math.min(1, opts.length - 1)];
+    if (f.optsOf) {
+      const opts = f.optsOf(o);
+      if (!opts.includes(String(o[f.k]))) o[f.k] = opts[0];
     }
-    if (f.block && f.block(o) && o[f.k] !== "없음") o[f.k] = "없음";
+  }
+  // 쪽수 최대 (스프링: 단면이면 50쪽)
+  for (const f of p.fields) {
+    if (f.type === "num" && f.maxOf && Number(o[f.k]) > f.maxOf(o)) o[f.k] = f.maxOf(o);
+  }
+  for (const f of p.fields) {
+    if (f.type === "pick" && f.block && f.block(o) && o[f.k] !== "없음") o[f.k] = "없음";
   }
   return o;
 }
 
 function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | number | boolean) => void }) {
   if (f.type === "pick") {
-    const opts = f.dep ? (f.dep.map[String(v[f.dep.k])] ?? f.opts) : f.opts;
+    const opts = f.optsOf ? f.optsOf(v) : f.opts;
     const why = f.block ? f.block(v) : null;
     const tone = (o: string) => (f.k === "color" ? (o === "흑백" ? " bk" : o === "칼라" ? " red" : "") : "");
     return (
@@ -123,6 +129,7 @@ function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | nu
     const n = Number(v[f.k]) || 0;
     const fix = (x: number) => {
       let y = Math.max(f.min, Math.round(x));
+      if (f.maxOf) y = Math.min(f.maxOf(v), y);
       if (f.mult4) y = Math.max(8, Math.round(y / 4) * 4);
       else if (f.step > 1) y = Math.max(f.min, Math.round(y / f.step) * f.step);
       return y;
@@ -143,6 +150,8 @@ function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | nu
           </button>
         </div>
         {f.mult4 && n % 4 !== 0 && <small className="od-warn">중철은 4의 배수만 가능해요 (8 · 12 · 16 …)</small>}
+        {f.minWhy && n > 0 && n < f.min && <small className="od-warn">{f.minWhy}</small>}
+        {f.maxOf && n > f.maxOf(v) && <small className="od-warn">최대 {f.maxOf(v)}{f.unit}까지 가능해요.</small>}
         {f.hint && <small className="od-hint">{f.hint}</small>}
       </div>
     );

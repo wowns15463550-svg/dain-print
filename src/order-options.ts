@@ -13,12 +13,12 @@ export type Field =
       hint?: string;
       // 고르면 글을 직접 적을 수 있는 선택지 (값은 vals[k + "_txt"])
       custom?: string;
-      // 다른 칸 값에 따라 선택지가 바뀜 (예: 포스터 종이 종류 → 평량)
-      dep?: { k: string; map: Record<string, string[]> };
+      // 다른 칸 값에 따라 선택지가 바뀜 (예: 포스터 종이 종류 · 크기 → 평량)
+      optsOf?: (v: Vals) => string[];
       // "없음"이 아닌 선택지를 막는 조건. 막히면 이유를 돌려줌
       block?: (v: Vals) => string | null;
     }
-  | { k: string; label: string; type: "num"; def: number; min: number; step: number; unit: string; hint?: string; mult4?: boolean }
+  | { k: string; label: string; type: "num"; def: number; min: number; step: number; unit: string; hint?: string; mult4?: boolean; maxOf?: (v: Vals) => number; minWhy?: string }
   | { k: string; label: string; type: "check"; text: string; def: boolean; hint?: string };
 
 export type Product = { id: string; name: string; slug?: string; note?: string; fields: Field[] };
@@ -27,26 +27,47 @@ const DIRECT = "다른 종이 (직접 적기)";
 const UNSURE = "잘 모르겠어요";
 const SHEET_PAPERS = ["스노우지 250g", "스노우지 200g", "스노우지 150g", "랑데뷰 240g", "랑데뷰 190g", "랑데뷰 160g", UNSURE];
 
-// 코팅 조건: 190g 이상만 / 랑데뷰는 50권 이상만
+// 코팅 조건: 190g 이상만 / 랑데뷰는 인쇄 크기별 최소 수량 (A3 50 · A4 100 · A5 이하 200)
 const gsm = (p: unknown) => Number(String(p).match(/(\d+)\s*g/)?.[1] || 0);
-const coat200 = (v: Vals) => {
+const RV_MIN: Record<string, number> = { A3: 50, A4: 100, A5: 200, A6: 200 };
+const rvCoat = (paper: unknown, printSize: string, qty: number) => {
+  if (!String(paper).startsWith("랑데뷰")) return null;
+  const min = RV_MIN[printSize];
+  if (min && qty < min) return `랑데뷰 종이 코팅은 ${printSize} 기준 ${min}부 이상부터 가능해요. (A3 50부 · A4 100부 · A5 200부)`;
+  return null;
+};
+const coat190 = (v: Vals) => {
   const g = gsm(v.paper);
   if (g && g < 190) return "코팅은 190g 이상 종이만 가능해요.";
   return null;
 };
+const sheetCoat = (v: Vals) => coat190(v) || rvCoat(v.paper, String(v.size), Number(v.qty));
+// 중철 표지는 펼친 크기로 인쇄 (A4 책 → A3, A5 책 → A4)
 const saddleCoat = (v: Vals) => {
-  const why = coat200(v);
-  if (why) return why;
-  if (String(v.paper).startsWith("랑데뷰") && Number(v.qty) < 50) return "랑데뷰 종이는 50권 이상부터 코팅할 수 있어요.";
-  return null;
+  const why = coat190(v) || rvCoat(v.paper, v.size === "A5" ? "A4" : "A3", Number(v.qty));
+  return why && why.startsWith("랑데뷰") ? `랑데뷰 표지 코팅은 ${v.size === "A5" ? "A5 책 100부" : "A4 책 50부"} 이상부터 가능해요.` : why;
+};
+// 포스터: B3 이상은 코팅 제한 없음, A4 · A3만 일반 규칙
+const BIG = ["B3", "A2", "B2"];
+const posterCoat = (v: Vals) => {
+  if (BIG.includes(String(v.size))) return null;
+  const g = gsm(v.weight);
+  if (g && g < 190) return "A4 · A3 포스터 코팅은 190g 이상 종이만 가능해요. (B3 이상은 제한 없음)";
+  return rvCoat(v.paper, String(v.size), Number(v.kinds) * Number(v.qty));
 };
 
-// 포스터 종이 (종류 → 평량)
+// 포스터 종이 (종류 → 평량). 스노우 120g · 랑데뷰 105g · 130g은 B3 · A2 · B2만
 const POSTER_PAPERS: Record<string, string[]> = {
   스노우: ["120g", "150g", "180g", "200g", "250g", "300g"],
-  아트: ["120g", "150g", "180g", "200g", "250g", "300g"],
   백색모조: ["100g", "120g", "150g", "180g", "220g", "260g"],
   "랑데뷰 울트라": ["105g", "130g", "160g", "190g", "210g", "240g"],
+};
+const BIG_ONLY: Record<string, string[]> = { 스노우: ["120g"], "랑데뷰 울트라": ["105g", "130g"] };
+const posterWeights = (v: Vals) => {
+  const all = POSTER_PAPERS[String(v.paper)] ?? POSTER_PAPERS["스노우"];
+  if (BIG.includes(String(v.size))) return all;
+  const no = BIG_ONLY[String(v.paper)] ?? [];
+  return all.filter((w) => !no.includes(w));
 };
 
 export const PRODUCTS: Product[] = [
@@ -68,13 +89,13 @@ export const PRODUCTS: Product[] = [
     id: "spring",
     name: "스프링제본 (보고서 · 문제집)",
     slug: "spring-binding",
-    note: "검정 트윈링, 앞뒤 무광 반투명 PVC로 마감합니다. 표지도 양면으로 시작하고, 표지와 내지는 같은 용지예요.",
+    note: "검정 트윈링, 앞뒤 무광 반투명 PVC로 마감합니다. 표지도 양면으로 시작하고, 표지와 내지는 같은 용지예요. 한 권은 최대 50장(양면 100쪽)까지 가능해요.",
     fields: [
       { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B5", "그 외 (요청사항에 적기)"], def: "A4" },
       { k: "color", label: "인쇄", type: "pick", opts: ["흑백", "칼라"], def: "흑백" },
       { k: "side", label: "면", type: "pick", opts: ["양면", "단면"], def: "양면" },
       { k: "paper", label: "용지", type: "pick", opts: ["복사용지 (무림 M COPY 80g)", DIRECT, UNSURE], def: "복사용지 (무림 M COPY 80g)", custom: DIRECT },
-      { k: "pages", label: "쪽수 (표지 포함)", type: "num", def: 50, min: 1, step: 1, unit: "쪽" },
+      { k: "pages", label: "쪽수 (표지 포함)", type: "num", def: 50, min: 1, step: 1, unit: "쪽", maxOf: (v) => (v.side === "단면" ? 50 : 100), hint: "최대 50장까지 (양면 100쪽 · 단면 50쪽)" },
       { k: "qty", label: "권수", type: "num", def: 1, min: 1, step: 1, unit: "권" },
     ],
   },
@@ -82,13 +103,13 @@ export const PRODUCTS: Product[] = [
     id: "saddle",
     name: "중철제본 (소책자 · 카탈로그)",
     slug: "saddle-stitch",
-    note: "쪽수는 표지 포함 8쪽부터 4의 배수예요. 표지도 양면으로 인쇄합니다.",
+    note: "중철은 50부 이상부터 받아요 (모조 100g 기준). 쪽수는 표지 포함 8쪽부터 4의 배수이고, 표지도 양면으로 인쇄합니다.",
     fields: [
       { k: "size", label: "접었을 때 크기", type: "pick", opts: ["A4", "A5"], def: "A4" },
       { k: "pages", label: "쪽수 (표지 포함)", type: "num", def: 8, min: 8, step: 4, unit: "쪽", mult4: true },
       { k: "paper", label: "용지", type: "pick", opts: ["모조 100g", "스노우지 250g", "스노우지 200g", "스노우지 150g", "랑데뷰 240g", "랑데뷰 190g", "랑데뷰 160g", UNSURE], def: "모조 100g" },
-      { k: "qty", label: "권수", type: "num", def: 10, min: 1, step: 1, unit: "권" },
-      { k: "coat", label: "표지 코팅", type: "pick", opts: ["없음", "무광", "유광"], def: "없음", block: saddleCoat, hint: "코팅은 190g 이상 종이만, 랑데뷰는 50권 이상부터 가능해요." },
+      { k: "qty", label: "권수", type: "num", def: 50, min: 50, step: 1, unit: "권", minWhy: "중철은 50부 이상부터 받아요." },
+      { k: "coat", label: "표지 코팅", type: "pick", opts: ["없음", "무광", "유광"], def: "없음", block: saddleCoat, hint: "코팅은 190g 이상 종이만 가능해요. 랑데뷰는 A4 책 50부 · A5 책 100부 이상부터." },
     ],
   },
   {
@@ -106,12 +127,12 @@ export const PRODUCTS: Product[] = [
     id: "sheet",
     name: "리플렛 · 엽서 · 카드 · 낱장 인쇄",
     slug: "postcard-invitation",
-    note: "박(금박 등)은 하지 않아요. 아르떼 · 랑데뷰 소량 코팅과 미싱 · 귀도리 같은 극소량 후가공도 하지 않아요.",
+    note: "박(금박 등)은 하지 않아요. 랑데뷰 코팅은 A3 50부 · A4 100부 · A5 200부 이상부터 가능하고, 미싱 · 귀도리 같은 극소량 후가공은 하지 않아요.",
     fields: [
       { k: "size", label: "펼쳤을 때 크기", type: "pick", opts: ["A3", "A4", "A5", "A6", "그 외 (요청사항에 적기)"], def: "A4" },
       { k: "side", label: "면", type: "pick", opts: ["단면", "양면"], def: "양면" },
       { k: "paper", label: "용지", type: "pick", opts: SHEET_PAPERS, def: "스노우지 200g" },
-      { k: "coat", label: "코팅", type: "pick", opts: ["없음", "무광", "유광 (단면만)"], def: "없음", block: coat200 },
+      { k: "coat", label: "코팅", type: "pick", opts: ["없음", "무광", "유광 (단면만)"], def: "없음", block: sheetCoat, hint: "랑데뷰 코팅은 A3 50부 · A4 100부 · A5 200부 이상부터 가능해요." },
       { k: "fold", label: "접지", type: "pick", opts: ["없음", "2단 접지", "3단 접지"], def: "없음", hint: "접지는 오시를 넣고 접어 드려요. A4 3단은 97 · 100 · 100mm" },
       { k: "cut", label: "재단", type: "check", text: "재단 필요 (가장자리까지 배경이 있는 경우)", def: false },
       { k: "qty", label: "수량", type: "num", def: 50, min: 1, step: 1, unit: "장" },
@@ -132,12 +153,12 @@ export const PRODUCTS: Product[] = [
     id: "poster",
     name: "포스터",
     slug: "poster",
-    note: "B2보다 큰 크기(A1 · A0 · B1 · B0)는 제작하지 않아요.",
+    note: "B2보다 큰 크기(A1 · A0 · B1 · B0)는 제작하지 않아요. 스노우 120g · 랑데뷰 105g · 130g은 B3 · A2 · B2만 가능해요.",
     fields: [
-      { k: "size", label: "크기", type: "pick", opts: ["A2", "B3", "B2"], def: "A2" },
+      { k: "size", label: "크기", type: "pick", opts: ["A4", "A3", "B3", "A2", "B2"], def: "A2" },
       { k: "paper", label: "종이", type: "pick", opts: Object.keys(POSTER_PAPERS), def: "스노우" },
-      { k: "weight", label: "두께 (평량)", type: "pick", opts: POSTER_PAPERS["스노우"], def: "150g", dep: { k: "paper", map: POSTER_PAPERS } },
-      { k: "coat", label: "코팅", type: "pick", opts: ["없음", "무광", "유광"], def: "없음" },
+      { k: "weight", label: "두께 (평량)", type: "pick", opts: POSTER_PAPERS["스노우"], def: "150g", optsOf: posterWeights },
+      { k: "coat", label: "코팅", type: "pick", opts: ["없음", "무광", "유광"], def: "없음", block: posterCoat, hint: "B3 이상은 코팅 제한이 없어요." },
       { k: "kinds", label: "종류 (디자인 가짓수)", type: "num", def: 1, min: 1, step: 1, unit: "종" },
       { k: "qty", label: "종류당 수량", type: "num", def: 1, min: 1, step: 1, unit: "장" },
     ],
