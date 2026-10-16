@@ -813,3 +813,12 @@ textarea.od-in{resize:vertical;line-height:1.6}
 }
 
 .od-spine{display:inline-block;align-self:flex-start;width:fit-content;margin-top:8px;padding:4px 10px;background:#EEF2FD;color:#1E4BD2;font-size:13px;font-weight:600;border-radius:4px}
+.od-orient{display:flex;gap:10px}
+.od-orient button{display:flex;flex-direction:column;align-items:center;gap:6px;width:84px;padding:12px 0 10px;background:#F6F7F9;border:1px solid transparent;border-radius:8px;color:#6B7280;font-size:14px;cursor:pointer}
+.od-orient button svg path{fill:#fff;stroke:#6B7280;stroke-width:1.5;stroke-linejoin:round}
+.od-orient button svg text{font-size:11px;font-weight:600;fill:#6B7280;font-family:inherit}
+.od-orient button.on{background:#E8EEFC;border-color:#BFD0F7;color:#1E4BD2;font-weight:700}
+.od-orient button.on svg path{stroke:#1E4BD2}
+.od-orient button.on svg text{fill:#1E4BD2}
+.od-orient button.x{cursor:not-allowed;opacity:.75}
+.od-orient button svg path.od-x{fill:none;stroke:#C2544A;stroke-width:3;stroke-linecap:round}

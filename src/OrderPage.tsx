@@ -46,10 +46,14 @@ function describe(it: Item) {
       r.push(["권수", `${v.qty}권`]);
       break;
     case "spring":
-      r.push(["크기", size], ["내지", join(paperOf(v), v.side, v.color)], ["페이지", `${v.pages}p (표지 포함)`], ["권수", `${v.qty}권`]);
+      r.push(["크기", size]);
+      if (v.orient === "가로형") r.push(["방향", "가로형"]);
+      r.push(["내지", join(paperOf(v), v.side, v.color)], ["페이지", `${v.pages}p (표지 포함)`], ["권수", `${v.qty}권`]);
       break;
     case "saddle":
-      r.push(["크기", size], ["용지", paperOf(v)], ["표지", v.coat === "없음" ? "코팅 없음" : `${v.coat}코팅`], ["페이지", `${v.pages}p (표지 포함)`], ["권수", `${v.qty}권`]);
+      r.push(["크기", size]);
+      if (v.orient === "가로형") r.push(["방향", "가로형"]);
+      r.push(["용지", paperOf(v)], ["표지", v.coat === "없음" ? "코팅 없음" : `${v.coat}코팅`], ["페이지", `${v.pages}p (표지 포함)`], ["권수", `${v.qty}권`]);
       break;
     case "flyer":
       r.push(["크기", size], ["용지", join(paperOf(v), v.side)], ["수량", `${v.qty}장`]);
@@ -88,7 +92,7 @@ function flags(it: Item): string[] {
   if (String(v.size ?? "").startsWith("그 외")) f.push("규격 외 크기 (요청사항 확인)");
   if (it.pid === "saddle" && Number(v.pages) % 4 !== 0) f.push(`중철 쪽수 ${v.pages}p — 4의 배수 아님`);
   if (it.pid === "etc") f.push("품목 미정 (요청사항 확인)");
-  if (it.pid === "perfect" && v.orient === "가로형") f.push(`가로형 ${String(v.bind).replace(/ \(.*\)$/, "")}`);
+  if (v.orient === "가로형") f.push(it.pid === "perfect" ? `가로형 ${String(v.bind).replace(/ \(.*\)$/, "")}` : "가로형");
   return f;
 }
 
@@ -101,6 +105,7 @@ export function settle(p: Product, v: Vals): Vals {
       const opts = f.optsOf(o);
       if (!opts.includes(String(o[f.k]))) o[f.k] = opts[0];
     }
+    if (f.offOf && f.offOf(o).includes(String(o[f.k]))) o[f.k] = f.def;
   }
   // 쪽수 최대 (스프링: 단면이면 50쪽)
   for (const f of p.fields) {
@@ -115,6 +120,32 @@ export function settle(p: Product, v: Vals): Vals {
 function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | number | boolean) => void }) {
   if (f.type === "pick") {
     if (f.showIf && !f.showIf(v)) return null;
+    if (f.k === "orient") {
+      const off = f.offOf?.(v) ?? [];
+      const hint = f.hintOf?.(v);
+      return (
+        <div className="od-field">
+          <span className="od-lab">{f.label}</span>
+          <div className="od-orient" role="radiogroup" aria-label={f.label}>
+            {f.opts.map((o) => {
+              const wide = o === "가로형";
+              const x = off.includes(o);
+              return (
+                <button type="button" key={o} role="radio" aria-checked={v[f.k] === o} disabled={x} className={(v[f.k] === o ? "on" : "") + (x ? " x" : "") || undefined} onClick={() => set(f.k, o)}>
+                  <svg viewBox="0 0 48 48" width="44" height="44" aria-hidden="true">
+                    {wide ? <path d="M7 14h28l6 6v14H7z M35 14v6h6" /> : <path d="M14 7h14l6 6v28H14z M28 7v6h6" />}
+                    <text x={wide ? 24 : 24} y={wide ? 29 : 28} textAnchor="middle">A</text>
+                    {x && <path className="od-x" d="M10 10l28 28M38 10L10 38" />}
+                  </svg>
+                  <span>{o.replace("형", "")}</span>
+                </button>
+              );
+            })}
+          </div>
+          {hint && <small className={off.length ? "od-warn" : "od-hint"}>{hint}</small>}
+        </div>
+      );
+    }
     const opts = f.optsOf ? f.optsOf(v) : f.opts;
     const why = f.block ? f.block(v) : null;
     const tone = (o: string) => (f.k === "color" ? (o === "흑백" ? " bk" : o === "칼라" ? " red" : "") : "");
@@ -166,7 +197,7 @@ function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | nu
         {f.minWhy && n > 0 && n < f.min && <small className="od-warn">{f.minWhy}</small>}
         {f.maxOf && n > f.maxOf(v) && <small className="od-warn">최대 {f.maxOf(v)}{f.unit}까지 가능해요.</small>}
         {f.hint && <small className="od-hint">{f.hint}</small>}
-        {f.k === "pages" && v.orient && spineMM(v) && <small className="od-spine">세네카(책등) 약 {spineMM(v)}mm · 표지 만들 때 참고</small>}
+        {f.k === "pages" && "bind" in v && spineMM(v) && <small className="od-spine">세네카(책등) 약 {spineMM(v)}mm · 표지 만들 때 참고</small>}
       </div>
     );
   }
