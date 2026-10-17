@@ -826,3 +826,13 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .od-pics button.x{cursor:not-allowed;opacity:.7}
 .od-pics svg path.od-x{fill:none;stroke:#C2544A;stroke-width:3;stroke-linecap:round}
 @media (max-width:480px){.od-pics button{width:calc(33.3% - 7px)}}
+
+.od-pics svg .ln{fill:none;stroke:#B6BBC4;stroke-width:1.6;stroke-linecap:round}
+.od-pics svg .sh{fill:rgba(30,75,210,.10);stroke:none}
+.od-pics svg .ar{fill:none;stroke:#C2544A;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.od-pics svg .st{fill:none;stroke:#C2544A;stroke-width:2.4;stroke-linecap:round}
+.od-pics svg circle{stroke:#6B7280;stroke-width:1}
+.od-pics button small{display:block;font-size:11px;font-weight:500;color:#9AA0AA;line-height:1.2}
+.od-pics button.on small{color:#1E4BD2}
+.od-pics button span{font-size:12.5px}
+.od-size{display:inline-block;align-self:flex-start;padding:3px 10px;background:#EEF2FD;color:#1E4BD2;font-size:13px;font-weight:600;border-radius:4px}

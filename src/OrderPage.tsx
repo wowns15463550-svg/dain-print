@@ -3,12 +3,12 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Arrow, Ico } from "./App";
 import { Shell } from "./ServicePage";
 import { CONTACT } from "./site-data";
-import { PRODUCTS, SLOW_IDS, type Field, type Product, type Vals } from "./order-options";
+import { PRODUCTS, SLOW_IDS, SIZE_MM, OTHER, sizeMM, type Field, type Product, type Vals } from "./order-options";
 
 type Item = { key: number; pid: string; vals: Vals };
 
-const defaults = (p: Product): Vals => Object.fromEntries(p.fields.map((f) => [f.k, f.def]));
 const prod = (id: string) => PRODUCTS.find((p) => p.id === id) ?? PRODUCTS[0];
+const defaults = (p: Product): Vals => settle(p, Object.fromEntries(p.fields.map((f) => [f.k, f.def])));
 let seq = 1;
 const newItem = (pid = PRODUCTS[0].id): Item => ({ key: seq++, pid, vals: defaults(prod(pid)) });
 
@@ -20,8 +20,13 @@ const dayName = (d: string) => "일월화수목금토"[new Date(d + "T12:00:00+0
 const NUM = "①②③④⑤⑥⑦⑧⑨⑩";
 const paperOf = (v: Vals) => {
   const p = String(v.paper ?? "");
-  if (p.startsWith("다른 종이")) return String(v.paper_txt || "").trim() || "다른 종이 (요청사항 참고)";
+  if (p === OTHER) return String(v.paper_txt || "").trim() || "그 외 (요청사항 참고)";
   return p.replace(/^복사용지 \(무림 M COPY 80g\)$/, "복사용지 80g");
+};
+const coatOf = (v: Vals) => (v.coat === OTHER ? String(v.coat_txt || "").trim() || "그 외 (요청사항 참고)" : String(v.coat));
+const sizeOf = (v: Vals, k = "size") => {
+  const mm = sizeMM(v[k]);
+  return mm ? `${v[k]} (${mm})` : String(v[k] ?? "");
 };
 const join = (...xs: unknown[]) => xs.filter((x) => x && x !== "없음").map((x) => (x === "단면" ? "★단면" : x)).join(" · ");
 // 세네카(책등 두께): 모조 100g만, 100쪽(양면 50장) ≈ 5.9mm 기준
@@ -36,7 +41,7 @@ function describe(it: Item) {
   const p = prod(it.pid);
   const v = it.vals;
   const r: [string, string][] = [];
-  const size = String(v.size ?? "").startsWith("그 외") ? "그 외 (요청사항 참고)" : String(v.size ?? "");
+  const size = sizeOf(v);
   switch (p.id) {
     case "perfect":
       r.push(["크기", size]);
@@ -52,15 +57,15 @@ function describe(it: Item) {
       break;
     case "saddle":
       r.push(["크기", size]);
-      if (v.orient === "가로형") r.push(["방향", "가로형"]);
-      r.push(["용지", paperOf(v)], ["표지", v.coat === "없음" ? "코팅 없음" : `${v.coat}코팅`], ["페이지", `${v.pages}p (표지 포함)`], ["권수", `${v.qty}권`]);
+      if (v.orient === "가로형") r.push(["방향", `가로형 · ${String(v.bind).replace(/ \(.*\)$/, "")}`]);
+      r.push(["용지", paperOf(v)], ["표지", v.coat === "없음" ? "코팅 없음" : coatOf(v)], ["페이지", `${v.pages}p (표지 포함)`], ["권수", `${v.qty}권`]);
       break;
     case "flyer":
       r.push(["크기", size], ["용지", join(paperOf(v), v.side)], ["수량", `${v.qty}장`]);
       break;
     case "sheet":
       r.push(["크기", size], ["용지", join(paperOf(v), v.side)]);
-      if (v.coat !== "없음") r.push(["코팅", String(v.coat)]);
+      if (v.coat !== "없음") r.push(["코팅", coatOf(v)]);
       if (v.fold !== "없음") r.push(["접지", String(v.fold)]);
       if (v.cut) r.push(["재단", "필요"]);
       r.push(["수량", `${v.qty}장`]);
@@ -70,7 +75,7 @@ function describe(it: Item) {
       break;
     case "poster":
       r.push(["크기", size], ["용지", `${v.paper} ${v.weight}`]);
-      if (v.coat !== "없음") r.push(["코팅", String(v.coat)]);
+      if (v.coat !== "없음") r.push(["코팅", coatOf(v)]);
       r.push(["수량", `${v.kinds}종 × ${v.qty}장`]);
       break;
     case "form":
@@ -87,12 +92,10 @@ function describe(it: Item) {
 function flags(it: Item): string[] {
   const v = it.vals;
   const f: string[] = [];
-  if (String(v.paper ?? "").startsWith("다른 종이")) f.push(`종이 직접 지정: ${paperOf(v)}`);
-  if (v.paper === "잘 모르겠어요") f.push("종이 추천 필요 (손님이 잘 모름)");
-  if (String(v.size ?? "").startsWith("그 외")) f.push("규격 외 크기 (요청사항 확인)");
+  if (v.paper === OTHER) f.push(`종이 직접 지정: ${paperOf(v)}`);
+  if (v.coat === OTHER) f.push(`코팅 직접 지정: ${coatOf(v)}`);
   if (it.pid === "saddle" && Number(v.pages) % 4 !== 0) f.push(`중철 쪽수 ${v.pages}p — 4의 배수 아님`);
-  if (it.pid === "etc") f.push("품목 미정 (요청사항 확인)");
-  if (v.orient === "가로형") f.push(it.pid === "perfect" ? `가로형 ${String(v.bind).replace(/ \(.*\)$/, "")}` : "가로형");
+  if (v.orient === "가로형") f.push(v.bind ? `가로형 ${String(v.bind).replace(/ \(.*\)$/, "")}` : "가로형");
   return f;
 }
 
@@ -117,70 +120,140 @@ export function settle(p: Product, v: Vals): Vals {
   return o;
 }
 
-// 그림 카드 (제본 방향 · 접지 · 명함 크기). 파란 면 = 앞면
+// 그림 카드 (모든 선택 항목). 파란 면 = 앞면, 회색 = 안쪽 / 책등
 const W = { className: "w" }; // 흰 면
 const Bl = { className: "b" }; // 파란 면
 const G = { className: "g" }; // 안쪽(회색) 면
+const Ln = (y: number, x1 = 0, x2 = 0) => <path key={y + "-" + x1} className="ln" d={`M${x1} ${y}h${x2 - x1}`} />;
+const lines = (x1: number, x2: number, ys: number[]) => ys.map((y) => Ln(y, x1, x2));
+
 const PICS: Record<string, ReactNode> = {
-  가로형: (<><path {...W} d="M10 14h38l6 6v22H10z" /><path {...W} d="M48 14v6h6" /><text x="32" y="33" textAnchor="middle">A</text></>),
-  세로형: (<><path {...W} d="M20 6h18l6 6v38H20z" /><path {...W} d="M38 6v6h6" /><text x="32" y="33" textAnchor="middle">A</text></>),
-  없음: (<path {...W} d="M20 8h24v40H20z" />),
-  반접지: (<><path {...W} d="M32 6l16 4v40l-16-4z" /><path {...Bl} d="M32 6l-13 6v40l13-6z" /></>),
-  "3단 접지": (<><path {...W} d="M28 7l18 4v39l-18-4z" /><path {...G} d="M28 7l10-3v39l-10 3z" /><path {...Bl} d="M28 7l-13 6v39l13-6z" /></>),
-  "N 접지": (<><path {...G} d="M40 10l12-4v38l-12 4z" /><path {...W} d="M28 6l12 4v38l-12-4z" /><path {...Bl} d="M28 6l-13 6v38l13-6z" /></>),
-  "대문 접지": (<><path {...W} d="M24 6h16v38H24z" /><path {...Bl} d="M24 6l-12 5v39l12-6z" /><path {...Bl} d="M40 6l12 5v39l-12-6z" /></>),
-  "4단 병풍접지": (<><path {...G} d="M44 9l10-3v37l-10 3z" /><path {...W} d="M34 6l10 3v37l-10-3z" /><path {...W} d="M24 9l10-3v37l-10 3z" /><path {...Bl} d="M24 9l-13 5v37l13-5z" /></>),
-  "명함 (90×50)": (<><path {...W} d="M8 12h42l6 6v26H8z" /><path {...W} d="M50 12v6h6" /><text className="sm" x="31" y="26" textAnchor="middle">90mm</text><text className="sm" x="31" y="33" textAnchor="middle">×</text><text className="sm" x="31" y="41" textAnchor="middle">50mm</text></>),
+  // ── 방향 · 넘기는 방향
+  가로형: (<><path {...W} d="M6 14h46l6 6v24H6z" /><path {...Bl} d="M10 18h22v22H10z" />{lines(36, 52, [24, 30, 36])}</>),
+  세로형: (<><path {...W} d="M16 5h26l6 6v40H16z" /><path {...Bl} d="M20 10h22v16H20z" />{lines(21, 43, [33, 39, 45])}</>),
+  "좌철 (옆으로 넘김)": (<><path {...W} d="M8 12h46v32H8z" /><path {...G} d="M8 12h8v32H8z" />{[17, 24, 31, 38].map((y) => <circle key={y} cx="12" cy={y} r="1.6" fill="#6B7280" />)}{lines(22, 48, [22, 28, 34])}<path className="ar" d="M44 48h10m-4-3l4 3-4 3" /></>),
+  "상철 (위로 넘김)": (<><path {...W} d="M8 14h46v36H8z" /><path {...G} d="M8 14h46v8H8z" />{[14, 22, 30, 38, 46].map((x) => <circle key={x} cx={x + 2} cy="18" r="1.6" fill="#6B7280" />)}{lines(14, 48, [30, 36, 42])}<path className="ar" d="M58 38v-10m-3 4l3-4 3 4" /></>),
+  // ── 접지
+  없음: (<path {...W} d="M18 6h28v44H18z" />),
+  반접지: (<><path {...W} d="M32 6l18 4v38l-18 4z" /><path {...Bl} d="M32 6L14 10v38l18 4z" /></>),
+  "3단 접지": (<><path {...W} d="M33 7l18 4v36l-18 4z" /><path {...G} d="M33 7l-9-3v40l9 7z" /><path {...Bl} d="M24 4L8 9v36l16 5z" /></>),
+  "4단 접지": (<><path {...W} d="M42 8l12 3v34l-12 3z" /><path {...G} d="M30 5l12 3v40l-12-3z" /><path {...W} d="M20 8l10-3v40l-10 3z" /><path {...Bl} d="M20 8L8 12v34l12 3z" /></>),
+  "N 접지": (<><path {...G} d="M40 8l14 4v36l-14-4z" /><path {...W} d="M26 12l14-4v36l-14 4z" /><path {...Bl} d="M12 8l14 4v36l-14-4z" /></>),
+  "대문 접지": (<><path {...W} d="M24 6h16v44H24z" /><path {...Bl} d="M24 6L10 10v38l14 2z" /><path {...Bl} d="M40 6l14 4v38l-14 2z" /></>),
+  "4단 병풍접지": (<><path {...Bl} d="M8 14l12-4v36l-12 4z" /><path {...W} d="M20 10l12 4v36l-12-4z" /><path {...G} d="M32 14l12-4v36l-12 4z" /><path {...W} d="M44 10l12 4v36l-12-4z" /></>),
+  // ── 인쇄 · 면
+  흑백: (<><path {...W} d="M16 5h26l6 6v40H16z" />{lines(21, 43, [17, 23, 29, 35, 41])}</>),
+  칼라: (<><path {...W} d="M16 5h26l6 6v40H16z" /><circle cx="26" cy="20" r="5" fill="#E8635A" /><circle cx="34" cy="20" r="5" fill="#4C8DF0" opacity=".85" /><circle cx="30" cy="27" r="5" fill="#F2C94C" opacity=".85" />{lines(21, 43, [38, 44])}</>),
+  단면: (<><path {...W} d="M16 5h26l6 6v40H16z" /><text x="32" y="34" textAnchor="middle">1면</text></>),
+  양면: (<><path {...W} d="M10 8h24l5 5v36H10z" /><path {...W} d="M24 5h24l5 5v36H24z" /><text x="38" y="30" textAnchor="middle">앞·뒤</text></>),
+  // ── 코팅
+  없음_코팅: (<path {...W} d="M18 6h28v44H18z" />),
+  무광코팅: (<><path {...W} d="M16 5h32v46H16z" /><path className="sh" d="M16 30L38 5h10L16 40z" /><path className="sh" d="M26 51l22-26v14L36 51z" /></>),
+  그외: (<><path {...W} d="M16 5h32v46H16z" /><text x="32" y="34" textAnchor="middle">···</text></>),
+  // ── 용지 (결 · 질감은 색으로 구분)
+  종이: (<><path {...W} d="M12 22l20-8 22 8-22 9z" /><path {...W} d="M12 28l20 9 22-9v6l-22 9-20-9z" /></>),
+  // ── 품목
+  "p:perfect": (<><path {...G} d="M9 10l5-3v42l-5 3z" /><path {...Bl} d="M14 7h28v42H14z" /><path {...W} d="M42 7l6 2v42l-6-2z" /><path className="ln" d="M43 13l4 1M43 18l4 1M43 23l4 1M43 28l4 1" /><path {...W} d="M19 13h18v12H19z" />{lines(19, 37, [32, 37, 42])}</>),
+  "p:spring": (<><path {...W} d="M16 6h36v44H16z" />{[11, 18, 25, 32, 39, 46].map((y) => <path key={y} className="ln" d={`M11 ${y}h10`} />)}{[11, 18, 25, 32, 39, 46].map((y) => <circle key={y} cx="16" cy={y} r="1.8" fill="#6B7280" />)}<path {...Bl} d="M24 11h22v14H24z" />{lines(24, 46, [32, 38, 44])}</>),
+  "p:saddle": (<><path {...W} d="M6 14l26 5v31l-26-5z" /><path {...Bl} d="M32 19l26-5v31l-26 5z" /><path className="ln" d="M32 19v31" /><circle cx="32" cy="26" r="1.6" fill="#C2544A" /><circle cx="32" cy="42" r="1.6" fill="#C2544A" />{lines(11, 27, [27, 32, 37])}</>),
+  "p:flyer": (<><path {...W} d="M14 5h30l6 6v40H14z" /><path {...Bl} d="M19 11h26v16H19z" />{lines(19, 45, [34, 39, 44])}</>),
+  "p:sheet": (<><path {...G} d="M24 6h30v32H24z" /><path {...W} d="M8 14h34v36H8z" /><path {...Bl} d="M13 19h24v14H13z" />{lines(13, 37, [39, 44])}</>),
+  "p:card": (<><path {...W} d="M6 14h50v30H6z" /><path {...Bl} d="M11 20h12v12H11z" />{lines(29, 51, [24, 30, 36])}</>),
+  "p:poster": (<><path {...W} d="M14 3h28v50H14z" /><path {...Bl} d="M18 8h20v26H18z" /><text x="28" y="25" textAnchor="middle">POSTER</text>{lines(18, 38, [41, 46])}</>),
+  "p:form": (<><path {...G} d="M16 8h32v42H16z" /><path {...W} d="M12 5h32v42H12z" />{lines(17, 39, [15, 21, 27, 33])}<path className="st" d="M13 10l5 4" /></>),
+  // ── 받는 방법
+  "방문 픽업": (<><path {...W} d="M10 22h44v28H10z" /><path {...Bl} d="M8 12h48l-4 10H12z" /><path {...G} d="M26 32h12v18H26z" /></>),
+  "택배 (CJ대한통운)": (<><path {...W} d="M10 18l22-8 22 8v26l-22 8-22-8z" /><path className="ln" d="M10 18l22 8 22-8M32 26v26" /><path {...Bl} d="M20 14l22 8-6 3-22-8z" /></>),
+  "퀵 (서울 근교)": (<><circle cx="16" cy="42" r="7" {...W} /><circle cx="48" cy="42" r="7" {...W} /><path {...Bl} d="M22 38h18l-5-14h-8z" /><path className="ln" d="M40 38l4-14h6M10 24h10" /></>),
 };
-const PIC_LABEL: Record<string, string> = { 가로형: "가로", 세로형: "세로", 없음: "접지 안 함", "명함 (90×50)": "명함(90×50)" };
+// 종이 · 품목 이름 → 그림
+const paperPic = (o: string): ReactNode => {
+  const fill = o.startsWith("모조") || o.startsWith("백색") ? "#F6EFD9" : o.startsWith("랑데뷰") ? "#E7E4F2" : o.startsWith("반누보") ? "#EADFCB" : o.startsWith("복사") ? "#FFFFFF" : "#FFFFFF";
+  return (
+    <>
+      <path d="M10 34l22 9 22-9v6l-22 9-22-9z" style={{ fill }} />
+      <path d="M10 27l22 9 22-9v6l-22 9-22-9z" style={{ fill }} />
+      <path d="M10 20l22-9 22 9-22 9z" style={{ fill }} />
+    </>
+  );
+};
+// 크기 그림 — 실제 비율대로 그린 종이
+const sizePic = (o: string): ReactNode => {
+  const m = SIZE_MM[o];
+  if (!m) return <path {...W} d="M14 6h36v44H14z" />;
+  const k = Math.min(36 / m[0], 44 / m[1]);
+  const w = m[0] * k, h = m[1] * k;
+  return <path {...W} d={`M${32 - w / 2} ${28 - h / 2}h${w}v${h}h${-w}z`} />;
+};
+const PIC_LABEL: Record<string, string> = {
+  가로형: "가로", 세로형: "세로", 없음: "없음", "명함 (90×50)": "명함(90×50)",
+  "좌철 (옆으로 넘김)": "좌철 (옆으로)", "상철 (위로 넘김)": "상철 (위로)",
+  "택배 (CJ대한통운)": "택배", "퀵 (서울 근교)": "퀵", "복사용지 (무림 M COPY 80g)": "복사용지 80g",
+};
+const PROD_LABEL: Record<string, string> = { perfect: "무선제본", spring: "스프링", saddle: "중철", flyer: "전단지", sheet: "리플렛·엽서·낱장", card: "명함", poster: "포스터", form: "양식·스테이플" };
+// 그림 카드로 보여줄 항목 (용지 · 크기 · 코팅 …)
+const PIC_KEYS = ["size", "csize", "orient", "bind", "color", "side", "paper", "coat", "fold"];
+
+type PicItem = { key: string; label: string; sub?: string; art: ReactNode; off?: boolean };
+function PicRow({ items, value, label, onPick }: { items: PicItem[]; value: string; label: string; onPick: (k: string) => void }) {
+  return (
+    <div className="od-pics" role="radiogroup" aria-label={label}>
+      {items.map((it) => (
+        <button type="button" key={it.key} role="radio" aria-checked={value === it.key} disabled={it.off} className={(value === it.key ? "on" : "") + (it.off ? " x" : "") || undefined} onClick={() => onPick(it.key)}>
+          <svg viewBox="0 0 64 56" aria-hidden="true">
+            {it.art}
+            {it.off && <path className="od-x" d="M14 8l36 40M50 8L14 48" />}
+          </svg>
+          <span>{it.label}</span>
+          {it.sub && <small>{it.sub}</small>}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+const artOf = (k: string, o: string): ReactNode => {
+  if (k === "size") return sizePic(o);
+  if (k === "paper") return paperPic(o);
+  if (k === "coat") return PICS[o === "없음" ? "없음_코팅" : o === OTHER ? "그외" : o] ?? PICS["없음_코팅"];
+  if (o === OTHER) return PICS["그외"];
+  return PICS[o] ?? PICS["없음"];
+};
 
 function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | number | boolean) => void }) {
   if (f.type === "pick") {
     if (f.showIf && !f.showIf(v)) return null;
-    if (f.pic) {
-      const off = f.offOf?.(v) ?? [];
-      const hint = f.hintOf?.(v) ?? f.hint;
-      return (
-        <div className="od-field">
-          <span className="od-lab">{f.label}</span>
-          <div className="od-pics" role="radiogroup" aria-label={f.label}>
-            {f.opts.map((o) => {
-              const x = off.includes(o);
-              return (
-                <button type="button" key={o} role="radio" aria-checked={v[f.k] === o} disabled={x} className={(v[f.k] === o ? "on" : "") + (x ? " x" : "") || undefined} onClick={() => set(f.k, o)}>
-                  <svg viewBox="0 0 64 56" aria-hidden="true">
-                    {PICS[o]}
-                    {x && <path className="od-x" d="M14 8l36 40M50 8L14 48" />}
-                  </svg>
-                  <span>{PIC_LABEL[o] ?? o}</span>
-                </button>
-              );
-            })}
-          </div>
-          {hint && <small className={off.length ? "od-warn" : "od-hint"}>{hint}</small>}
-        </div>
-      );
-    }
     const opts = f.optsOf ? f.optsOf(v) : f.opts;
     const why = f.block ? f.block(v) : null;
+    const asPic = f.pic || PIC_KEYS.includes(f.k);
+    const off = [...(f.offOf?.(v) ?? []), ...(why ? opts.filter((o) => o !== "없음") : [])];
+    const hint = why ?? f.hintOf?.(v) ?? f.hint;
     const tone = (o: string) => (f.k === "color" ? (o === "흑백" ? " bk" : o === "칼라" ? " red" : "") : "");
+    const mm = (f.k === "size" || f.k === "csize") && SIZE_MM[String(v[f.k])] ? `${v[f.k]} = ${sizeMM(v[f.k])}mm` : "";
     return (
       <div className="od-field">
         <span className="od-lab">{f.label}</span>
-        <div className="od-chips" role="radiogroup" aria-label={f.label}>
-          {opts.map((o) => {
-            const off = !!why && o !== "없음";
-            return (
-              <button type="button" key={o} role="radio" aria-checked={v[f.k] === o} disabled={off} className={(v[f.k] === o ? "on" : "") + tone(o) || undefined} onClick={() => set(f.k, o)}>
+        {asPic ? (
+          <PicRow
+            label={f.label}
+            value={String(v[f.k])}
+            onPick={(o) => set(f.k, o)}
+            items={opts.map((o) => ({ key: o, label: f.k === "fold" && o === "없음" ? "접지 안 함" : (PIC_LABEL[o] ?? o), sub: f.k === "size" ? sizeMM(o) : undefined, art: artOf(f.k, o), off: off.includes(o) }))}
+          />
+        ) : (
+          <div className="od-chips" role="radiogroup" aria-label={f.label}>
+            {opts.map((o) => (
+              <button type="button" key={o} role="radio" aria-checked={v[f.k] === o} disabled={off.includes(o)} className={(v[f.k] === o ? "on" : "") + tone(o) || undefined} onClick={() => set(f.k, o)}>
                 {o}
               </button>
-            );
-          })}
-        </div>
-        {f.custom && v[f.k] === f.custom && (
-          <input className="od-in" value={String(v[f.k + "_txt"] ?? "")} onChange={(e) => set(f.k + "_txt", e.target.value)} placeholder="원하시는 종이를 적어 주세요 (예: 랑데뷰 130g)" />
+            ))}
+          </div>
         )}
-        {why ? <small className="od-warn">{why}</small> : (f.hintOf?.(v) ?? f.hint) && <small className="od-hint">{f.hintOf?.(v) ?? f.hint}</small>}
+        {mm && <small className="od-size">{mm}</small>}
+        {f.custom && v[f.k] === f.custom && (
+          <input className="od-in" value={String(v[f.k + "_txt"] ?? "")} onChange={(e) => set(f.k + "_txt", e.target.value)} placeholder={f.k === "coat" ? "원하시는 코팅을 적어 주세요" : "원하시는 종이를 적어 주세요 (예: 랑데뷰 130g)"} />
+        )}
+        {hint && <small className={why || off.length ? "od-warn" : "od-hint"}>{hint}</small>}
       </div>
     );
   }
@@ -378,13 +451,12 @@ export default function OrderView() {
                   </div>
                   <div className="od-field">
                     <span className="od-lab">무엇을 만드세요?</span>
-                    <div className="od-chips od-prod">
-                      {PRODUCTS.map((pp) => (
-                        <button type="button" key={pp.id} className={pp.id === it.pid ? "on" : undefined} aria-pressed={pp.id === it.pid} onClick={() => upd(it.key, () => ({ key: it.key, pid: pp.id, vals: defaults(pp) }))}>
-                          {pp.name}
-                        </button>
-                      ))}
-                    </div>
+                    <PicRow
+                      label="품목"
+                      value={it.pid}
+                      onPick={(id) => upd(it.key, () => ({ key: it.key, pid: id, vals: defaults(prod(id)) }))}
+                      items={PRODUCTS.map((pp) => ({ key: pp.id, label: PROD_LABEL[pp.id] ?? pp.name, art: PICS["p:" + pp.id] }))}
+                    />
                   </div>
                   {p.note && <p className="od-note">{p.note}</p>}
                   {p.fields.map((f) => (
@@ -443,13 +515,7 @@ export default function OrderView() {
               ))}
               <div className="od-field">
                 <span className="od-lab">받는 방법</span>
-                <div className="od-chips">
-                  {["방문 픽업", "택배 (CJ대한통운)", "퀵 (서울 근교)"].map((o) => (
-                    <button type="button" key={o} className={recv === o ? "on" : undefined} onClick={() => setRecv(o)}>
-                      {o}
-                    </button>
-                  ))}
-                </div>
+                <PicRow label="받는 방법" value={recv} onPick={setRecv} items={["방문 픽업", "택배 (CJ대한통운)", "퀵 (서울 근교)"].map((o) => ({ key: o, label: PIC_LABEL[o] ?? o, art: PICS[o] }))} />
                 {recv !== "방문 픽업" ? (
                   <input className="od-in" value={addr} onChange={(e) => setAddr(e.target.value)} placeholder="받으실 주소 · 받는 분 · 연락처" />
                 ) : (
