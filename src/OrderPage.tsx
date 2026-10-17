@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Arrow, Ico } from "./App";
 import { Shell } from "./ServicePage";
 import { CONTACT } from "./site-data";
-import { PRODUCTS, SLOW_IDS, SIZE_MM, OTHER, sizeMM, type Field, type Product, type Vals } from "./order-options";
+import { PRODUCTS, SLOW_IDS, SIZE_MM, OTHER, FOLD_OTHER, sizeMM, type Field, type Product, type Vals } from "./order-options";
 
 type Item = { key: number; pid: string; vals: Vals };
 
@@ -66,8 +66,7 @@ function describe(it: Item) {
     case "sheet":
       r.push(["크기", size], ["용지", join(paperOf(v), v.side)]);
       if (v.coat !== "없음") r.push(["코팅", coatOf(v)]);
-      if (v.fold !== "없음") r.push(["접지", String(v.fold)]);
-      if (v.cut) r.push(["재단", "필요"]);
+      if (v.fold !== "없음") r.push(["접지", v.fold === FOLD_OTHER ? String(v.fold_txt || "").trim() || "그 외 (요청사항 참고)" : String(v.fold)]);
       r.push(["수량", `${v.qty}장`]);
       break;
     case "card":
@@ -93,6 +92,7 @@ function flags(it: Item): string[] {
   const v = it.vals;
   const f: string[] = [];
   if (v.paper === OTHER) f.push(`종이 직접 지정: ${paperOf(v)}`);
+  if (v.fold === FOLD_OTHER) f.push(`접지 직접 지정: ${String(v.fold_txt || "").trim() || "요청사항 확인"}`);
   if (v.coat === OTHER) f.push(`코팅 직접 지정: ${coatOf(v)}`);
   if (it.pid === "saddle" && Number(v.pages) % 4 !== 0) f.push(`중철 쪽수 ${v.pages}p — 4의 배수 아님`);
   if (v.orient === "가로형") f.push(v.bind ? `가로형 ${String(v.bind).replace(/ \(.*\)$/, "")}` : "가로형");
@@ -135,15 +135,12 @@ const PICS: Record<string, ReactNode> = {
   "상철 (위로 넘김)": (<><path {...W} d="M8 14h46v36H8z" /><path {...G} d="M8 14h46v8H8z" />{[14, 22, 30, 38, 46].map((x) => <circle key={x} cx={x + 2} cy="18" r="1.6" fill="#6B7280" />)}{lines(14, 48, [30, 36, 42])}<path className="ar" d="M58 38v-10m-3 4l3-4 3 4" /></>),
   // ── 접지
   없음: (<path {...W} d="M18 6h28v44H18z" />),
-  반접지: (<><path {...W} d="M32 6l18 4v38l-18 4z" /><path {...Bl} d="M32 6L14 10v38l18 4z" /></>),
-  "3단 접지": (<><path {...W} d="M33 7l18 4v36l-18 4z" /><path {...G} d="M33 7l-9-3v40l9 7z" /><path {...Bl} d="M24 4L8 9v36l16 5z" /></>),
-  "4단 접지": (<><path {...W} d="M42 8l12 3v34l-12 3z" /><path {...G} d="M30 5l12 3v40l-12-3z" /><path {...W} d="M20 8l10-3v40l-10 3z" /><path {...Bl} d="M20 8L8 12v34l12 3z" /></>),
-  "N 접지": (<><path {...G} d="M40 8l14 4v36l-14-4z" /><path {...W} d="M26 12l14-4v36l-14 4z" /><path {...Bl} d="M12 8l14 4v36l-14-4z" /></>),
-  "대문 접지": (<><path {...W} d="M24 6h16v44H24z" /><path {...Bl} d="M24 6L10 10v38l14 2z" /><path {...Bl} d="M40 6l14 4v38l-14 2z" /></>),
-  "4단 병풍접지": (<><path {...Bl} d="M8 14l12-4v36l-12 4z" /><path {...W} d="M20 10l12 4v36l-12-4z" /><path {...G} d="M32 14l12-4v36l-12 4z" /><path {...W} d="M44 10l12 4v36l-12-4z" /></>),
+  반접지: (<><path {...Bl} d="M8 12h24v32H8z" /><path {...W} d="M32 12h24v32H32z" /><path className="ar" d="M14 50h16m-4-3l4 3-4 3" /></>),
+  "3단 접지": (<><path {...Bl} d="M8 12h16v32H8z" /><path {...W} d="M24 12h16v32H24z" /><path {...G} d="M40 12h16v32H40z" /><path className="ar" d="M12 50h10m-3-3l3 3-3 3M52 50H42m3-3l-3 3 3 3" /></>),
+  "대문 접지": (<><path {...Bl} d="M8 12h12v32H8z" /><path {...W} d="M20 12h24v32H20z" /><path {...Bl} d="M44 12h12v32H44z" /><path className="ar" d="M10 50h9m-3-3l3 3-3 3M54 50h-9m3-3l-3 3 3 3" /></>),
   // ── 인쇄 · 면
-  흑백: (<><path {...W} d="M16 5h26l6 6v40H16z" />{lines(21, 43, [17, 23, 29, 35, 41])}</>),
-  칼라: (<><path {...W} d="M16 5h26l6 6v40H16z" /><circle cx="26" cy="20" r="5" fill="#E8635A" /><circle cx="34" cy="20" r="5" fill="#4C8DF0" opacity=".85" /><circle cx="30" cy="27" r="5" fill="#F2C94C" opacity=".85" />{lines(21, 43, [38, 44])}</>),
+  흑백: (<circle cx="32" cy="28" r="12" fill="#222" />),
+  칼라: (<><path d="M32 28L32 16A12 12 0 0 1 42.4 34Z" style={{ fill: "#E8635A" }} /><path d="M32 28L42.4 34A12 12 0 0 1 21.6 34Z" style={{ fill: "#4C8DF0" }} /><path d="M32 28L21.6 34A12 12 0 0 1 32 16Z" style={{ fill: "#F2C94C" }} /></>),
   단면: (<><path {...W} d="M16 5h26l6 6v40H16z" /><text x="32" y="34" textAnchor="middle">1면</text></>),
   양면: (<><path {...W} d="M10 8h24l5 5v36H10z" /><path {...W} d="M24 5h24l5 5v36H24z" /><text x="38" y="30" textAnchor="middle">앞·뒤</text></>),
   // ── 코팅
@@ -164,7 +161,7 @@ const PICS: Record<string, ReactNode> = {
   // ── 받는 방법
   "방문 픽업": (<><path {...W} d="M10 22h44v28H10z" /><path {...Bl} d="M8 12h48l-4 10H12z" /><path {...G} d="M26 32h12v18H26z" /></>),
   "택배 (CJ대한통운)": (<><path {...W} d="M10 18l22-8 22 8v26l-22 8-22-8z" /><path className="ln" d="M10 18l22 8 22-8M32 26v26" /><path {...Bl} d="M20 14l22 8-6 3-22-8z" /></>),
-  "퀵 (서울 근교)": (<><circle cx="16" cy="42" r="7" {...W} /><circle cx="48" cy="42" r="7" {...W} /><path {...Bl} d="M22 38h18l-5-14h-8z" /><path className="ln" d="M40 38l4-14h6M10 24h10" /></>),
+  "퀵 (서울 근교)": (<><path {...W} d="M4 14h14v12H4z" /><circle cx="14" cy="42" r="8" {...W} /><circle cx="50" cy="42" r="8" {...W} /><path {...Bl} d="M18 34h18l4-8H22z" /><path className="ln" d="M22 26l-4 8M40 26l10 16M44 20h8" /><path {...G} d="M36 34l6-14h6" /></>),
 };
 // 종이 · 품목 이름 → 그림
 const paperPic = (o: string): ReactNode => {
@@ -192,7 +189,7 @@ const PIC_LABEL: Record<string, string> = {
 };
 const PROD_LABEL: Record<string, string> = { perfect: "무선제본", spring: "스프링", saddle: "중철", flyer: "전단지", sheet: "리플렛·엽서·낱장", card: "명함", poster: "포스터", form: "양식·스테이플" };
 // 그림 카드로 보여줄 항목 (용지 · 크기 · 코팅 …)
-const PIC_KEYS = ["size", "csize", "orient", "bind", "color", "side", "paper", "coat", "fold"];
+const PIC_KEYS = ["size", "csize", "orient", "bind", "color", "paper", "coat", "fold"];
 
 type PicItem = { key: string; label: string; sub?: string; art: ReactNode; off?: boolean };
 function PicRow({ items, value, label, onPick }: { items: PicItem[]; value: string; label: string; onPick: (k: string) => void }) {
@@ -216,7 +213,7 @@ const artOf = (k: string, o: string): ReactNode => {
   if (k === "size") return sizePic(o);
   if (k === "paper") return paperPic(o);
   if (k === "coat") return PICS[o === "없음" ? "없음_코팅" : o === OTHER ? "그외" : o] ?? PICS["없음_코팅"];
-  if (o === OTHER) return PICS["그외"];
+  if (o.startsWith(OTHER)) return PICS["그외"];
   return PICS[o] ?? PICS["없음"];
 };
 
@@ -251,7 +248,7 @@ function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | nu
         )}
         {mm && <small className="od-size">{mm}</small>}
         {f.custom && v[f.k] === f.custom && (
-          <input className="od-in" value={String(v[f.k + "_txt"] ?? "")} onChange={(e) => set(f.k + "_txt", e.target.value)} placeholder={f.k === "coat" ? "원하시는 코팅을 적어 주세요" : "원하시는 종이를 적어 주세요 (예: 랑데뷰 130g)"} />
+          <input className="od-in" value={String(v[f.k + "_txt"] ?? "")} onChange={(e) => set(f.k + "_txt", e.target.value)} placeholder={f.k === "coat" ? "원하시는 코팅을 적어 주세요" : f.k === "fold" ? "원하시는 접지를 적어 주세요" : "원하시는 종이를 적어 주세요 (예: 랑데뷰 130g)"} />
         )}
         {hint && <small className={why || off.length ? "od-warn" : "od-hint"}>{hint}</small>}
       </div>

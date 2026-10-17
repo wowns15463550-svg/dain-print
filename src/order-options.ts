@@ -31,6 +31,7 @@ export type Field =
 export type Product = { id: string; name: string; slug?: string; note?: string; fields: Field[] };
 
 export const OTHER = "그 외";
+export const FOLD_OTHER = "그 외 접지";
 const DIRECT = OTHER; // 종이 · 코팅의 "그 외"는 직접 적는 칸이 열림
 export const SIZE_MM: Record<string, [number, number]> = {
   A2: [420, 594], A3: [297, 420], A4: [210, 297], A5: [148, 210], A6: [105, 148],
@@ -177,8 +178,7 @@ export const PRODUCTS: Product[] = [
       { k: "side", label: "면", type: "pick", opts: ["단면", "양면"], def: "양면" },
       { k: "paper", label: "용지", type: "pick", opts: SHEET_PAPERS, def: "스노우지 200g" },
       { k: "coat", label: "코팅", type: "pick", opts: COATS, def: COATS[1], block: sheetCoat, custom: OTHER, hint: "랑데뷰 코팅은 A3 50부 · A4 100부 · A5 200부 이상부터 가능해요." },
-      { k: "fold", label: "접지", type: "pick", opts: ["없음", "반접지", "3단 접지", "4단 접지", "N 접지", "대문 접지", "4단 병풍접지"], def: "없음", pic: true, hint: "펼쳤을 때 가로 450mm 이하만 접지해요. 오시를 넣고 접어 드리고, A4 3단은 97 · 100 · 100mm예요." },
-      { k: "cut", label: "재단", type: "check", text: "재단 필요 (가장자리까지 배경이 있는 경우)", def: false },
+      { k: "fold", label: "접지", type: "pick", opts: ["없음", "반접지", "3단 접지", "대문 접지", FOLD_OTHER], def: "없음", pic: true, custom: FOLD_OTHER, hint: "펼쳤을 때 가로 450mm 이하만 접지해요. 오시를 넣고 접어 드리고, A4 3단은 97 · 100 · 100mm예요." },
       { k: "qty", label: "수량", type: "num", def: 50, min: 1, step: 1, unit: "장" },
     ],
   },
