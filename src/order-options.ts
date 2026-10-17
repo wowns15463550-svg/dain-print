@@ -20,6 +20,8 @@ export type Field =
       hintOf?: (v: Vals) => string | null;
       // 고를 수 없는 선택지 (X 표시)
       offOf?: (v: Vals) => string[];
+      // 그림 카드로 보여주기 (OrderPage의 PICS 그림 사용)
+      pic?: boolean;
       // "없음"이 아닌 선택지를 막는 조건. 막히면 이유를 돌려줌
       block?: (v: Vals) => string | null;
     }
@@ -31,15 +33,17 @@ export type Product = { id: string; name: string; slug?: string; note?: string; 
 const DIRECT = "다른 종이 (직접 적기)";
 export const SIDE_BIND = "좌철 (옆으로 넘김)";
 export const TOP_BIND = "상철 (위로 넘김)";
-// 책 방향 (그림 카드). noA4Wide면 A4 가로형은 X
+// 책 방향 (그림 카드). noA4Wide면 A4 · B4 가로형은 X
+const WIDE_NO = ["A4", "B4"];
 const orientField = (noA4Wide: boolean): Field => ({
   k: "orient",
   label: "제본 방향",
   type: "pick",
   opts: ["가로형", "세로형"],
   def: "세로형",
-  offOf: noA4Wide ? (v) => (v.size === "A4" ? ["가로형"] : []) : undefined,
-  hintOf: noA4Wide ? (v) => (v.size === "A4" ? "A4 가로형은 제작이 어려워요." : null) : undefined,
+  pic: true,
+  offOf: noA4Wide ? (v) => (WIDE_NO.includes(String(v.size)) ? ["가로형"] : []) : undefined,
+  hintOf: noA4Wide ? (v) => (WIDE_NO.includes(String(v.size)) ? `${v.size} 가로형은 제작이 어려워요.` : null) : undefined,
 });
 const UNSURE = "잘 모르겠어요";
 const SHEET_PAPERS = ["스노우지 250g", "스노우지 200g", "스노우지 150g", "랑데뷰 240g", "랑데뷰 190g", "랑데뷰 160g", UNSURE];
@@ -94,7 +98,7 @@ export const PRODUCTS: Product[] = [
     slug: "perfect-binding",
     note: "표지는 스노우지 250g 단면 무광코팅으로 고정입니다. 표지는 단면이라 내지 1쪽은 오른쪽부터 시작해요. A4 가로형은 안 되고, A5 가로형은 좌철도 가능해요.",
     fields: [
-      { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B5", "그 외 (요청사항에 적기)"], def: "A4" },
+      { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B4", "B5", "B6", "그 외 (요청사항에 적기)"], def: "A4" },
       orientField(true),
       {
         k: "bind",
@@ -103,8 +107,8 @@ export const PRODUCTS: Product[] = [
         opts: [SIDE_BIND, TOP_BIND],
         def: TOP_BIND,
         showIf: (v) => v.orient === "가로형",
-        optsOf: (v) => (v.size === "A5" ? [SIDE_BIND, TOP_BIND] : [TOP_BIND]),
-        hintOf: (v) => (v.size === "A5" ? "A5 가로형은 좌철 · 상철 둘 다 가능해요." : "이 크기 가로형은 위로 넘기는 상철만 가능해요. (좌철은 A5만)"),
+        optsOf: (v) => (["A5", "B6"].includes(String(v.size)) ? [SIDE_BIND, TOP_BIND] : [TOP_BIND]),
+        hintOf: (v) => (["A5", "B6"].includes(String(v.size)) ? `${v.size} 가로형은 좌철 · 상철 둘 다 가능해요.` : "이 크기 가로형은 위로 넘기는 상철만 가능해요. (좌철은 A5 · B6)"),
       },
       { k: "color", label: "내지 인쇄", type: "pick", opts: ["흑백", "칼라"], def: "흑백" },
       { k: "side", label: "내지 면", type: "pick", opts: ["양면", "단면"], def: "양면" },
@@ -119,7 +123,7 @@ export const PRODUCTS: Product[] = [
     slug: "spring-binding",
     note: "검정 트윈링, 앞뒤 무광 반투명 PVC로 마감합니다. 표지도 양면으로 시작하고, 표지와 내지는 같은 용지예요. 한 권은 최대 50장(양면 100쪽)까지 가능해요.",
     fields: [
-      { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B5", "그 외 (요청사항에 적기)"], def: "A4" },
+      { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B4", "B5", "B6", "그 외 (요청사항에 적기)"], def: "A4" },
       orientField(false),
       { k: "color", label: "인쇄", type: "pick", opts: ["흑백", "칼라"], def: "흑백" },
       { k: "side", label: "면", type: "pick", opts: ["양면", "단면"], def: "양면" },
@@ -134,7 +138,7 @@ export const PRODUCTS: Product[] = [
     slug: "saddle-stitch",
     note: "쪽수는 표지 포함 8쪽부터 4의 배수예요. 표지도 양면으로 인쇄합니다.",
     fields: [
-      { k: "size", label: "접었을 때 크기", type: "pick", opts: ["A4", "A5"], def: "A4" },
+      { k: "size", label: "접었을 때 크기", type: "pick", opts: ["A4", "A5", "B4", "B5", "B6"], def: "A4" },
       orientField(true),
       { k: "pages", label: "쪽수 (표지 포함)", type: "num", def: 8, min: 8, step: 4, unit: "쪽", mult4: true },
       { k: "paper", label: "용지", type: "pick", opts: ["모조 100g", "스노우지 250g", "스노우지 200g", "스노우지 150g", "랑데뷰 240g", "랑데뷰 190g", "랑데뷰 160g", UNSURE], def: "모조 100g" },
@@ -147,7 +151,7 @@ export const PRODUCTS: Product[] = [
     name: "전단지",
     slug: "flyer-leaflet",
     fields: [
-      { k: "size", label: "크기", type: "pick", opts: ["A4", "A5"], def: "A4" },
+      { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B4", "B5", "B6"], def: "A4" },
       { k: "side", label: "면", type: "pick", opts: ["단면", "양면"], def: "단면" },
       { k: "paper", label: "용지", type: "pick", opts: ["스노우지 100g", "스노우지 120g"], def: "스노우지 100g" },
       { k: "qty", label: "수량", type: "num", def: 100, min: 100, step: 100, unit: "장", hint: "100장 단위" },
@@ -159,11 +163,11 @@ export const PRODUCTS: Product[] = [
     slug: "postcard-invitation",
     note: "박(금박 등)은 하지 않아요. 랑데뷰 코팅은 A3 50부 · A4 100부 · A5 200부 이상부터 가능하고, 미싱 · 귀도리 같은 극소량 후가공은 하지 않아요.",
     fields: [
-      { k: "size", label: "펼쳤을 때 크기", type: "pick", opts: ["A3", "A4", "A5", "A6", "그 외 (요청사항에 적기)"], def: "A4" },
+      { k: "size", label: "펼쳤을 때 크기", type: "pick", opts: ["A3", "A4", "A5", "A6", "B4", "B5", "B6", "그 외 (요청사항에 적기)"], def: "A4" },
       { k: "side", label: "면", type: "pick", opts: ["단면", "양면"], def: "양면" },
       { k: "paper", label: "용지", type: "pick", opts: SHEET_PAPERS, def: "스노우지 200g" },
       { k: "coat", label: "코팅", type: "pick", opts: ["없음", "무광", "유광 (단면만)"], def: "없음", block: sheetCoat, hint: "랑데뷰 코팅은 A3 50부 · A4 100부 · A5 200부 이상부터 가능해요." },
-      { k: "fold", label: "접지", type: "pick", opts: ["없음", "2단 접지", "3단 접지"], def: "없음", hint: "접지는 오시를 넣고 접어 드려요. A4 3단은 97 · 100 · 100mm" },
+      { k: "fold", label: "접지", type: "pick", opts: ["없음", "반접지", "3단 접지", "N 접지", "대문 접지", "4단 병풍접지"], def: "없음", pic: true, hint: "펼쳤을 때 가로 450mm 이하만 접지해요. 오시를 넣고 접어 드리고, A4 3단은 97 · 100 · 100mm예요." },
       { k: "cut", label: "재단", type: "check", text: "재단 필요 (가장자리까지 배경이 있는 경우)", def: false },
       { k: "qty", label: "수량", type: "num", def: 50, min: 1, step: 1, unit: "장" },
     ],
@@ -174,6 +178,7 @@ export const PRODUCTS: Product[] = [
     slug: "business-card",
     note: "양면 인쇄 기본, 완성 90 × 50mm (작업 92 × 52mm)입니다.",
     fields: [
+      { k: "csize", label: "크기", type: "pick", opts: ["명함 (90×50)"], def: "명함 (90×50)", pic: true },
       { k: "paper", label: "용지", type: "pick", opts: ["스노우지 250g", "랑데뷰지 240g", "반누보 227g"], def: "랑데뷰지 240g" },
       { k: "kinds", label: "종류 (이름 수)", type: "num", def: 1, min: 1, step: 1, unit: "종" },
       { k: "qty", label: "종류당 수량", type: "num", def: 100, min: 100, step: 100, unit: "장", hint: "100장 단위" },

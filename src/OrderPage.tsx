@@ -1,5 +1,5 @@
 // 주문서 도우미 (/order/) — 손님이 사양을 고르면 주문 글이 자동으로 완성됩니다. 가격은 보여주지 않습니다.
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Arrow, Ico } from "./App";
 import { Shell } from "./ServicePage";
 import { CONTACT } from "./site-data";
@@ -66,7 +66,7 @@ function describe(it: Item) {
       r.push(["수량", `${v.qty}장`]);
       break;
     case "card":
-      r.push(["용지", paperOf(v)], ["수량", `${v.kinds}종 × ${v.qty}장`]);
+      r.push(["크기", "90×50mm"], ["용지", paperOf(v)], ["수량", `${v.kinds}종 × ${v.qty}장`]);
       break;
     case "poster":
       r.push(["크기", size], ["용지", `${v.paper} ${v.weight}`]);
@@ -117,27 +117,42 @@ export function settle(p: Product, v: Vals): Vals {
   return o;
 }
 
+// 그림 카드 (제본 방향 · 접지 · 명함 크기). 파란 면 = 앞면
+const W = { className: "w" }; // 흰 면
+const Bl = { className: "b" }; // 파란 면
+const G = { className: "g" }; // 안쪽(회색) 면
+const PICS: Record<string, ReactNode> = {
+  가로형: (<><path {...W} d="M10 14h38l6 6v22H10z" /><path {...W} d="M48 14v6h6" /><text x="32" y="33" textAnchor="middle">A</text></>),
+  세로형: (<><path {...W} d="M20 6h18l6 6v38H20z" /><path {...W} d="M38 6v6h6" /><text x="32" y="33" textAnchor="middle">A</text></>),
+  없음: (<path {...W} d="M20 8h24v40H20z" />),
+  반접지: (<><path {...W} d="M32 6l16 4v40l-16-4z" /><path {...Bl} d="M32 6l-13 6v40l13-6z" /></>),
+  "3단 접지": (<><path {...W} d="M28 7l18 4v39l-18-4z" /><path {...G} d="M28 7l10-3v39l-10 3z" /><path {...Bl} d="M28 7l-13 6v39l13-6z" /></>),
+  "N 접지": (<><path {...G} d="M40 10l12-4v38l-12 4z" /><path {...W} d="M28 6l12 4v38l-12-4z" /><path {...Bl} d="M28 6l-13 6v38l13-6z" /></>),
+  "대문 접지": (<><path {...W} d="M24 6h16v38H24z" /><path {...Bl} d="M24 6l-12 5v39l12-6z" /><path {...Bl} d="M40 6l12 5v39l-12-6z" /></>),
+  "4단 병풍접지": (<><path {...G} d="M44 9l10-3v37l-10 3z" /><path {...W} d="M34 6l10 3v37l-10-3z" /><path {...W} d="M24 9l10-3v37l-10 3z" /><path {...Bl} d="M24 9l-13 5v37l13-5z" /></>),
+  "명함 (90×50)": (<><path {...W} d="M8 12h42l6 6v26H8z" /><path {...W} d="M50 12v6h6" /><text className="sm" x="31" y="26" textAnchor="middle">90mm</text><text className="sm" x="31" y="33" textAnchor="middle">×</text><text className="sm" x="31" y="41" textAnchor="middle">50mm</text></>),
+};
+const PIC_LABEL: Record<string, string> = { 가로형: "가로", 세로형: "세로", 없음: "접지 안 함", "명함 (90×50)": "명함(90×50)" };
+
 function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | number | boolean) => void }) {
   if (f.type === "pick") {
     if (f.showIf && !f.showIf(v)) return null;
-    if (f.k === "orient") {
+    if (f.pic) {
       const off = f.offOf?.(v) ?? [];
-      const hint = f.hintOf?.(v);
+      const hint = f.hintOf?.(v) ?? f.hint;
       return (
         <div className="od-field">
           <span className="od-lab">{f.label}</span>
-          <div className="od-orient" role="radiogroup" aria-label={f.label}>
+          <div className="od-pics" role="radiogroup" aria-label={f.label}>
             {f.opts.map((o) => {
-              const wide = o === "가로형";
               const x = off.includes(o);
               return (
                 <button type="button" key={o} role="radio" aria-checked={v[f.k] === o} disabled={x} className={(v[f.k] === o ? "on" : "") + (x ? " x" : "") || undefined} onClick={() => set(f.k, o)}>
-                  <svg viewBox="0 0 48 48" width="44" height="44" aria-hidden="true">
-                    {wide ? <path d="M7 14h28l6 6v14H7z M35 14v6h6" /> : <path d="M14 7h14l6 6v28H14z M28 7v6h6" />}
-                    <text x={wide ? 24 : 24} y={wide ? 29 : 28} textAnchor="middle">A</text>
-                    {x && <path className="od-x" d="M10 10l28 28M38 10L10 38" />}
+                  <svg viewBox="0 0 64 56" aria-hidden="true">
+                    {PICS[o]}
+                    {x && <path className="od-x" d="M14 8l36 40M50 8L14 48" />}
                   </svg>
-                  <span>{o.replace("형", "")}</span>
+                  <span>{PIC_LABEL[o] ?? o}</span>
                 </button>
               );
             })}

@@ -813,12 +813,16 @@ textarea.od-in{resize:vertical;line-height:1.6}
 }
 
 .od-spine{display:inline-block;align-self:flex-start;width:fit-content;margin-top:8px;padding:4px 10px;background:#EEF2FD;color:#1E4BD2;font-size:13px;font-weight:600;border-radius:4px}
-.od-orient{display:flex;gap:10px}
-.od-orient button{display:flex;flex-direction:column;align-items:center;gap:6px;width:84px;padding:12px 0 10px;background:#F6F7F9;border:1px solid transparent;border-radius:8px;color:#6B7280;font-size:14px;cursor:pointer}
-.od-orient button svg path{fill:#fff;stroke:#6B7280;stroke-width:1.5;stroke-linejoin:round}
-.od-orient button svg text{font-size:11px;font-weight:600;fill:#6B7280;font-family:inherit}
-.od-orient button.on{background:#E8EEFC;border-color:#BFD0F7;color:#1E4BD2;font-weight:700}
-.od-orient button.on svg path{stroke:#1E4BD2}
-.od-orient button.on svg text{fill:#1E4BD2}
-.od-orient button.x{cursor:not-allowed;opacity:.75}
-.od-orient button svg path.od-x{fill:none;stroke:#C2544A;stroke-width:3;stroke-linecap:round}
+.od-pics{display:flex;flex-wrap:wrap;gap:10px}
+.od-pics button{display:flex;flex-direction:column;align-items:center;gap:6px;width:96px;padding:10px 4px;background:#F4F5F7;border:1px solid transparent;border-radius:8px;color:#6B7280;font-size:13px;line-height:1.3;cursor:pointer;text-align:center}
+.od-pics button svg{width:60px;height:52px}
+.od-pics svg path{stroke:#6B7280;stroke-width:1.3;stroke-linejoin:round}
+.od-pics svg .w{fill:#fff}.od-pics svg .b{fill:#D3E2F8}.od-pics svg .g{fill:#E3E5E9}
+.od-pics svg text{font-size:10px;font-weight:600;fill:#6B7280;font-family:inherit}
+.od-pics svg text.sm{font-size:8.5px;font-weight:700;fill:#374151}
+.od-pics button.on{background:#E8EEFC;border-color:#1E4BD2;color:#1E4BD2;font-weight:700;box-shadow:0 0 0 1px #1E4BD2 inset}
+.od-pics button.on svg path{stroke:#1E4BD2}.od-pics button.on svg .b{fill:#B9CFF5}
+.od-pics button.on svg text{fill:#1E4BD2}
+.od-pics button.x{cursor:not-allowed;opacity:.7}
+.od-pics svg path.od-x{fill:none;stroke:#C2544A;stroke-width:3;stroke-linecap:round}
+@media (max-width:480px){.od-pics button{width:calc(33.3% - 7px)}}
