@@ -193,18 +193,30 @@ function useCopy() {
   return { copied, copy };
 }
 
-// 영업 안내 — 늘 "주말·공휴일 휴무"를 보여주고, 주말(한국 시간)에 들어오면 오늘 휴무라고 알려줌
-function HoursNote() {
+// 영업 안내 띠 — 오른쪽에서 왼쪽으로 흐름. 늘 "주말·공휴일 휴무"를 알리고, 주말(한국 시간)에 들어오면 "오늘은 휴무일"
+function HoursBanner() {
   const [wk, setWk] = useState(false);
   useEffect(() => {
     const d = new Date(Date.now() + 9 * 3600e3).getUTCDay();
     setWk(d === 0 || d === 6);
   }, []);
+  const msg = wk
+    ? ["오늘은 휴무일입니다", "파일은 미리 보내 주세요", "평일 09:30부터 순서대로 확인해 드립니다"]
+    : [`영업시간 ${CONTACT.hours}`, "주말 · 공휴일은 휴무입니다", "주말 작업이 꼭 필요하면 미리 상의해 주세요"];
+  const row = (k: number) => (
+    <span className="hb-row" key={k} aria-hidden={k > 0 ? "true" : undefined}>
+      {msg.map((m) => (
+        <span key={m}>
+          {m}
+          <i aria-hidden="true">●</i>
+        </span>
+      ))}
+    </span>
+  );
   return (
-    <p className={wk ? "hero-hours off" : "hero-hours"}>
-      <i aria-hidden="true" />
-      {wk ? "오늘은 휴무일입니다. 파일은 미리 보내 주세요, 평일 09:30부터 확인해 드립니다." : `${CONTACT.hours} · ${CONTACT.closed}`}
-    </p>
+    <div className={wk ? "hours-bar off" : "hours-bar"} role="note" aria-label={wk ? "오늘은 휴무일입니다" : "영업 안내"}>
+      <div className="hb-track">{[0, 1, 2, 3].map(row)}</div>
+    </div>
   );
 }
 
@@ -440,6 +452,7 @@ export default function App() {
 
       <main>
         <section className="hero" ref={heroRef} aria-label="다인인쇄소 소개">
+          <HoursBanner />
           <div className="hero-body">
             <div className="wrap hero-grid">
               <div className="hero-copy">
@@ -461,7 +474,6 @@ export default function App() {
                   빠르고 정확한 <strong className="onestop">원스톱 인쇄소</strong>입니다.
                 </span>
               </p>
-              <HoursNote />
               <div className="hero-cta">
                 <a className="btn btn-order" href="/order/">
                   간단하게 주문하기 <Arrow />

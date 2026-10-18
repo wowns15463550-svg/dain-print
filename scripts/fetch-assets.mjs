@@ -72,6 +72,7 @@ const ASSETS = [
   ["recv-pickup.webp", "hf_20261018_091407_1e26eb64-3a85-4aab-a0a4-aa4b87634fd1", { max: 240 }],
   ["recv-parcel.webp", "hf_20261018_091409_21978b34-3837-421b-a3f7-bfb5bb0f9967", { max: 240 }],
   ["recv-quick.webp", "hf_20261018_091411_5710cd02-60f5-40f1-8855-93afa12ed2e9", { max: 240 }],
+  ["order-hero2.webp", "hf_20261018_093613_3a8d72b1-6eaa-4871-81ee-f276b74d78e1", { max: 1168 }],
 ];
 
 mkdirSync(OUT, { recursive: true });

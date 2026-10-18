@@ -841,3 +841,16 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .hero-hours.off{border-color:#C2544A;color:#C2544A;font-weight:600}
 .hero-hours.off i{background:#C2544A}
 .od-pics button img{width:60px;height:52px;object-fit:contain;mix-blend-mode:multiply}
+
+.hours-bar{position:relative;z-index:2;overflow:hidden;background:#1E4BD2;color:#fff;font-size:16px;font-weight:700;line-height:1;white-space:nowrap}
+.hours-bar.off{background:#C2544A}
+.hb-track{display:flex;width:max-content;padding-block:13px;animation:hb 40s linear infinite}
+.hb-row{display:inline-flex;align-items:center}
+.hb-row>span{display:inline-flex;align-items:center}
+.hb-row i{font-style:normal;font-size:8px;opacity:.6;margin-inline:26px}
+@keyframes hb{to{transform:translateX(-25%)}}
+@media (prefers-reduced-motion:reduce){.hb-track{animation:none}}
+@media (max-width:640px){.hours-bar{font-size:15px}.hb-track{padding-block:11px;animation-duration:30s}}
+.od-pics button{width:108px}
+.od-pics button svg{width:72px;height:63px}
+.od-pics button img{width:92px;height:80px}
