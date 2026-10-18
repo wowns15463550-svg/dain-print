@@ -117,7 +117,7 @@ export const PRODUCTS: Product[] = [
     slug: "perfect-binding",
     note: "표지는 스노우지 250g 단면 무광코팅으로 고정입니다. 표지는 단면이라 내지 1쪽은 오른쪽부터 시작해요. 가로형은 위로 넘기는 상철이 가능하고, A5 · B6은 좌철도 가능해요. B5 가로형은 제작하지 않아요.",
     fields: [
-      { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B4", "B5", "B6"], def: "A4" },
+      { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B5", "B6"], def: "A4" },
       orientField(true),
       bindField(true),
       { k: "color", label: "내지 인쇄", type: "pick", opts: ["흑백", "칼라"], def: "흑백" },
@@ -133,7 +133,7 @@ export const PRODUCTS: Product[] = [
     slug: "spring-binding",
     note: "검정 트윈링, 앞뒤 무광 반투명 PVC로 마감합니다. 표지도 양면으로 시작하고, 표지와 내지는 같은 용지예요. 한 권은 최대 50장(양면 100쪽)까지 가능해요.",
     fields: [
-      { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B4", "B5", "B6"], def: "A4" },
+      { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B5", "B6"], def: "A4" },
       orientField(false),
       { k: "color", label: "인쇄", type: "pick", opts: ["흑백", "칼라"], def: "흑백" },
       { k: "side", label: "면", type: "pick", opts: ["양면", "단면"], def: "양면" },
@@ -148,7 +148,7 @@ export const PRODUCTS: Product[] = [
     slug: "saddle-stitch",
     note: "쪽수는 표지 포함 8쪽부터 4의 배수예요. 표지도 양면으로 인쇄합니다.",
     fields: [
-      { k: "size", label: "접었을 때 크기", type: "pick", opts: ["A4", "A5", "B4", "B5", "B6"], def: "A4" },
+      { k: "size", label: "접었을 때 크기", type: "pick", opts: ["A4", "A5", "B5", "B6"], def: "A4" },
       orientField(true),
       bindField(false),
       { k: "pages", label: "쪽수 (표지 포함)", type: "num", def: 8, min: 8, step: 4, unit: "쪽", mult4: true },
