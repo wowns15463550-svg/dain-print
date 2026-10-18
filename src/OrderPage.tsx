@@ -150,7 +150,7 @@ const PICS: Record<string, ReactNode> = {
   // ── 용지 (결 · 질감은 색으로 구분)
   종이: (<><path {...W} d="M12 22l20-8 22 8-22 9z" /><path {...W} d="M12 28l20 9 22-9v6l-22 9-20-9z" /></>),
   // ── 품목
-  "p:perfect": (<><path d="M8 9l6-3v42l-6 3z" style={{ fill: "#2A4CB8" }} /><path {...W} d="M14 6h28v42H14z" /><path d="M14 6h28v13H14z" style={{ fill: "#1E4BD2" }} /><path d="M18 11h16M18 15h10" style={{ stroke: "#fff", strokeWidth: 1.8, fill: "none", strokeLinecap: "round" }} /><circle cx="27" cy="35" r="9" style={{ fill: "#BFD3F7", stroke: "none" }} /><circle cx="36" cy="27" r="4.5" style={{ fill: "#C2544A", stroke: "none" }} /><path d="M18 46h14" style={{ stroke: "#9FB6EA", strokeWidth: 1.8, fill: "none", strokeLinecap: "round" }} /><path {...W} d="M42 6l6 2v42l-6-2z" /><path className="ln" d="M43 13l4 1M43 18l4 1M43 23l4 1M43 28l4 1M43 33l4 1" /></>),
+  "p:perfect": (<><path {...W} d="M14 5h34v46H14z" /><path {...W} d="M14 5h6v46h-6z" /><path {...W} d="M26 13h16v14H26z" />{lines(29, 39, [17, 20.5, 24])}{lines(26, 42, [36, 41])}</>),
   "p:spring": (<><path {...W} d="M16 6h36v44H16z" />{[11, 18, 25, 32, 39, 46].map((y) => <path key={y} className="ln" d={`M11 ${y}h10`} />)}{[11, 18, 25, 32, 39, 46].map((y) => <circle key={y} cx="16" cy={y} r="1.8" fill="#6B7280" />)}<path {...Bl} d="M24 11h22v14H24z" />{lines(24, 46, [32, 38, 44])}</>),
   "p:saddle": (<><path {...W} d="M6 14l26 5v31l-26-5z" /><path {...Bl} d="M32 19l26-5v31l-26 5z" /><path className="ln" d="M32 19v31" /><circle cx="32" cy="26" r="1.6" fill="#C2544A" /><circle cx="32" cy="42" r="1.6" fill="#C2544A" />{lines(11, 27, [27, 32, 37])}</>),
   "p:flyer": (<><path {...W} d="M14 5h30l6 6v40H14z" /><path {...Bl} d="M19 11h26v16H19z" />{lines(19, 45, [34, 39, 44])}</>),
