@@ -73,6 +73,7 @@ const ASSETS = [
   ["recv-parcel.webp", "hf_20261018_091409_21978b34-3837-421b-a3f7-bfb5bb0f9967", { max: 240 }],
   ["recv-quick.webp", "hf_20261018_091411_5710cd02-60f5-40f1-8855-93afa12ed2e9", { max: 240 }],
   ["order-hero2.webp", "hf_20261018_093613_3a8d72b1-6eaa-4871-81ee-f276b74d78e1", { max: 1168 }],
+  ["l-perfect2.webp", "hf_20261018_094037_04e3bdba-043f-40f2-b4bf-65cdb6a2b057", { max: 1100 }],
 ];
 
 mkdirSync(OUT, { recursive: true });

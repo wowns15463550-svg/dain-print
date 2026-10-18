@@ -31,7 +31,7 @@ export type Notice = { date: string; tag: string; hot?: boolean; title: string; 
 export const NOTICES: Notice[] = notices as Notice[];
 
 export const SERVICES = [
-  { img: "assets/l-perfect.webp", name: "무선제본", desc: "학원 교재, 포트폴리오, 보고서처럼 쪽수가 있는 책. 무선 제본기로 책등에 풀을 발라 붙이는 가장 일반적인 제본입니다.", spec: "표지 스노우지 250g 무광코팅" },
+  { img: "assets/l-perfect2.webp", name: "무선제본", desc: "학원 교재, 포트폴리오, 보고서처럼 쪽수가 있는 책. 무선 제본기로 책등에 풀을 발라 붙이는 가장 일반적인 제본입니다.", spec: "표지 스노우지 250g 무광코팅" },
   { img: "assets/l-saddle.webp", name: "중철제본", desc: "카탈로그, 팜플렛, 행사 책자. 가운데를 스테이플로 묶어 활짝 펼쳐지는 얇은 책입니다.", spec: "소책자 · 카탈로그 · 프로그램북" },
   { img: "assets/l-spiral2.webp", detail: "assets/l-spiral-x.webp", parts: ["무광 반투명 PVC 앞표지", "내지", "PVC 뒷표지", "검정 트윈링"], name: "스프링제본", desc: "보고서, 문제집, 매뉴얼처럼 펼쳐두고 보는 자료. 사각 구멍을 뚫어 검정 트윈링으로 묶고, 앞뒤에 무광 반투명 PVC 표지를 넣어 깔끔하게 마감합니다.", spec: "검정 트윈링 · 무광 PVC 표지" },
   { img: "assets/l-form.webp", name: "양식 · 스테이플", desc: "아파트 · 관리사무소 양식, 신청서, 회의 자료. 복사용지에 출력해 왼쪽 위를 자동 스테이플러로 한 번 찍어 드립니다. 뒷면 심이 납작하게 눌려 뾰족하지 않습니다.", spec: "왼쪽 위 1곳 · 복사용지" },

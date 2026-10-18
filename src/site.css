@@ -854,3 +854,7 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .od-pics button{width:108px}
 .od-pics button svg{width:72px;height:63px}
 .od-pics button img{width:92px;height:80px}
+.od-pics.big button{width:168px;gap:8px;padding:12px 6px}
+.od-pics.big button img{width:148px;height:148px}
+.od-pics.big button span{font-size:15px}
+@media (max-width:480px){.od-pics.big button{width:calc(33.3% - 7px);padding:8px 2px}.od-pics.big button img{width:100%;max-width:104px;height:auto;aspect-ratio:1}}

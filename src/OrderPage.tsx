@@ -197,13 +197,13 @@ const RECV_IMG: Record<string, string> = { "방문 픽업": "/assets/recv-pickup
 const PIC_KEYS = ["size", "csize", "orient", "bind", "color", "paper", "coat", "fold"];
 
 type PicItem = { key: string; label: string; sub?: string; art?: ReactNode; img?: string; off?: boolean };
-function PicRow({ items, value, label, onPick }: { items: PicItem[]; value: string; label: string; onPick: (k: string) => void }) {
+function PicRow({ items, value, label, onPick, big }: { items: PicItem[]; value: string; label: string; onPick: (k: string) => void; big?: boolean }) {
   return (
-    <div className="od-pics" role="radiogroup" aria-label={label}>
+    <div className={big ? "od-pics big" : "od-pics"} role="radiogroup" aria-label={label}>
       {items.map((it) => (
         <button type="button" key={it.key} role="radio" aria-checked={value === it.key} disabled={it.off} className={(value === it.key ? "on" : "") + (it.off ? " x" : "") || undefined} onClick={() => onPick(it.key)}>
           {it.img ? (
-            <img src={it.img} alt="" width={60} height={52} loading="lazy" />
+            <img src={it.img} alt="" width={140} height={140} loading="lazy" />
           ) : (
             <svg viewBox="0 0 64 56" aria-hidden="true">
               {it.art}
@@ -521,7 +521,7 @@ export default function OrderView() {
               ))}
               <div className="od-field">
                 <span className="od-lab">받는 방법</span>
-                <PicRow label="받는 방법" value={recv} onPick={setRecv} items={["방문 픽업", "택배 (CJ대한통운)", "퀵 (서울 근교)"].map((o) => ({ key: o, label: PIC_LABEL[o] ?? o, img: RECV_IMG[o] }))} />
+                <PicRow big label="받는 방법" value={recv} onPick={setRecv} items={["방문 픽업", "택배 (CJ대한통운)", "퀵 (서울 근교)"].map((o) => ({ key: o, label: PIC_LABEL[o] ?? o, img: RECV_IMG[o] }))} />
                 {recv !== "방문 픽업" ? (
                   <input className="od-in" value={addr} onChange={(e) => setAddr(e.target.value)} placeholder="받으실 주소 · 받는 분 · 연락처" />
                 ) : (
