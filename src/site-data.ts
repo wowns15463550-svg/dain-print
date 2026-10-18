@@ -3,6 +3,7 @@ import notices from "../content/notices.json";
 
 export const CONTACT = {
   phone: "0507-1461-0552",
+  phoneWeekend: "02-2271-0496", // 주말(한국 시간)에는 이 번호로 바뀌어 보임 (chat.ts)
   email: "dain969@naver.com",
   address: "서울 중구 마른내로4길 27",
   addressDetail: "다인시스템 1층",
@@ -18,10 +19,6 @@ export const CONTACT = {
   kakaoId: "dain969",
   insta: "https://www.instagram.com/dain969_/",
   mailWrite: "https://mail.naver.com/write/direct?orderType=new&to=dain969@naver.com",
-  webhard: "https://www.webhard.co.kr",
-  webhardId: "dain0496",
-  webhardPw: "22710496",
-  webhardFolder: "1.인터넷손님",
   subway: "충무로역 7번 출구 도보 3분",
   // 카카오 개발자센터에서 받은 JavaScript 키. 넣으면 오시는 길 지도가 카카오맵으로 바뀝니다 (비어 있으면 구글 지도).
   kakaoMapKey: "25275005fc01012009bcd9f4854e8d4a",

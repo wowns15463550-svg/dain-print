@@ -193,6 +193,21 @@ function useCopy() {
   return { copied, copy };
 }
 
+// 영업 안내 — 늘 "주말·공휴일 휴무"를 보여주고, 주말(한국 시간)에 들어오면 오늘 휴무라고 알려줌
+function HoursNote() {
+  const [wk, setWk] = useState(false);
+  useEffect(() => {
+    const d = new Date(Date.now() + 9 * 3600e3).getUTCDay();
+    setWk(d === 0 || d === 6);
+  }, []);
+  return (
+    <p className={wk ? "hero-hours off" : "hero-hours"}>
+      <i aria-hidden="true" />
+      {wk ? "오늘은 휴무일입니다. 파일은 미리 보내 주세요, 평일 09:30부터 확인해 드립니다." : `${CONTACT.hours} · ${CONTACT.closed}`}
+    </p>
+  );
+}
+
 export default function App() {
   const [menu, setMenu] = useState(false);
   const [slide, setSlide] = useState(0);
@@ -446,6 +461,7 @@ export default function App() {
                   빠르고 정확한 <strong className="onestop">원스톱 인쇄소</strong>입니다.
                 </span>
               </p>
+              <HoursNote />
               <div className="hero-cta">
                 <a className="btn btn-order" href="/order/">
                   간단하게 주문하기 <Arrow />
@@ -852,36 +868,6 @@ export default function App() {
                     </span>
                   </li>
                 </ul>
-                <div className="wh" id="webhard">
-                  <div className="wh-h">
-                    <Ico k="cloud" />
-                    <b>용량이 큰 파일은 웹하드로</b>
-                  </div>
-                  <dl>
-                    <dt>아이디</dt>
-                    <dd>
-                      {CONTACT.webhardId}
-                      <button type="button" className={copied === "whid" ? "mini done" : "mini"} onClick={() => copy("whid", CONTACT.webhardId)}>
-                        {copied === "whid" ? "복사됨" : "복사"}
-                      </button>
-                    </dd>
-                    <dt>비밀번호</dt>
-                    <dd>
-                      {CONTACT.webhardPw}
-                      <button type="button" className={copied === "whpw" ? "mini done" : "mini"} onClick={() => copy("whpw", CONTACT.webhardPw)}>
-                        {copied === "whpw" ? "복사됨" : "복사"}
-                      </button>
-                    </dd>
-                    <dt>올릴 폴더</dt>
-                    <dd>
-                      <span className="wh-folder">{CONTACT.webhardFolder}</span>
-                    </dd>
-                  </dl>
-                  <p>올리신 뒤 메일이나 카톡으로 성함과 파일 이름을 알려주세요.</p>
-                  <a className="btn btn-accent" href={CONTACT.webhard} target="_blank" rel="noreferrer">
-                    웹하드 열기 <Arrow />
-                  </a>
-                </div>
                 <div className="wh bank" id="bank">
                   <div className="wh-h">
                     <Ico k="bank" />
@@ -1158,10 +1144,6 @@ export default function App() {
         <a className="qm-i qm-mail" href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
           <Ico k="mail" />
           <span>메일</span>
-        </a>
-        <a className="qm-i qm-wh" href="#webhard">
-          <Ico k="cloud" />
-          <span>웹하드</span>
         </a>
         <a className="qm-i qm-map" href="#visit" onClick={openVisit}>
           <Ico k="pin" />

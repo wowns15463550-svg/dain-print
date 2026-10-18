@@ -154,7 +154,7 @@ const PICS: Record<string, ReactNode> = {
   "p:spring": (<><path {...W} d="M16 6h36v44H16z" />{[11, 18, 25, 32, 39, 46].map((y) => <path key={y} className="ln" d={`M11 ${y}h10`} />)}{[11, 18, 25, 32, 39, 46].map((y) => <circle key={y} cx="16" cy={y} r="1.8" fill="#6B7280" />)}<path {...Bl} d="M24 11h22v14H24z" />{lines(24, 46, [32, 38, 44])}</>),
   "p:saddle": (<><path {...W} d="M6 14l26 5v31l-26-5z" /><path {...Bl} d="M32 19l26-5v31l-26 5z" /><path className="ln" d="M32 19v31" /><circle cx="32" cy="26" r="1.6" fill="#C2544A" /><circle cx="32" cy="42" r="1.6" fill="#C2544A" />{lines(11, 27, [27, 32, 37])}</>),
   "p:flyer": (<><path {...W} d="M14 5h30l6 6v40H14z" /><path {...Bl} d="M19 11h26v16H19z" />{lines(19, 45, [34, 39, 44])}</>),
-  "p:sheet": (<><path {...G} d="M24 6h30v32H24z" /><path {...W} d="M8 14h34v36H8z" /><path {...Bl} d="M13 19h24v14H13z" />{lines(13, 37, [39, 44])}</>),
+  "p:sheet": (<><path {...Bl} d="M6 14l17-4v34l-17 4z" /><path {...W} d="M23 10l18 4v34l-18-4z" /><path {...G} d="M41 14l17-4v34l-17 4z" />{lines(27, 37, [22, 28, 34])}</>),
   "p:card": (<><path {...W} d="M6 14h50v30H6z" /><path {...Bl} d="M11 20h12v12H11z" />{lines(29, 51, [24, 30, 36])}</>),
   "p:poster": (<><path {...W} d="M14 3h28v50H14z" /><path {...Bl} d="M18 8h20v26H18z" /><text x="28" y="25" textAnchor="middle">POSTER</text>{lines(18, 38, [41, 46])}</>),
   "p:form": (<><path {...G} d="M16 8h32v42H16z" /><path {...W} d="M12 5h32v42H12z" />{lines(17, 39, [15, 21, 27, 33])}<path className="st" d="M13 10l5 4" /></>),
@@ -175,32 +175,41 @@ const paperPic = (o: string): ReactNode => {
   );
 };
 // 크기 그림 — 실제 비율대로 그린 종이
-const sizePic = (o: string): ReactNode => {
+const sizePic = (o: string, all: string[]): ReactNode => {
   const m = SIZE_MM[o];
   if (!m) return <path {...W} d="M14 6h36v44H14z" />;
-  const k = Math.min(36 / m[0], 44 / m[1]);
+  // 같은 줄에 있는 크기끼리 실제 비율로 비교되게 같은 축척으로 그림
+  const mw = Math.max(...all.map((x) => SIZE_MM[x]?.[0] ?? 0));
+  const mh = Math.max(...all.map((x) => SIZE_MM[x]?.[1] ?? 0));
+  const k = Math.min(48 / mw, 52 / mh);
   const w = m[0] * k, h = m[1] * k;
-  return <path {...W} d={`M${32 - w / 2} ${28 - h / 2}h${w}v${h}h${-w}z`} />;
+  return <path {...W} d={`M${32 - w / 2} ${54 - h}h${w}v${h}h${-w}z`} />;
 };
 const PIC_LABEL: Record<string, string> = {
   가로형: "가로", 세로형: "세로", 없음: "없음", "명함 (90×50)": "명함(90×50)",
   "좌철 (옆으로 넘김)": "좌철 (옆으로)", "상철 (위로 넘김)": "상철 (위로)",
   "택배 (CJ대한통운)": "택배", "퀵 (서울 근교)": "퀵", "복사용지 (무림 M COPY 80g)": "복사용지 80g",
 };
-const PROD_LABEL: Record<string, string> = { perfect: "무선제본", spring: "스프링", saddle: "중철", flyer: "전단지", sheet: "리플렛·엽서·낱장", card: "명함", poster: "포스터", form: "양식·스테이플" };
+const PROD_LABEL: Record<string, string> = { perfect: "무선제본", spring: "스프링", saddle: "중철", flyer: "전단지", sheet: "낱장 인쇄", card: "명함", poster: "포스터", form: "양식·스테이플" };
+const PROD_SUB: Record<string, string> = { perfect: "(떡제본)", sheet: "(리플렛 · 엽서)" };
 // 그림 카드로 보여줄 항목 (용지 · 크기 · 코팅 …)
+const RECV_IMG: Record<string, string> = { "방문 픽업": "/assets/recv-pickup.webp", "택배 (CJ대한통운)": "/assets/recv-parcel.webp", "퀵 (서울 근교)": "/assets/recv-quick.webp" };
 const PIC_KEYS = ["size", "csize", "orient", "bind", "color", "paper", "coat", "fold"];
 
-type PicItem = { key: string; label: string; sub?: string; art: ReactNode; off?: boolean };
+type PicItem = { key: string; label: string; sub?: string; art?: ReactNode; img?: string; off?: boolean };
 function PicRow({ items, value, label, onPick }: { items: PicItem[]; value: string; label: string; onPick: (k: string) => void }) {
   return (
     <div className="od-pics" role="radiogroup" aria-label={label}>
       {items.map((it) => (
         <button type="button" key={it.key} role="radio" aria-checked={value === it.key} disabled={it.off} className={(value === it.key ? "on" : "") + (it.off ? " x" : "") || undefined} onClick={() => onPick(it.key)}>
-          <svg viewBox="0 0 64 56" aria-hidden="true">
-            {it.art}
-            {it.off && <path className="od-x" d="M14 8l36 40M50 8L14 48" />}
-          </svg>
+          {it.img ? (
+            <img src={it.img} alt="" width={60} height={52} loading="lazy" />
+          ) : (
+            <svg viewBox="0 0 64 56" aria-hidden="true">
+              {it.art}
+              {it.off && <path className="od-x" d="M14 8l36 40M50 8L14 48" />}
+            </svg>
+          )}
           <span>{it.label}</span>
           {it.sub && <small>{it.sub}</small>}
         </button>
@@ -209,8 +218,8 @@ function PicRow({ items, value, label, onPick }: { items: PicItem[]; value: stri
   );
 }
 
-const artOf = (k: string, o: string): ReactNode => {
-  if (k === "size") return sizePic(o);
+const artOf = (k: string, o: string, all: string[] = []): ReactNode => {
+  if (k === "size") return sizePic(o, all);
   if (k === "paper") return paperPic(o);
   if (k === "coat") return PICS[o === "없음" ? "없음_코팅" : o === OTHER ? "그외" : o] ?? PICS["없음_코팅"];
   if (o.startsWith(OTHER)) return PICS["그외"];
@@ -235,7 +244,7 @@ function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | nu
             label={f.label}
             value={String(v[f.k])}
             onPick={(o) => set(f.k, o)}
-            items={opts.map((o) => ({ key: o, label: f.k === "fold" && o === "없음" ? "접지 안 함" : (PIC_LABEL[o] ?? o), sub: f.k === "size" ? sizeMM(o) : undefined, art: artOf(f.k, o), off: off.includes(o) }))}
+            items={opts.map((o) => ({ key: o, label: f.k === "fold" && o === "없음" ? "접지 안 함" : (PIC_LABEL[o] ?? o), sub: f.k === "size" ? sizeMM(o) : undefined, art: artOf(f.k, o, opts), off: off.includes(o) }))}
           />
         ) : (
           <div className="od-chips" role="radiogroup" aria-label={f.label}>
@@ -452,7 +461,7 @@ export default function OrderView() {
                       label="품목"
                       value={it.pid}
                       onPick={(id) => upd(it.key, () => ({ key: it.key, pid: id, vals: defaults(prod(id)) }))}
-                      items={PRODUCTS.map((pp) => ({ key: pp.id, label: PROD_LABEL[pp.id] ?? pp.name, art: PICS["p:" + pp.id] }))}
+                      items={PRODUCTS.map((pp) => ({ key: pp.id, label: PROD_LABEL[pp.id] ?? pp.name, sub: PROD_SUB[pp.id], art: PICS["p:" + pp.id] }))}
                     />
                   </div>
                   {p.note && <p className="od-note">{p.note}</p>}
@@ -512,7 +521,7 @@ export default function OrderView() {
               ))}
               <div className="od-field">
                 <span className="od-lab">받는 방법</span>
-                <PicRow label="받는 방법" value={recv} onPick={setRecv} items={["방문 픽업", "택배 (CJ대한통운)", "퀵 (서울 근교)"].map((o) => ({ key: o, label: PIC_LABEL[o] ?? o, art: PICS[o] }))} />
+                <PicRow label="받는 방법" value={recv} onPick={setRecv} items={["방문 픽업", "택배 (CJ대한통운)", "퀵 (서울 근교)"].map((o) => ({ key: o, label: PIC_LABEL[o] ?? o, img: RECV_IMG[o] }))} />
                 {recv !== "방문 픽업" ? (
                   <input className="od-in" value={addr} onChange={(e) => setAddr(e.target.value)} placeholder="받으실 주소 · 받는 분 · 연락처" />
                 ) : (

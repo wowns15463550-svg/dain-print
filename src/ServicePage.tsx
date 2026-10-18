@@ -83,10 +83,6 @@ export function Shell({ children }: { children: ReactNode }) {
           <Ico k="mail" />
           <span>메일</span>
         </a>
-        <a className="qm-i qm-wh" href="/#webhard">
-          <Ico k="cloud" />
-          <span>웹하드</span>
-        </a>
         <a className="qm-i qm-map" href="/#visit">
           <Ico k="pin" />
           <span>오시는 길</span>
@@ -244,7 +240,7 @@ export default function ServiceView({ p }: { p: ServicePage }) {
               <li>
                 <b>파일 보내기</b>
                 <span>
-                  PDF 파일과 사양을 메일({CONTACT.email})이나 카톡으로 보내주세요. 큰 파일은 웹하드에 올려 주세요.
+                  PDF 파일과 사양을 메일({CONTACT.email})이나 카톡으로 보내주세요. 
                 </span>
               </li>
               <li>

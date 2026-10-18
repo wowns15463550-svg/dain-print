@@ -69,6 +69,9 @@ const ASSETS = [
   ["check-font.webp", "hf_20261005_152325_91dc3e70-2cb6-48aa-88a4-81cff45abf77", { max: 1100 }],
   ["check-order.webp", "hf_20261005_152324_f81fc9fa-b6e6-4731-aae8-abf9a6e24865", { max: 1100 }],
   ["l-invite.webp", "hf_20261005_152331_f2b83398-7c25-4582-8b25-f338ef8a3c5b"],
+  ["recv-pickup.webp", "hf_20261018_091407_1e26eb64-3a85-4aab-a0a4-aa4b87634fd1", { max: 240 }],
+  ["recv-parcel.webp", "hf_20261018_091409_21978b34-3837-421b-a3f7-bfb5bb0f9967", { max: 240 }],
+  ["recv-quick.webp", "hf_20261018_091411_5710cd02-60f5-40f1-8855-93afa12ed2e9", { max: 240 }],
 ];
 
 mkdirSync(OUT, { recursive: true });

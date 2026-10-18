@@ -1,6 +1,7 @@
 // 다인 AI 챗봇 — 모든 페이지 오른쪽 아래. 서버 없이 chat-kb.ts에 적힌 확인된 답만 보여줍니다.
 // 로봇 표정: 되는 답 = 웃음, 안 되는 답 = 울음, 모르는 질문 = 갸우뚱
 import { checkFile } from "./filecheck";
+import { CONTACT } from "./site-data";
 import { byId, FALLBACK, findIntent, GREETING, Intent, L, Link, Mood, MORE_CHIPS, START_CHIPS } from "./chat-kb";
 
 type Face = Mood | "idle";
@@ -207,7 +208,7 @@ function mount() {
     typing.remove();
     const head = r.ok ? "파일을 확인했습니다. 큰 문제는 없어 보입니다." : "파일을 확인했습니다. 아래 내용을 확인해 주세요.";
     if (r.pages) lastPages = r.pages;
-    bot(`${head}\n${r.lines.join("\n")}\n보내실 때는 같은 크기·같은 수량끼리 PDF 하나로 묶어 주세요.\n정확한 확인은 사장님께서 해 드립니다.`, r.ok ? "happy" : "unsure", [L.mail, L.webhard]);
+    bot(`${head}\n${r.lines.join("\n")}\n보내실 때는 같은 크기·같은 수량끼리 PDF 하나로 묶어 주세요.\n정확한 확인은 사장님께서 해 드립니다.`, r.ok ? "happy" : "unsure", [L.mail, L.kakao]);
     busy = false;
   }
   const fileIn = form.querySelector(".dc-file") as HTMLInputElement;
@@ -376,3 +377,26 @@ function mount() {
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);
 else mount();
+
+// 주말(한국 시간)에는 화면의 전화번호를 유선(02-2271-0496)으로 바꿔 보여줌
+{
+  const wk = new Date(Date.now() + 9 * 3600e3).getUTCDay();
+  if (wk === 0 || wk === 6) {
+    const FROM = CONTACT.phone;
+    const TO = CONTACT.phoneWeekend;
+    const swap = () => {
+      document.querySelectorAll<HTMLAnchorElement>('a[href^="tel:"]').forEach((a) => {
+        if (a.getAttribute("href") === `tel:${FROM.replace(/-/g, "")}`) a.setAttribute("href", `tel:${TO.replace(/-/g, "")}`);
+      });
+      const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      for (let n = w.nextNode(); n; n = w.nextNode()) if (n.nodeValue && n.nodeValue.includes(FROM)) n.nodeValue = n.nodeValue.split(FROM).join(TO);
+    };
+    let t = 0;
+    const later = () => {
+      clearTimeout(t);
+      t = window.setTimeout(swap, 150);
+    };
+    window.addEventListener("load", () => window.setTimeout(swap, 1200));
+    new MutationObserver(later).observe(document.body, { childList: true, subtree: true });
+  }
+}
