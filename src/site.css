@@ -858,3 +858,13 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .od-pics.big button img{width:148px;height:148px}
 .od-pics.big button span{font-size:15px}
 @media (max-width:480px){.od-pics.big button{width:calc(33.3% - 7px);padding:8px 2px}.od-pics.big button img{width:100%;max-width:104px;height:auto;aspect-ratio:1}}
+/* 휴대폰: 종이 · 장비는 옆으로 밀어서 보기 */
+@media (max-width:640px){
+  .paper-grid,.eq-grid,.eq-sub{display:flex;grid-template-columns:none;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;margin-inline:-20px;padding:4px 20px 14px;scroll-padding-inline:20px;scrollbar-width:none}
+  .paper-grid::-webkit-scrollbar,.eq-grid::-webkit-scrollbar,.eq-sub::-webkit-scrollbar{display:none}
+  .paper-grid:not(.more)>:nth-child(n+3),.eq-sub:not(.more)>:nth-child(n+3){display:flex}
+  .paper-grid>.pc{display:block}
+  .paper-grid>*,.eq-grid>*,.eq-sub>*{flex:0 0 78%;max-width:340px;scroll-snap-align:start}
+  .paper+.x,.paper .mob-more,.eq-sub+.mob-more{display:none}
+  .eq-grid{margin-top:32px}
+}
