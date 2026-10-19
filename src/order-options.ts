@@ -69,6 +69,8 @@ const SHEET_PAPERS = ["스노우지 250g", "스노우지 200g", "스노우지 15
 
 // 코팅 조건: 190g 이상만 / 랑데뷰는 인쇄 크기별 최소 수량 (A3 50 · A4 100 · A5 이하 200)
 const gsm = (p: unknown) => Number(String(p).match(/(\d+)\s*g/)?.[1] || 0);
+// 종이 평량 — "그 외"(직접 적은 종이)는 적은 글에서 읽고, 못 읽으면 0(확인 불가)
+const paperGsm = (v: Vals) => (v.paper === OTHER ? gsm(v.paper_txt) : gsm(v.paper));
 const RV_MIN: Record<string, number> = { A3: 50, A4: 100, A5: 200, A6: 200 };
 const rvCoat = (paper: unknown, printSize: string, qty: number) => {
   if (!String(paper).startsWith("랑데뷰")) return null;
@@ -77,8 +79,9 @@ const rvCoat = (paper: unknown, printSize: string, qty: number) => {
   return null;
 };
 const coat190 = (v: Vals) => {
-  const g = gsm(v.paper);
-  if (g && g < 190) return "코팅은 190g 이상 종이만 가능해요.";
+  const g = paperGsm(v);
+  if (!g) return "직접 적은 종이는 190g 이상인지 확인이 필요해서 코팅을 고를 수 없어요. 요청사항에 적어 주세요.";
+  if (g < 190) return "코팅은 190g 이상 종이만 가능해요.";
   return null;
 };
 const sheetCoat = (v: Vals) => coat190(v) || rvCoat(v.paper, String(v.size), Number(v.qty));
@@ -87,12 +90,12 @@ const saddleCoat = (v: Vals) => {
   const why = coat190(v) || rvCoat(v.paper, v.size === "A5" ? "A4" : "A3", Number(v.qty));
   return why && why.startsWith("랑데뷰") ? `랑데뷰 표지 코팅은 ${v.size === "A5" ? "A5 책 100부" : "A4 책 50부"} 이상부터 가능해요.` : why;
 };
-// 포스터: B3 이상은 코팅 제한 없음, A4 · A3만 일반 규칙
+// 포스터: 코팅은 190g 이상만. B3 이상은 랑데뷰 최소 수량 제한이 없음
 const BIG = ["B3", "A2", "B2"];
 const posterCoat = (v: Vals) => {
-  if (BIG.includes(String(v.size))) return null;
   const g = gsm(v.weight);
-  if (g && g < 190) return "A4 · A3 포스터 코팅은 190g 이상 종이만 가능해요. (B3 이상은 제한 없음)";
+  if (!g || g < 190) return "코팅은 190g 이상 종이만 가능해요.";
+  if (BIG.includes(String(v.size))) return null;
   return rvCoat(v.paper, String(v.size), Number(v.kinds) * Number(v.qty));
 };
 
@@ -203,7 +206,7 @@ export const PRODUCTS: Product[] = [
       { k: "size", label: "크기", type: "pick", opts: ["A4", "A3", "B3", "A2", "B2"], def: "A2" },
       { k: "paper", label: "종이", type: "pick", opts: Object.keys(POSTER_PAPERS), def: "스노우" },
       { k: "weight", label: "두께 (평량)", type: "pick", opts: POSTER_PAPERS["스노우"], def: "150g", optsOf: posterWeights },
-      { k: "coat", label: "코팅", type: "pick", opts: COATS, def: COATS[1], block: posterCoat, custom: OTHER, hint: "B3 이상은 코팅 제한이 없어요." },
+      { k: "coat", label: "코팅", type: "pick", opts: COATS, def: COATS[1], block: posterCoat, custom: OTHER, hint: "코팅은 190g 이상만 가능해요. (B3 이상은 랑데뷰 수량 제한 없음)" },
       { k: "kinds", label: "종류 (디자인 가짓수)", type: "num", def: 1, min: 1, step: 1, unit: "종" },
       { k: "qty", label: "종류당 수량", type: "num", def: 1, min: 1, step: 1, unit: "장" },
     ],
