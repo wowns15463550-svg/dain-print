@@ -43,17 +43,15 @@ export const sizeMM = (s: unknown) => {
 };
 export const SIDE_BIND = "좌철 (옆으로 넘김)";
 export const TOP_BIND = "상철 (위로 넘김)";
-// 책 방향 (그림 카드). B5 가로형은 제작 불가 (무선 · 중철)
-const orientField = (noB5Wide: boolean): Field => ({
+// 책 방향 (그림 카드). 가로형은 모든 크기 가능 — 넘기는 방향은 bindField에서 제한
+const orientField = (_unused?: boolean): Field => ({
   k: "orient",
   label: "제본 방향",
   type: "pick",
   opts: ["가로형", "세로형"],
   def: "세로형",
-  offOf: noB5Wide ? (v) => (v.size === "B5" ? ["가로형"] : []) : undefined,
-  hintOf: noB5Wide ? (v) => (v.size === "B5" ? "B5 가로형은 제작이 어려워요." : null) : undefined,
 });
-// 가로형일 때 넘기는 방향 (무선: A5 · B6은 좌철도 가능 / 중철은 상철만)
+// 가로형일 때 넘기는 방향 (무선 · 중철: A5 · B6은 좌철·상철 모두, 그 밖의 크기는 상철만)
 const bindField = (leftOk: boolean): Field => ({
   k: "bind",
   label: "넘기는 방향",
@@ -118,7 +116,7 @@ export const PRODUCTS: Product[] = [
     id: "perfect",
     name: "무선제본 (책 · 교재 · 포트폴리오)",
     slug: "perfect-binding",
-    note: "표지는 스노우지 250g 단면 무광코팅으로 고정입니다. 표지는 단면이라 내지 1쪽은 오른쪽부터 시작해요. 가로형은 위로 넘기는 상철이 가능하고, A5 · B6은 좌철도 가능해요. B5 가로형은 제작하지 않아요.",
+    note: "표지는 스노우지 250g 단면 무광코팅으로 고정입니다. 표지는 단면이라 내지 1쪽은 오른쪽부터 시작해요. 가로형은 위로 넘기는 상철이 가능하고, A5 · B6은 좌철도 가능해요.",
     fields: [
       { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B5", "B6"], def: "A4" },
       orientField(true),
@@ -153,7 +151,7 @@ export const PRODUCTS: Product[] = [
     fields: [
       { k: "size", label: "접었을 때 크기", type: "pick", opts: ["A4", "A5", "B5", "B6"], def: "A4" },
       orientField(true),
-      bindField(false),
+      bindField(true),
       { k: "pages", label: "쪽수 (표지 포함)", type: "num", def: 8, min: 8, step: 4, unit: "쪽", mult4: true },
       { k: "paper", label: "용지", type: "pick", opts: ["모조 100g", "스노우지 250g", "스노우지 200g", "스노우지 150g", "랑데뷰 240g", "랑데뷰 190g", "랑데뷰 160g"], def: "모조 100g" },
       { k: "qty", label: "권수", type: "num", def: 10, min: 1, step: 1, unit: "권" },
