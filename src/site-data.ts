@@ -36,7 +36,7 @@ export const SERVICES = [
   { img: "assets/l-spiral2.webp", detail: "assets/l-spiral-x.webp", parts: ["무광 반투명 PVC 앞표지", "내지", "PVC 뒷표지", "검정 트윈링"], name: "스프링제본", desc: "보고서, 문제집, 매뉴얼처럼 펼쳐두고 보는 자료. 사각 구멍을 뚫어 검정 트윈링으로 묶고, 앞뒤에 무광 반투명 PVC 표지를 넣어 깔끔하게 마감합니다.", spec: "검정 트윈링 · 무광 PVC 표지" },
   { img: "assets/l-form.webp", name: "양식 · 스테이플", desc: "아파트 · 관리사무소 양식, 신청서, 회의 자료. 복사용지에 출력해 왼쪽 위를 자동 스테이플러로 한 번 찍어 드립니다. 뒷면 심이 납작하게 눌려 뾰족하지 않습니다.", spec: "왼쪽 위 1곳 · 복사용지" },
   { img: "assets/l-flyer.webp", name: "전단지 · 리플렛", desc: "매장 홍보 전단부터 접는 리플렛까지. 소량도 또렷한 색으로 뽑아드립니다.", spec: "단면 · 양면 · 접지 리플렛" },
-  { img: "assets/l-card.webp", name: "명함", desc: "두께감 있는 랑데뷰지 240g에 깔끔하게 인쇄합니다.", spec: "랑데뷰 240g · 52×92mm" },
+  { img: "assets/l-card.webp", name: "명함", desc: "가장 기본적인 명함입니다. 랑데뷰 240g 또는 스노우지 250g에 깔끔하게 인쇄하며, 100장 단위로 작업합니다.", spec: "랑데뷰 240g · 스노우지 250g · 100장 단위" },
   { img: "assets/l-invite.webp", name: "엽서 · 청첩장", desc: "두께감 있고 결이 고운 랑데뷰 240g으로 많이 만듭니다. 손에 쥐었을 때 고급스러운 인상이 남습니다.", spec: "랑데뷰 240g" },
   { img: "assets/l-poster.webp", name: "포스터", desc: "전시, 매장, 행사 포스터. 사진과 색이 살아 있는 출력물로 만들어 드립니다. A3부터 최대 B2까지.", spec: "A3 · A2 · B2" },
 ];
@@ -115,7 +115,7 @@ export const FINISHING = [
   { k: "코팅", name: "JS CHICO 460AT", sub: "자동 코팅기. 표지와 포스터에 무광·유광 필름을 입혀 오염과 긁힘을 막습니다.", img: "assets/m-lami2.webp" },
   { k: "오시", name: "YPL 자동 오시기", sub: "강력한 오시로 접는 선을 깊고 반듯하게 눌러 둡니다. 리플렛 접지나 중철 제본 때 접힌 부분이 터지지 않습니다.", img: "assets/m-crease.webp" },
   { k: "스프링 제본", name: "EBX-50 사각 스프링기", sub: "사각 구멍을 일정한 간격으로 깔끔하게 뚫어 스프링 제본을 합니다. 보고서, 문제집, 매뉴얼에 씁니다.", img: "assets/m-punch3b.webp" },
-  { k: "명함 재단", name: "자동 명함 재단기 BK-400H", sub: "명함 크기로 자동 재단합니다. 가로는 회전 칼날, 세로는 길로틴 칼날로 잘라 모서리가 반듯하고, 약 180~350gsm 두께 용지까지 자릅니다.", img: "assets/m-cardcutter.webp" },
+  { k: "명함 재단", name: "자동 명함 재단기 BK-400H", sub: "가장 기본적인 명함을 100장 단위로 자동 재단합니다. 랑데뷰 240g, 스노우지 250g 두 가지 용지만 사용합니다.", img: "assets/m-cardcutter2a.webp" },
 ];
 
 export const STEPS = [

@@ -74,7 +74,8 @@ const ASSETS = [
   ["recv-quick.webp", "hf_20261018_091411_5710cd02-60f5-40f1-8855-93afa12ed2e9", { max: 240 }],
   ["order-hero2.webp", "hf_20261018_093613_3a8d72b1-6eaa-4871-81ee-f276b74d78e1", { max: 1168 }],
   ["l-perfect2.webp", "hf_20261018_094037_04e3bdba-043f-40f2-b4bf-65cdb6a2b057", { max: 1100 }],
-  ["m-cardcutter.webp", "hf_20261030_162845_6f1715d9-2e88-4522-a88b-a87e58ef9b72", { max: 900 }],
+  ["m-cardcutter2a.webp", "hf_20261030_163438_dcae46c9-12a1-4cac-b6e1-cd8f971b55c4", { max: 900 }],
+  ["m-cardcutter2b.webp", "hf_20261030_163437_828364d2-b7b9-4a3b-852a-7a803fe16264", { max: 900 }],
 ];
 
 mkdirSync(OUT, { recursive: true });

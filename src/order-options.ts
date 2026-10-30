@@ -190,7 +190,7 @@ export const PRODUCTS: Product[] = [
     note: "양면 인쇄 기본, 완성 90 × 50mm (작업 92 × 52mm)입니다.",
     fields: [
       { k: "csize", label: "크기", type: "pick", opts: ["명함 (90×50)"], def: "명함 (90×50)", pic: true },
-      { k: "paper", label: "용지", type: "pick", opts: ["스노우지 250g", "랑데뷰지 240g", "반누보 227g"], def: "랑데뷰지 240g" },
+      { k: "paper", label: "용지", type: "pick", opts: ["스노우지 250g", "랑데뷰지 240g"], def: "랑데뷰지 240g" },
       { k: "kinds", label: "종류 (이름 수)", type: "num", def: 1, min: 1, step: 1, unit: "종" },
       { k: "qty", label: "종류당 수량", type: "num", def: 100, min: 100, step: 100, unit: "장", hint: "100장 단위" },
     ],
