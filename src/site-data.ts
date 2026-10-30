@@ -115,6 +115,7 @@ export const FINISHING = [
   { k: "코팅", name: "JS CHICO 460AT", sub: "자동 코팅기. 표지와 포스터에 무광·유광 필름을 입혀 오염과 긁힘을 막습니다.", img: "assets/m-lami2.webp" },
   { k: "오시", name: "YPL 자동 오시기", sub: "강력한 오시로 접는 선을 깊고 반듯하게 눌러 둡니다. 리플렛 접지나 중철 제본 때 접힌 부분이 터지지 않습니다.", img: "assets/m-crease.webp" },
   { k: "스프링 제본", name: "EBX-50 사각 스프링기", sub: "사각 구멍을 일정한 간격으로 깔끔하게 뚫어 스프링 제본을 합니다. 보고서, 문제집, 매뉴얼에 씁니다.", img: "assets/m-punch3b.webp" },
+  { k: "명함 재단", name: "자동 명함 재단기 BK-400H", sub: "명함 크기로 자동 재단합니다. 가로는 회전 칼날, 세로는 길로틴 칼날로 잘라 모서리가 반듯하고, 약 180~350gsm 두께 용지까지 자릅니다.", img: "assets/m-cardcutter.webp" },
 ];
 
 export const STEPS = [
