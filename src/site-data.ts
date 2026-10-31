@@ -63,7 +63,7 @@ export const PAPER_GUIDE: Paper[] = [
       ["80g", "쪽수가 많아 두꺼운 책의 내지"],
       ["100g", "교재 · 책 내지"],
     ],
-    img: "assets/paper-w-mojo.webp",
+    img: "assets/paper-x-mojo.webp",
     use: "assets/paper-mojo-use.webp",
     useLabel: "교재 · 책 내지",
   },
