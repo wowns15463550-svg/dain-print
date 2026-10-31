@@ -231,7 +231,7 @@ function PaperPick({ f, v, set }: { f: Extract<Field, { type: "pick" }>; v: Vals
   const rows = opts.map((o) => ({ o, ...paperGroup(o) }));
   const types = rows.map((r) => r.t).filter((t, i, a) => a.indexOf(t) === i);
   const cur = paperGroup(String(v[f.k]));
-  const grams = rows.filter((r) => r.t === cur.t && r.g);
+  const grams = rows.filter((r) => r.t === cur.t && r.g).sort((a, b) => parseInt(a.g!) - parseInt(b.g!));
   const info = cur.t === OTHER ? undefined : paperInfo(cur.t);
   const rowUse = info?.rows.find((r) => cur.g && r[0].includes(cur.g.replace(/ .*/, "").replace("g", "")))?.[1];
   const hint = f.hintOf?.(v) ?? f.hint;
@@ -343,7 +343,7 @@ function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | nu
         {f.minWhy && n > 0 && n < f.min && <small className="od-warn">{f.minWhy}</small>}
         {f.maxOf && n > f.maxOf(v) && <small className="od-warn">최대 {f.maxOf(v)}{f.unit}까지 가능해요.</small>}
         {f.hint && <small className="od-hint">{f.hint}</small>}
-        {f.k === "pages" && "bind" in v && spineMM(v) && <small className="od-spine">세네카(책등) 약 {spineMM(v)}mm · 표지 만들 때 참고</small>}
+        {f.k === "pages" && !f.noSpine && "bind" in v && spineMM(v) && <small className="od-spine">세네카(책등) 약 {spineMM(v)}mm · 표지 만들 때 참고</small>}
       </div>
     );
   }

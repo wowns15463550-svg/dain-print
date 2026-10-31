@@ -25,7 +25,7 @@ export type Field =
       // "없음"이 아닌 선택지를 막는 조건. 막히면 이유를 돌려줌
       block?: (v: Vals) => string | null;
     }
-  | { k: string; label: string; type: "num"; def: number; min: number; step: number; unit: string; hint?: string; mult4?: boolean; maxOf?: (v: Vals) => number; minWhy?: string }
+  | { k: string; label: string; type: "num"; def: number; min: number; step: number; unit: string; hint?: string; mult4?: boolean; noSpine?: boolean; maxOf?: (v: Vals) => number; minWhy?: string }
   | { k: string; label: string; type: "check"; text: string; def: boolean; hint?: string };
 
 export type Product = { id: string; name: string; slug?: string; note?: string; fields: Field[] };
@@ -64,7 +64,7 @@ const bindField = (leftOk: boolean, all = false): Field => ({
   hintOf: (v) => (all || (leftOk && ["A5", "B6"].includes(String(v.size))) ? "좌철은 왼쪽으로 넘기는 형식, 상철은 위로 넘기는 형식이에요." : "가로형은 위로 넘기는 상철만 가능해요. (상철 = 위로 넘기는 형식)"),
 });
 export const COATS = ["없음", "무광코팅", OTHER];
-const SHEET_PAPERS = ["스노우지 250g", "스노우지 200g", "스노우지 150g", "랑데뷰 240g", "랑데뷰 190g", "랑데뷰 160g"];
+const SHEET_PAPERS = ["스노우지 150g", "스노우지 200g", "스노우지 250g", "랑데뷰 160g", "랑데뷰 190g", "랑데뷰 240g"];
 
 // 코팅 조건: 190g 이상만 / 랑데뷰는 인쇄 크기별 최소 수량 (A3 50 · A4 100 · A5 이하 200)
 const gsm = (p: unknown) => Number(String(p).match(/(\d+)\s*g/)?.[1] || 0);
@@ -154,8 +154,8 @@ export const PRODUCTS: Product[] = [
       { k: "size", label: "접었을 때 크기", type: "pick", opts: ["A4", "A5", "B5", "B6"], def: "A4" },
       orientField(true),
       bindField(true),
-      { k: "pages", label: "쪽수 (표지 포함)", type: "num", def: 8, min: 8, step: 4, unit: "쪽", mult4: true },
-      { k: "paper", label: "용지", type: "pick", opts: ["모조 100g", "스노우지 250g", "스노우지 200g", "스노우지 150g", "랑데뷰 240g", "랑데뷰 190g", "랑데뷰 160g"], def: "모조 100g" },
+      { k: "pages", label: "쪽수 (표지 포함)", type: "num", def: 8, min: 8, step: 4, unit: "쪽", mult4: true, noSpine: true },
+      { k: "paper", label: "용지", type: "pick", opts: ["모조 100g", "모조 150g", "스노우지 100g", "스노우지 120g", "스노우지 150g", "스노우지 200g", "스노우지 250g", "랑데뷰 130g", "랑데뷰 160g", "랑데뷰 190g", "랑데뷰 240g"], def: "모조 100g" },
       { k: "qty", label: "권수", type: "num", def: 10, min: 1, step: 1, unit: "권" },
       { k: "coat", label: "표지 코팅", type: "pick", opts: COATS, def: COATS[1], block: saddleCoat, custom: OTHER, hint: "코팅은 190g 이상 종이만 가능해요. 랑데뷰는 A4 책 50부 · A5 책 100부 이상부터." },
     ],
