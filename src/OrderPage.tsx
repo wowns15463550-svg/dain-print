@@ -187,7 +187,7 @@ const MOCKS: Record<string, { img: string; cap: string }[]> = {
   flyer: [{ img: "assets/mock-flyer-gym.webp", cap: "헬스장 전단지 예시" }, { img: "assets/mock-flyer-pest.webp", cap: "방역 전단지 예시" }, { img: "assets/mock-flyer-salon.webp", cap: "미용실 전단지 예시" }],
   sheet: [{ img: "assets/mock-trifold-1.webp", cap: "3단 접지 리플렛" }, { img: "assets/mock-trifold-2.webp", cap: "3단 리플렛 · 펼친 모습" }, { img: "assets/mock-trifold-3.webp", cap: "접어서 쌓은 리플렛" }, { img: "assets/mock-bifold-1.webp", cap: "반접지 리플렛" }, { img: "assets/mock-bifold-2.webp", cap: "반접지 리플렛 (펼침)" }, { img: "assets/mock-postcard.webp", cap: "엽서" }],
   card: [{ img: "assets/card-dain.webp", cap: "명함 예시" }, { img: "assets/mock-card-1.webp", cap: "검정 명함 예시" }, { img: "assets/mock-card-2.webp", cap: "크래프트 느낌 명함 예시" }, { img: "assets/mock-card-3.webp", cap: "흰 명함 쌓은 모습" }],
-  poster: [{ img: "assets/mock-poster-1.webp", cap: "액자에 넣은 포스터" }, { img: "assets/mock-poster-2.webp", cap: "큰 포스터 (B2 · A2 · B3)" }],
+  poster: [{ img: "assets/mock-poster-p1.webp", cap: "액자에 넣은 포스터" }, { img: "assets/mock-poster-p2.webp", cap: "큰 포스터 (B2 · A2 · B3)" }, { img: "assets/mock-poster-p3.webp", cap: "벽에 세운 포스터" }],
   form: [{ img: "assets/l-form.webp", cap: "왼쪽 위 스테이플 양식" }],
 };
 const PROD_SUB: Record<string, string> = { perfect: "(떡제본)", sheet: "(리플렛 · 엽서)" };

@@ -887,5 +887,5 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .od-mock-t small{font-weight:400;color:#6b7280}
 .od-mock-row{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory}
 .od-mock-row figure{margin:0;flex:0 0 min(300px,78%);scroll-snap-align:start}
-.od-mock-row img{width:100%;height:auto;border-radius:10px;display:block}
+.od-mock-row img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
 .od-mock-row figcaption{font-size:13px;color:#4b5563;margin-top:4px}
