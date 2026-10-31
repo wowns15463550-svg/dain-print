@@ -181,8 +181,8 @@ const PIC_LABEL: Record<string, string> = {
 };
 const PROD_LABEL: Record<string, string> = { perfect: "무선제본", spring: "스프링", saddle: "중철", flyer: "전단지", sheet: "낱장 인쇄", card: "명함", poster: "포스터", form: "양식·스테이플" };
 const MOCKS: Record<string, { img: string; cap: string }[]> = {
-  perfect: [{ img: "assets/mock-book-1.webp", cap: "무선제본 책 — 책등을 풀로 붙인 일반 책 모양" }, { img: "assets/mock-book-2.webp", cap: "펼쳐 읽는 책 · 교재" }],
-  spring: [{ img: "assets/mock-booklet.webp", cap: "가로형 책자" }, { img: "assets/l-spiral2.webp", cap: "검정 스프링 + 무광 반투명 표지" }],
+  perfect: [{ img: "assets/mock-book-1.webp", cap: "무선제본 책 — 책등을 풀로 붙인 일반 책 모양" }, { img: "assets/mock-book-2.webp", cap: "펼쳐 읽는 책 · 교재" }, { img: "assets/mock-booklet.webp", cap: "가로형 무선 책자" }],
+  spring: [{ img: "assets/mock-spring-1.webp", cap: "검정 스프링 + 무광 반투명 표지" }, { img: "assets/mock-spring-2.webp", cap: "펼쳐 두고 보는 스프링 자료" }, { img: "assets/l-spiral2.webp", cap: "스프링제본 예시" }],
   saddle: [{ img: "assets/mock-saddle.webp", cap: "가운데를 스테이플로 묶은 잡지·소책자" }, { img: "assets/l-saddle.webp", cap: "카탈로그 · 프로그램북" }],
   flyer: [{ img: "assets/mock-flyer-gym.webp", cap: "헬스장 전단지 예시" }, { img: "assets/mock-flyer-pest.webp", cap: "방역 전단지 예시" }, { img: "assets/mock-flyer-salon.webp", cap: "미용실 전단지 예시" }],
   sheet: [{ img: "assets/mock-trifold-1.webp", cap: "3단 접지 리플렛" }, { img: "assets/mock-trifold-2.webp", cap: "3단 리플렛 · 펼친 모습" }, { img: "assets/mock-trifold-3.webp", cap: "접어서 쌓은 리플렛" }, { img: "assets/mock-bifold-1.webp", cap: "반접지 리플렛" }, { img: "assets/mock-bifold-2.webp", cap: "반접지 리플렛 (펼침)" }, { img: "assets/mock-postcard.webp", cap: "엽서" }],

@@ -109,6 +109,8 @@ const ASSETS = [
   ["mock-poster-p1.webp", "hf_20261031_160426_00dbcb52-7402-462f-b029-fbc737f1da19", { max: 1000 }],
   ["mock-poster-p2.webp", "hf_20261031_160426_d5bb07d6-0531-40d8-910b-d6cf838205a8", { max: 1000 }],
   ["mock-poster-p3.webp", "hf_20261031_160426_80f4067f-c1c5-4e00-91f6-6dfd63ca1973", { max: 1000 }],
+  ["mock-spring-1.webp", "hf_20261031_162401_397479d5-6e28-429f-aa81-6e846c82f805", { max: 1000 }],
+  ["mock-spring-2.webp", "hf_20261031_162402_1823e37b-dd02-49fb-abb5-38b118c18c2d", { max: 1000 }],
   ["card-dain.webp", "hf_20261031_055331_79e07fee-8252-4631-8adf-c1973f5707e8", { max: 1100 }],
   ["card-s1.webp", "hf_20261031_053814_21e4d853-a50c-49bd-b9e6-f966e8f84348", { max: 1100 }],
   ["card-s2.webp", "hf_20261031_053814_8b128734-e7f6-443c-b926-fea9cb0e1c73", { max: 1100 }],
