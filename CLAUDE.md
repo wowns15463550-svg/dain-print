@@ -87,3 +87,4 @@
 - 종이 사진 속 작은 그림은 샐러드 그릇 대신 우리가 새로 만든 찻잔 그림(paper-v-*.webp, 저작권 이유로 교체). paper-u-*는 안 씀
 - 모조지 사진은 paper-w-mojo.webp(밝은 흰색)로 확정, paper-x-mojo는 안 씀
 - 주문서 용지(2026-10-31 사장님): 사진 카드 대신 글자 버튼 — 종이 종류 선택 → 두께(g) 선택 → 아래에 큰 종이 사진과 설명(느낌·쓰임, PAPER_GUIDE 내용). OrderPage.tsx PaperPick. 랑데뷰 사진은 paper-v-rdv 그대로(더 밝은 버전은 안 씀)
+- 종이 사진 최종(2026-10-31): 스노우 paper-v-snow 한 장을 기준으로 같은 구도·같은 찻잔 그림으로 다시 만든 paper-y-rdv/mojo/mcopy.webp (사장님이 고름). 이전 paper-u/v/w/x-*는 안 씀
