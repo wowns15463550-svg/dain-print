@@ -181,13 +181,13 @@ const PIC_LABEL: Record<string, string> = {
 };
 const PROD_LABEL: Record<string, string> = { perfect: "무선제본", spring: "스프링", saddle: "중철", flyer: "전단지", sheet: "낱장 인쇄", card: "명함", poster: "포스터", form: "양식·스테이플" };
 const MOCKS: Record<string, { img: string; cap: string }[]> = {
-  perfect: [{ img: "assets/mock-book.webp", cap: "무선제본 책 — 책등에 풀로 붙인 일반 책 모양" }, { img: "assets/l-perfect2.webp", cap: "문제집·교재처럼 쪽수가 많은 책" }],
-  spring: [{ img: "assets/l-spiral2.webp", cap: "검정 스프링 + 무광 반투명 표지" }],
-  saddle: [{ img: "assets/l-saddle.webp", cap: "가운데를 스테이플로 묶은 얇은 책" }],
-  flyer: [{ img: "assets/l-flyer.webp", cap: "전단지 · 리플렛" }],
-  sheet: [{ img: "assets/l-invite.webp", cap: "엽서 · 리플렛 같은 낱장 인쇄" }],
-  card: [{ img: "assets/card-dain.webp", cap: "명함 예시" }, { img: "assets/mock-card-tray.webp", cap: "트레이에 놓은 모습" }, { img: "assets/mock-card-grid.webp", cap: "여러 장 나열한 모습" }],
-  poster: [{ img: "assets/l-poster.webp", cap: "포스터 (B2 · A2 · B3)" }],
+  perfect: [{ img: "assets/mock-book-1.webp", cap: "무선제본 책 — 책등을 풀로 붙인 일반 책 모양" }, { img: "assets/mock-book-2.webp", cap: "펼쳐 읽는 책 · 교재" }],
+  spring: [{ img: "assets/mock-booklet.webp", cap: "가로형 책자" }, { img: "assets/l-spiral2.webp", cap: "검정 스프링 + 무광 반투명 표지" }],
+  saddle: [{ img: "assets/mock-saddle.webp", cap: "가운데를 스테이플로 묶은 잡지·소책자" }, { img: "assets/l-saddle.webp", cap: "카탈로그 · 프로그램북" }],
+  flyer: [{ img: "assets/mock-flyer-gym.webp", cap: "헬스장 전단지 예시" }, { img: "assets/mock-flyer-pest.webp", cap: "방역 전단지 예시" }, { img: "assets/mock-flyer-salon.webp", cap: "미용실 전단지 예시" }],
+  sheet: [{ img: "assets/mock-trifold-1.webp", cap: "3단 접지 리플렛" }, { img: "assets/mock-trifold-2.webp", cap: "3단 리플렛 · 펼친 모습" }, { img: "assets/mock-trifold-3.webp", cap: "접어서 쌓은 리플렛" }, { img: "assets/mock-bifold-1.webp", cap: "반접지 리플렛" }, { img: "assets/mock-bifold-2.webp", cap: "반접지 리플렛 (펼침)" }, { img: "assets/mock-postcard.webp", cap: "엽서" }],
+  card: [{ img: "assets/card-dain.webp", cap: "명함 예시" }, { img: "assets/mock-card-1.webp", cap: "검정 명함 예시" }, { img: "assets/mock-card-2.webp", cap: "크래프트 느낌 명함 예시" }, { img: "assets/mock-card-3.webp", cap: "흰 명함 쌓은 모습" }],
+  poster: [{ img: "assets/mock-poster-1.webp", cap: "액자에 넣은 포스터" }, { img: "assets/mock-poster-2.webp", cap: "큰 포스터 (B2 · A2 · B3)" }],
   form: [{ img: "assets/l-form.webp", cap: "왼쪽 위 스테이플 양식" }],
 };
 const PROD_SUB: Record<string, string> = { perfect: "(떡제본)", sheet: "(리플렛 · 엽서)" };
