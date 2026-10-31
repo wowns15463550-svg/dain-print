@@ -86,3 +86,4 @@
 - 종이 사진은 같은 배경·구도로 통일(paper-u-snow/rdv/mojo/mcopy.webp, 종이 안내·주문서 카드 공용, 힉스필드로 한 장을 기준 삼아 종이 색·질감·제목만 바꿈). 명함 대표 사진 card-dain.webp(남색·흰색 Dain 명함, D 마크). 이 두 번째 tmp-refs 임시 브랜치는 작업 후 지움
 - 종이 사진 속 작은 그림은 샐러드 그릇 대신 우리가 새로 만든 찻잔 그림(paper-v-*.webp, 저작권 이유로 교체). paper-u-*는 안 씀
 - 모조지 사진은 paper-w-mojo.webp(밝은 흰색)로 확정, paper-x-mojo는 안 씀
+- 주문서 용지(2026-10-31 사장님): 사진 카드 대신 글자 버튼 — 종이 종류 선택 → 두께(g) 선택 → 아래에 큰 종이 사진과 설명(느낌·쓰임, PAPER_GUIDE 내용). OrderPage.tsx PaperPick. 랑데뷰 사진은 paper-v-rdv 그대로(더 밝은 버전은 안 씀)

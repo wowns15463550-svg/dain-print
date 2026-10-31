@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Arrow, Ico } from "./App";
 import { Shell } from "./ServicePage";
-import { CONTACT } from "./site-data";
+import { CONTACT, PAPER_GUIDE } from "./site-data";
 import { PRODUCTS, SLOW_IDS, SIZE_MM, OTHER, FOLD_OTHER, sizeMM, type Field, type Product, type Vals } from "./order-options";
 
 type Item = { key: number; pid: string; vals: Vals };
@@ -163,20 +163,6 @@ const PICS: Record<string, ReactNode> = {
   "택배 (CJ대한통운)": (<><path {...W} d="M10 18l22-8 22 8v26l-22 8-22-8z" /><path className="ln" d="M10 18l22 8 22-8M32 26v26" /><path {...Bl} d="M20 14l22 8-6 3-22-8z" /></>),
   "퀵 (서울 근교)": (<><path {...W} d="M4 14h14v12H4z" /><circle cx="14" cy="42" r="8" {...W} /><circle cx="50" cy="42" r="8" {...W} /><path {...Bl} d="M18 34h18l4-8H22z" /><path className="ln" d="M22 26l-4 8M40 26l10 16M44 20h8" /><path {...G} d="M36 34l6-14h6" /></>),
 };
-// 종이 · 품목 이름 → 그림
-const paperPic = (o: string): ReactNode => {
-  const fill = o.startsWith("모조") || o.startsWith("백색") ? "#F6EFD9" : o.startsWith("랑데뷰") ? "#E7E4F2" : o.startsWith("반누보") ? "#EADFCB" : o.startsWith("복사") ? "#FFFFFF" : "#FFFFFF";
-  return (
-    <>
-      <path d="M10 34l22 9 22-9v6l-22 9-22-9z" style={{ fill }} />
-      <path d="M10 27l22 9 22-9v6l-22 9-22-9z" style={{ fill }} />
-      <path d="M10 20l22-9 22 9-22 9z" style={{ fill }} />
-    </>
-  );
-};
-// 종이 사진 (사이트 종이 안내에 쓰는 사진) — 없는 종이는 그림으로
-const PAPER_IMG = (o: string): string | undefined =>
-  o.startsWith("스노우") ? "/assets/paper-v-snow.webp" : o.startsWith("랑데뷰") ? "/assets/paper-v-rdv.webp" : o.startsWith("모조") || o.startsWith("백색") ? "/assets/paper-w-mojo.webp" : o.startsWith("복사") ? "/assets/paper-v-mcopy.webp" : undefined;
 // 크기 그림 — 실제 비율대로 그린 종이
 const sizePic = (o: string, all: string[]): ReactNode => {
   const m = SIZE_MM[o];
@@ -197,17 +183,15 @@ const PROD_LABEL: Record<string, string> = { perfect: "무선제본", spring: "�
 const PROD_SUB: Record<string, string> = { perfect: "(떡제본)", sheet: "(리플렛 · 엽서)" };
 // 그림 카드로 보여줄 항목 (용지 · 크기 · 코팅 …)
 const RECV_IMG: Record<string, string> = { "방문 픽업": "/assets/recv-pickup.webp", "택배 (CJ대한통운)": "/assets/recv-parcel.webp", "퀵 (서울 근교)": "/assets/recv-quick.webp" };
-const PIC_KEYS = ["size", "csize", "orient", "bind", "color", "paper", "coat", "fold"];
+const PIC_KEYS = ["size", "csize", "orient", "bind", "color", "coat", "fold"];
 
-type PicItem = { key: string; label: string; sub?: string; art?: ReactNode; img?: string; ph?: string; off?: boolean };
+type PicItem = { key: string; label: string; sub?: string; art?: ReactNode; img?: string; off?: boolean };
 function PicRow({ items, value, label, onPick, big }: { items: PicItem[]; value: string; label: string; onPick: (k: string) => void; big?: boolean }) {
   return (
     <div className={big ? "od-pics big" : "od-pics"} role="radiogroup" aria-label={label}>
       {items.map((it) => (
         <button type="button" key={it.key} role="radio" aria-checked={value === it.key} disabled={it.off} className={(value === it.key ? "on" : "") + (it.off ? " x" : "") || undefined} onClick={() => onPick(it.key)}>
-          {it.ph ? (
-            <img className="ph" src={it.ph} alt="" width={168} height={112} loading="lazy" />
-          ) : it.img ? (
+          {it.img ? (
             <img src={it.img} alt="" width={140} height={140} loading="lazy" />
           ) : (
             <svg viewBox="0 0 64 56" aria-hidden="true">
@@ -225,15 +209,78 @@ function PicRow({ items, value, label, onPick, big }: { items: PicItem[]; value:
 
 const artOf = (k: string, o: string, all: string[] = []): ReactNode => {
   if (k === "size") return sizePic(o, all);
-  if (k === "paper") return paperPic(o);
   if (k === "coat") return PICS[o === "없음" ? "없음_코팅" : o === OTHER ? "그외" : o] ?? PICS["없음_코팅"];
   if (o.startsWith(OTHER)) return PICS["그외"];
   return PICS[o] ?? PICS["없음"];
 };
 
+// 종이 고르기 — 종류(글자) → 두께(글자) → 큰 사진과 설명
+const paperGroup = (o: string): { t: string; g?: string } => {
+  if (o === OTHER) return { t: OTHER };
+  const m = o.match(/^(.*?)\s*(\d+g)$/);
+  if (m) {
+    const b = m[1];
+    return { t: b.startsWith("스노우") ? "스노우지" : b.startsWith("랑데뷰") ? "랑데뷰" : b.startsWith("모조") ? "모조지" : b, g: m[2] };
+  }
+  if (o.startsWith("복사용지")) return { t: "복사용지", g: "80g (무림 M COPY)" };
+  return { t: o };
+};
+const paperInfo = (t: string) => PAPER_GUIDE.find((p) => t.includes(p.name.replace("복사용지", "복사")) || p.name.includes(t.replace("지", "")));
+function PaperPick({ f, v, set }: { f: Extract<Field, { type: "pick" }>; v: Vals; set: (k: string, x: string | number | boolean) => void }) {
+  const opts = f.optsOf ? f.optsOf(v) : f.opts;
+  const rows = opts.map((o) => ({ o, ...paperGroup(o) }));
+  const types = rows.map((r) => r.t).filter((t, i, a) => a.indexOf(t) === i);
+  const cur = paperGroup(String(v[f.k]));
+  const grams = rows.filter((r) => r.t === cur.t && r.g);
+  const info = cur.t === OTHER ? undefined : paperInfo(cur.t);
+  const rowUse = info?.rows.find((r) => cur.g && r[0].includes(cur.g.replace(/ .*/, "").replace("g", "")))?.[1];
+  const hint = f.hintOf?.(v) ?? f.hint;
+  return (
+    <div className="od-field">
+      <span className="od-lab">{f.label}</span>
+      <small className="od-sub">종이 종류</small>
+      <div className="od-chips" role="radiogroup" aria-label={f.label + " 종류"}>
+        {types.map((t) => (
+          <button type="button" key={t} role="radio" aria-checked={cur.t === t} className={cur.t === t ? "on" : undefined} onClick={() => set(f.k, (rows.find((r) => r.t === t && r.o === f.def) ?? rows.find((r) => r.t === t))!.o)}>
+            {t}
+          </button>
+        ))}
+      </div>
+      {grams.length > 0 && (
+        <>
+          <small className="od-sub">두께 (g)</small>
+          <div className="od-chips" role="radiogroup" aria-label={f.label + " 두께"}>
+            {grams.map((r) => (
+              <button type="button" key={r.o} role="radio" aria-checked={v[f.k] === r.o} className={v[f.k] === r.o ? "on" : undefined} onClick={() => set(f.k, r.o)}>
+                {r.g}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+      {info && (
+        <div className="od-paper">
+          <img src={"/" + info.img} alt={`${info.name} 종이 사진`} width={560} height={420} loading="lazy" />
+          <div>
+            <b>{cur.t}</b>
+            <em>{info.finish}</em>
+            <p>{info.desc}</p>
+            {rowUse && <p className="od-paper-use">이 두께는 <b>{rowUse}</b>에 많이 씁니다.</p>}
+          </div>
+        </div>
+      )}
+      {f.custom && v[f.k] === f.custom && (
+        <input className="od-in" value={String(v[f.k + "_txt"] ?? "")} onChange={(e) => set(f.k + "_txt", e.target.value)} placeholder="원하시는 종이를 적어 주세요 (예: 랑데뷰 130g)" />
+      )}
+      {hint && <small className="od-hint">{hint}</small>}
+    </div>
+  );
+}
+
 function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | number | boolean) => void }) {
   if (f.type === "pick") {
     if (f.showIf && !f.showIf(v)) return null;
+    if (f.k === "paper") return <PaperPick f={f} v={v} set={set} />;
     const opts = f.optsOf ? f.optsOf(v) : f.opts;
     const why = f.block ? f.block(v) : null;
     const asPic = f.pic || PIC_KEYS.includes(f.k);
@@ -249,7 +296,7 @@ function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | nu
             label={f.label}
             value={String(v[f.k])}
             onPick={(o) => set(f.k, o)}
-            items={opts.map((o) => ({ key: o, label: f.k === "fold" && o === "없음" ? "접지 안 함" : (PIC_LABEL[o] ?? o), sub: f.k === "size" ? sizeMM(o) : undefined, art: artOf(f.k, o, opts), ph: f.k === "paper" ? PAPER_IMG(o) : undefined, off: off.includes(o) }))}
+            items={opts.map((o) => ({ key: o, label: f.k === "fold" && o === "없음" ? "접지 안 함" : (PIC_LABEL[o] ?? o), sub: f.k === "size" ? sizeMM(o) : undefined, art: artOf(f.k, o, opts), off: off.includes(o) }))}
           />
         ) : (
           <div className="od-chips" role="radiogroup" aria-label={f.label}>
