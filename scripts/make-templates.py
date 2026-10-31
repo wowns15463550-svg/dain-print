@@ -65,11 +65,11 @@ def trifold():
 
 
 def card():
-    B = 1
+    B = 2
     W, H = 90, 50
     inner = f'<div class="trim" style="left:{B}mm;top:{B}mm;width:{W}mm;height:{H}mm"></div>'
     inner += f'<div class="safe" style="left:{B+3}mm;top:{B+3}mm;width:{W-6}mm;height:{H-6}mm"></div>'
-    inner += f'<div class="panel" style="left:{B}mm;top:{B}mm;width:{W}mm;height:{H}mm"><span class="w" style="font-size:6mm">90 × 50mm</span><span class="s">작업 크기 92 × 52mm · 사방 1mm 재단 여백<br>글자 · 로고는 파란 점선 안쪽에</span></div>'
+    inner += f'<div class="panel" style="left:{B}mm;top:{B}mm;width:{W}mm;height:{H}mm"><span class="w" style="font-size:6mm">90 × 50mm</span><span class="s">작업 크기 94 × 54mm · 사방 2mm 재단 여백(최소 92 × 52mm)<br>글자 · 로고는 파란 점선 안쪽에</span></div>'
     pages = [page(W + 2 * B, H + 2 * B, inner.replace("90 × 50mm", "명함 앞면 · 90 × 50mm")), page(W + 2 * B, H + 2 * B, inner.replace("90 × 50mm", "명함 뒷면 · 90 × 50mm"))]
     return "business-card", W + 2 * B, H + 2 * B, pages
 

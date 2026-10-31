@@ -36,6 +36,7 @@ const DIRECT = OTHER; // 종이 · 코팅의 "그 외"는 직접 적는 칸이 �
 export const SIZE_MM: Record<string, [number, number]> = {
   A2: [420, 594], A3: [297, 420], A4: [210, 297], A5: [148, 210], A6: [105, 148],
   B2: [515, 728], B3: [364, 515], B4: [257, 364], B5: [182, 257], B6: [128, 182],
+  "90×50 (기본)": [90, 50], "90×45": [90, 45], "90×54": [90, 54], "90×90 (정사각)": [90, 90], "90×127": [90, 127], "90×136": [90, 136],
 };
 export const sizeMM = (s: unknown) => {
   const m = SIZE_MM[String(s)];
@@ -52,15 +53,15 @@ const orientField = (_unused?: boolean): Field => ({
   def: "세로형",
 });
 // 가로형일 때 넘기는 방향 (무선 · 중철: A5 · B6은 좌철·상철 모두, 그 밖의 크기는 상철만)
-const bindField = (leftOk: boolean): Field => ({
+const bindField = (leftOk: boolean, all = false): Field => ({
   k: "bind",
   label: "넘기는 방향",
   type: "pick",
   opts: [SIDE_BIND, TOP_BIND],
   def: TOP_BIND,
   showIf: (v) => v.orient === "가로형",
-  optsOf: (v) => (leftOk && ["A5", "B6"].includes(String(v.size)) ? [SIDE_BIND, TOP_BIND] : [TOP_BIND]),
-  hintOf: (v) => (leftOk && ["A5", "B6"].includes(String(v.size)) ? `${v.size} 가로형은 좌철 · 상철 둘 다 가능해요.` : "가로형은 위로 넘기는 상철만 가능해요."),
+  optsOf: (v) => (all || (leftOk && ["A5", "B6"].includes(String(v.size))) ? [SIDE_BIND, TOP_BIND] : [TOP_BIND]),
+  hintOf: (v) => (all || (leftOk && ["A5", "B6"].includes(String(v.size))) ? "좌철은 왼쪽으로 넘기는 형식, 상철은 위로 넘기는 형식이에요." : "가로형은 위로 넘기는 상철만 가능해요. (상철 = 위로 넘기는 형식)"),
 });
 export const COATS = ["없음", "무광코팅", OTHER];
 const SHEET_PAPERS = ["스노우지 250g", "스노우지 200g", "스노우지 150g", "랑데뷰 240g", "랑데뷰 190g", "랑데뷰 160g"];
@@ -136,6 +137,7 @@ export const PRODUCTS: Product[] = [
     fields: [
       { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B5", "B6"], def: "A4" },
       orientField(false),
+      bindField(true, true),
       { k: "color", label: "인쇄", type: "pick", opts: ["흑백", "칼라"], def: "흑백" },
       { k: "side", label: "면", type: "pick", opts: ["양면", "단면"], def: "양면" },
       { k: "paper", label: "용지", type: "pick", opts: ["복사용지 (무림 M COPY 80g)", DIRECT], def: "복사용지 (무림 M COPY 80g)", custom: DIRECT },
@@ -163,7 +165,7 @@ export const PRODUCTS: Product[] = [
     name: "전단지",
     slug: "flyer-leaflet",
     fields: [
-      { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B4", "B5", "B6"], def: "A4" },
+      { k: "size", label: "크기", type: "pick", opts: ["A4", "A5", "B5"], def: "A4" },
       { k: "side", label: "면", type: "pick", opts: ["단면", "양면"], def: "단면" },
       { k: "paper", label: "용지", type: "pick", opts: ["스노우지 100g", "스노우지 120g"], def: "스노우지 100g" },
       { k: "qty", label: "수량", type: "num", def: 100, min: 100, step: 100, unit: "장", hint: "100장 단위" },
@@ -187,9 +189,9 @@ export const PRODUCTS: Product[] = [
     id: "card",
     name: "명함",
     slug: "business-card",
-    note: "양면 인쇄 기본, 완성 90 × 50mm (작업 92 × 52mm)입니다.",
+    note: "완성 90 × 50mm가 기본이에요. 작업 파일은 사방 2mm 여백을 더한 94 × 54mm(최소 92 × 52mm)로 만들어 주시고, 글자 · 로고는 안쪽에 두세요. PDF로 보내 주세요. 접수 후 이상 없으면 2~3시간 안에 나옵니다.",
     fields: [
-      { k: "csize", label: "크기", type: "pick", opts: ["명함 (90×50)"], def: "명함 (90×50)", pic: true },
+      { k: "csize", label: "크기", type: "pick", opts: ["90×50 (기본)", "90×45", "90×54", "90×90 (정사각)", "90×127", "90×136"], def: "90×50 (기본)", pic: true },
       { k: "paper", label: "용지", type: "pick", opts: ["스노우지 250g", "랑데뷰지 240g"], def: "랑데뷰지 240g" },
       { k: "kinds", label: "종류 (이름 수)", type: "num", def: 1, min: 1, step: 1, unit: "종" },
       { k: "qty", label: "종류당 수량", type: "num", def: 100, min: 100, step: 100, unit: "장", hint: "100장 단위" },
@@ -199,9 +201,9 @@ export const PRODUCTS: Product[] = [
     id: "poster",
     name: "포스터",
     slug: "poster",
-    note: "B2보다 큰 크기(A1 · A0 · B1 · B0)는 제작하지 않아요. 스노우 120g · 랑데뷰 105g · 130g은 B3 · A2 · B2만 가능해요.",
+    note: "포스터는 B2 · A2 · B3 크기로 제작해요. B2보다 큰 크기(A1 · A0 · B1 · B0)는 제작하지 않아요.",
     fields: [
-      { k: "size", label: "크기", type: "pick", opts: ["A4", "A3", "B3", "A2", "B2"], def: "A2" },
+      { k: "size", label: "크기", type: "pick", opts: ["B2", "A2", "B3"], def: "A2" },
       { k: "paper", label: "종이", type: "pick", opts: Object.keys(POSTER_PAPERS), def: "스노우" },
       { k: "weight", label: "두께 (평량)", type: "pick", opts: POSTER_PAPERS["스노우"], def: "150g", optsOf: posterWeights },
       { k: "coat", label: "코팅", type: "pick", opts: COATS, def: COATS[1], block: posterCoat, custom: OTHER, hint: "코팅은 190g 이상만 가능해요. (B3 이상은 랑데뷰 수량 제한 없음)" },
@@ -227,4 +229,4 @@ export const PRODUCTS: Product[] = [
 ];
 
 // 당일 출고가 어려운 품목 (오전 주문 → 오후 5시쯤 출고 규칙에서 제외)
-export const SLOW_IDS = ["saddle", "card"];
+export const SLOW_IDS = ["saddle"];

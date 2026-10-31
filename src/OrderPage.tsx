@@ -70,7 +70,7 @@ function describe(it: Item) {
       r.push(["수량", `${v.qty}장`]);
       break;
     case "card":
-      r.push(["크기", "90×50mm"], ["용지", paperOf(v)], ["수량", `${v.kinds}종 × ${v.qty}장`]);
+      r.push(["크기", `${String(v.csize).replace(/ \(.*\)$/, "")}mm`], ["용지", paperOf(v)], ["수량", `${v.kinds}종 × ${v.qty}장`]);
       break;
     case "poster":
       r.push(["크기", size], ["용지", `${v.paper} ${v.weight}`]);
@@ -174,6 +174,9 @@ const paperPic = (o: string): ReactNode => {
     </>
   );
 };
+// 종이 사진 (사이트 종이 안내에 쓰는 사진) — 없는 종이는 그림으로
+const PAPER_IMG = (o: string): string | undefined =>
+  o.startsWith("스노우") ? "/assets/paper-snow.webp" : o.startsWith("랑데뷰") ? "/assets/paper-rdv.webp" : o.startsWith("모조") || o.startsWith("백색") ? "/assets/paper-mojo.webp" : o.startsWith("복사") ? "/assets/paper-mcopy.webp" : undefined;
 // 크기 그림 — 실제 비율대로 그린 종이
 const sizePic = (o: string, all: string[]): ReactNode => {
   const m = SIZE_MM[o];
@@ -186,7 +189,7 @@ const sizePic = (o: string, all: string[]): ReactNode => {
   return <path {...W} d={`M${32 - w / 2} ${54 - h}h${w}v${h}h${-w}z`} />;
 };
 const PIC_LABEL: Record<string, string> = {
-  가로형: "가로", 세로형: "세로", 없음: "없음", "명함 (90×50)": "명함(90×50)",
+  가로형: "가로", 세로형: "세로", 없음: "없음",
   "좌철 (옆으로 넘김)": "좌철 (옆으로)", "상철 (위로 넘김)": "상철 (위로)",
   "택배 (CJ대한통운)": "택배", "퀵 (서울 근교)": "퀵", "복사용지 (무림 M COPY 80g)": "복사용지 80g",
 };
@@ -196,13 +199,15 @@ const PROD_SUB: Record<string, string> = { perfect: "(떡제본)", sheet: "(리�
 const RECV_IMG: Record<string, string> = { "방문 픽업": "/assets/recv-pickup.webp", "택배 (CJ대한통운)": "/assets/recv-parcel.webp", "퀵 (서울 근교)": "/assets/recv-quick.webp" };
 const PIC_KEYS = ["size", "csize", "orient", "bind", "color", "paper", "coat", "fold"];
 
-type PicItem = { key: string; label: string; sub?: string; art?: ReactNode; img?: string; off?: boolean };
+type PicItem = { key: string; label: string; sub?: string; art?: ReactNode; img?: string; ph?: string; off?: boolean };
 function PicRow({ items, value, label, onPick, big }: { items: PicItem[]; value: string; label: string; onPick: (k: string) => void; big?: boolean }) {
   return (
     <div className={big ? "od-pics big" : "od-pics"} role="radiogroup" aria-label={label}>
       {items.map((it) => (
         <button type="button" key={it.key} role="radio" aria-checked={value === it.key} disabled={it.off} className={(value === it.key ? "on" : "") + (it.off ? " x" : "") || undefined} onClick={() => onPick(it.key)}>
-          {it.img ? (
+          {it.ph ? (
+            <img className="ph" src={it.ph} alt="" width={168} height={112} loading="lazy" />
+          ) : it.img ? (
             <img src={it.img} alt="" width={140} height={140} loading="lazy" />
           ) : (
             <svg viewBox="0 0 64 56" aria-hidden="true">
@@ -235,7 +240,7 @@ function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | nu
     const off = [...(f.offOf?.(v) ?? []), ...(why ? opts.filter((o) => o !== "없음") : [])];
     const hint = why ?? f.hintOf?.(v) ?? f.hint;
     const tone = (o: string) => (f.k === "color" ? (o === "흑백" ? " bk" : o === "칼라" ? " red" : "") : "");
-    const mm = (f.k === "size" || f.k === "csize") && SIZE_MM[String(v[f.k])] ? `${v[f.k]} = ${sizeMM(v[f.k])}mm` : "";
+    const mm = f.k === "size" && SIZE_MM[String(v[f.k])] ? `${v[f.k]} = ${sizeMM(v[f.k])}mm` : "";
     return (
       <div className="od-field">
         <span className="od-lab">{f.label}</span>
@@ -244,7 +249,7 @@ function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | nu
             label={f.label}
             value={String(v[f.k])}
             onPick={(o) => set(f.k, o)}
-            items={opts.map((o) => ({ key: o, label: f.k === "fold" && o === "없음" ? "접지 안 함" : (PIC_LABEL[o] ?? o), sub: f.k === "size" ? sizeMM(o) : undefined, art: artOf(f.k, o, opts), off: off.includes(o) }))}
+            items={opts.map((o) => ({ key: o, label: f.k === "fold" && o === "없음" ? "접지 안 함" : (PIC_LABEL[o] ?? o), sub: f.k === "size" ? sizeMM(o) : undefined, art: artOf(f.k, o, opts), ph: f.k === "paper" ? PAPER_IMG(o) : undefined, off: off.includes(o) }))}
           />
         ) : (
           <div className="od-chips" role="radiogroup" aria-label={f.label}>
@@ -348,8 +353,10 @@ export default function OrderView() {
       const slow = items.some((it) => SLOW_IDS.includes(it.pid) || (it.pid === "sheet" && it.vals.fold !== "없음"));
       warns.push(
         slow
-          ? "중철 · 명함 · 접지 작업은 당일 출고가 어려울 수 있어요. 먼저 전화나 카톡으로 가능 여부를 확인해 주세요."
-          : "오전에 주문하시고 파일에 문제가 없으면 보통 오후 5시쯤 나옵니다. 오후 주문은 먼저 연락 주세요.",
+          ? "중철 · 접지 작업은 당일 출고가 어려울 수 있어요. 먼저 전화나 카톡으로 가능 여부를 확인해 주세요."
+          : items.every((it) => it.pid === "card")
+            ? "명함은 접수 후 파일에 이상이 없으면 보통 2~3시간 안에 나옵니다."
+            : "오전에 주문하시고 파일에 문제가 없으면 보통 오후 5시쯤 나옵니다. 오후 주문은 먼저 연락 주세요.",
       );
     }
   }

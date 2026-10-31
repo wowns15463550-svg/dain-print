@@ -868,3 +868,6 @@ textarea.od-in{resize:vertical;line-height:1.6}
   .paper+.x,.paper .mob-more,.eq-sub+.mob-more{display:none}
   .eq-grid{margin-top:32px}
 }
+
+.od-pics button img.ph{width:84px;height:56px;object-fit:cover;border-radius:6px;mix-blend-mode:normal}
+@media (min-width:481px){.od-pics button img.ph{width:96px;height:64px}}

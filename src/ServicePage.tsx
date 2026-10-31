@@ -259,7 +259,7 @@ export default function ServiceView({ p }: { p: ServicePage }) {
               </li>
             </ol>
             <p className="sp-eta">
-              <b>오전에 주문하시면</b> 파일에 문제가 없을 때 보통 오후 5시쯤 나옵니다. (중철제본 · 명함 · 접지 작업 제외) 세금계산서 · 현금영수증은 견적 요청 때 미리 말씀해 주세요.
+              <b>오전에 주문하시면</b> 파일에 문제가 없을 때 보통 오후 5시쯤 나옵니다. (중철제본 · 접지 작업 제외, 명함은 접수 후 2~3시간) 세금계산서 · 현금영수증은 견적 요청 때 미리 말씀해 주세요.
             </p>
             <div className="sp-cta">
               <a className="btn btn-accent" href={CONTACT.kakao} target="_blank" rel="noreferrer">
