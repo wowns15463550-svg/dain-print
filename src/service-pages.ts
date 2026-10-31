@@ -201,8 +201,8 @@ export const SERVICE_PAGES: ServicePage[] = [
     desc: "충무로역 3분, 다인인쇄소 명함 인쇄. 랑데뷰 240g · 스노우지 250g, 100장부터. 접수 후 파일에 이상이 없으면 2~3시간 안에 나옵니다.",
     h1: ["충무로 명함,", "접수 후 2~3시간"],
     lead: "파일에 이상이 없으면 바로 작업에 들어가 보통 2~3시간 안에 나옵니다. 가장 기본인 90×50mm를 비롯해 여러 크기로 100장부터 만들어 드립니다.",
-    img: "assets/l-card.webp",
-    gallery: ["assets/card-s1.webp", "assets/card-s2.webp", "assets/card-s3.webp", "assets/card-s4.webp"],
+    img: "assets/card-dain.webp",
+    gallery: ["assets/card-s2.webp", "assets/card-s3.webp", "assets/card-s4.webp"],
     uses: ["회사 · 개인 명함", "매장 쿠폰 · 적립 카드", "작가 · 프리랜서 명함", "행사용 네임 카드"],
     specs: [
       ["용지", "랑데뷰 240g · 스노우지 250g"],
