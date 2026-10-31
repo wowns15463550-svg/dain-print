@@ -176,7 +176,7 @@ const paperPic = (o: string): ReactNode => {
 };
 // 종이 사진 (사이트 종이 안내에 쓰는 사진) — 없는 종이는 그림으로
 const PAPER_IMG = (o: string): string | undefined =>
-  o.startsWith("스노우") ? "/assets/paper-u-snow.webp" : o.startsWith("랑데뷰") ? "/assets/paper-u-rdv.webp" : o.startsWith("모조") || o.startsWith("백색") ? "/assets/paper-u-mojo.webp" : o.startsWith("복사") ? "/assets/paper-u-mcopy.webp" : undefined;
+  o.startsWith("스노우") ? "/assets/paper-v-snow.webp" : o.startsWith("랑데뷰") ? "/assets/paper-v-rdv.webp" : o.startsWith("모조") || o.startsWith("백색") ? "/assets/paper-v-mojo.webp" : o.startsWith("복사") ? "/assets/paper-v-mcopy.webp" : undefined;
 // 크기 그림 — 실제 비율대로 그린 종이
 const sizePic = (o: string, all: string[]): ReactNode => {
   const m = SIZE_MM[o];
