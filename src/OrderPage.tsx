@@ -70,7 +70,7 @@ function describe(it: Item) {
       r.push(["수량", `${v.qty}장`]);
       break;
     case "card":
-      r.push(["크기", `${String(v.csize).replace(/ \(.*\)$/, "")}mm`], ["용지", paperOf(v)], ["수량", `${v.kinds}종 × ${v.qty}장`]);
+      r.push(["크기", `${String(v.csize === OTHER ? v.csize2 : v.csize).replace(/ \(.*\)$/, "")}mm`], ["용지", paperOf(v)], ["수량", `${v.kinds}종 × ${v.qty}장`]);
       break;
     case "poster":
       r.push(["크기", size], ["용지", `${v.paper} ${v.weight}`]);
@@ -180,10 +180,20 @@ const PIC_LABEL: Record<string, string> = {
   "택배 (CJ대한통운)": "택배", "퀵 (서울 근교)": "퀵", "복사용지 (무림 M COPY 80g)": "복사용지 80g",
 };
 const PROD_LABEL: Record<string, string> = { perfect: "무선제본", spring: "스프링", saddle: "중철", flyer: "전단지", sheet: "낱장 인쇄", card: "명함", poster: "포스터", form: "양식·스테이플" };
+const MOCKS: Record<string, { img: string; cap: string }[]> = {
+  perfect: [{ img: "assets/mock-book.webp", cap: "무선제본 책 — 책등에 풀로 붙인 일반 책 모양" }, { img: "assets/l-perfect2.webp", cap: "문제집·교재처럼 쪽수가 많은 책" }],
+  spring: [{ img: "assets/l-spiral2.webp", cap: "검정 스프링 + 무광 반투명 표지" }],
+  saddle: [{ img: "assets/l-saddle.webp", cap: "가운데를 스테이플로 묶은 얇은 책" }],
+  flyer: [{ img: "assets/l-flyer.webp", cap: "전단지 · 리플렛" }],
+  sheet: [{ img: "assets/l-invite.webp", cap: "엽서 · 리플렛 같은 낱장 인쇄" }],
+  card: [{ img: "assets/card-dain.webp", cap: "명함 예시" }, { img: "assets/mock-card-tray.webp", cap: "트레이에 놓은 모습" }, { img: "assets/mock-card-grid.webp", cap: "여러 장 나열한 모습" }],
+  poster: [{ img: "assets/l-poster.webp", cap: "포스터 (B2 · A2 · B3)" }],
+  form: [{ img: "assets/l-form.webp", cap: "왼쪽 위 스테이플 양식" }],
+};
 const PROD_SUB: Record<string, string> = { perfect: "(떡제본)", sheet: "(리플렛 · 엽서)" };
 // 그림 카드로 보여줄 항목 (용지 · 크기 · 코팅 …)
 const RECV_IMG: Record<string, string> = { "방문 픽업": "/assets/recv-pickup.webp", "택배 (CJ대한통운)": "/assets/recv-parcel.webp", "퀵 (서울 근교)": "/assets/recv-quick.webp" };
-const PIC_KEYS = ["size", "csize", "orient", "bind", "color", "coat", "fold"];
+const PIC_KEYS = ["size", "csize", "orient", "bind", "color", "coat", "fold", "csize2"];
 
 type PicItem = { key: string; label: string; sub?: string; art?: ReactNode; img?: string; off?: boolean };
 function PicRow({ items, value, label, onPick, big }: { items: PicItem[]; value: string; label: string; onPick: (k: string) => void; big?: boolean }) {
@@ -209,6 +219,7 @@ function PicRow({ items, value, label, onPick, big }: { items: PicItem[]; value:
 
 const artOf = (k: string, o: string, all: string[] = []): ReactNode => {
   if (k === "size") return sizePic(o, all);
+  if ((k === "csize" || k === "csize2") && o !== OTHER) return sizePic(o, all.filter((x) => x !== OTHER));
   if (k === "coat") return PICS[o === "없음" ? "없음_코팅" : o === OTHER ? "그외" : o] ?? PICS["없음_코팅"];
   if (o.startsWith(OTHER)) return PICS["그외"];
   return PICS[o] ?? PICS["없음"];
@@ -264,8 +275,8 @@ function PaperPick({ f, v, set }: { f: Extract<Field, { type: "pick" }>; v: Vals
           <div>
             <b>{cur.t}</b>
             <em>{info.finish}</em>
-            <p>{info.desc}</p>
-            {rowUse && <p className="od-paper-use">이 두께는 <b>{rowUse}</b>에 많이 씁니다.</p>}
+            <p>{f.feel?.[cur.t] ?? info.desc}</p>
+            {!f.feel && rowUse && <p className="od-paper-use">이 두께는 <b>{rowUse}</b>에 많이 씁니다.</p>}
           </div>
         </div>
       )}
@@ -519,6 +530,19 @@ export default function OrderView() {
                     />
                   </div>
                   {p.note && <p className="od-note">{p.note}</p>}
+                  {MOCKS[p.id] && (
+                    <div className="od-mock" aria-label="이런 모습이에요">
+                      <p className="od-mock-t">이런 모습으로 만들어져요 <small>(참고용 목업 사진)</small></p>
+                      <div className="od-mock-row">
+                        {MOCKS[p.id].map((m) => (
+                          <figure key={m.img}>
+                            <img src={"/" + m.img} alt={m.cap} loading="lazy" />
+                            <figcaption>{m.cap}</figcaption>
+                          </figure>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   {p.fields.map((f) => (
                     <Ctl key={f.k} f={f} v={it.vals} set={(k, x) => upd(it.key, (o) => ({ ...o, vals: settle(p, { ...o.vals, [k]: x }) }))} />
                   ))}

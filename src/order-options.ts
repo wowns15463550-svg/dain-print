@@ -15,6 +15,8 @@ export type Field =
       custom?: string;
       // 다른 칸 값에 따라 선택지가 바뀜 (예: 포스터 종이 종류 · 크기 → 평량)
       optsOf?: (v: Vals) => string[];
+      // 종이 종류별 느낌 설명 (품목별로 다르게 보여줄 때)
+      feel?: Record<string, string>;
       // 조건에 따라 보이기 / 안내 문구 바꾸기
       showIf?: (v: Vals) => boolean;
       hintOf?: (v: Vals) => string | null;
@@ -191,8 +193,9 @@ export const PRODUCTS: Product[] = [
     slug: "business-card",
     note: "완성 90 × 50mm가 기본이에요. 작업 파일은 사방 2mm 여백을 더한 94 × 54mm(최소 92 × 52mm)로 만들어 주시고, 글자 · 로고는 안쪽에 두세요. PDF로 보내 주세요. 접수 후 이상 없으면 2~3시간 안에 나옵니다.",
     fields: [
-      { k: "csize", label: "크기", type: "pick", opts: ["90×50 (기본)", "90×45", "90×54", "90×90 (정사각)", "90×127", "90×136"], def: "90×50 (기본)", pic: true },
-      { k: "paper", label: "용지", type: "pick", opts: ["스노우지 250g", "랑데뷰지 240g"], def: "랑데뷰지 240g" },
+      { k: "csize", label: "크기", type: "pick", opts: ["90×50 (기본)", OTHER], def: "90×50 (기본)", pic: true },
+      { k: "csize2", label: "그 외 크기", type: "pick", opts: ["90×45", "90×54", "90×90 (정사각)", "90×127", "90×136"], def: "90×45", pic: true, showIf: (v) => v.csize === OTHER, hint: "가로 90mm 기준의 다른 크기예요. 이 크기도 사방 2mm 여백을 더해 작업해 주세요." },
+      { k: "paper", label: "용지", type: "pick", opts: ["스노우지 250g", "랑데뷰지 240g"], def: "랑데뷰지 240g", feel: { 스노우지: "표면이 매끈하고 하얀 종이라 색이 또렷하고 선명하게 나옵니다. 로고와 사진이 깔끔하게 보이는 단정한 명함이 됩니다.", 랑데뷰: "은은하고 고운 결이 있는 무광 종이입니다. 손에 쥐었을 때 도톰하고 차분해서 고급스러운 인상의 명함이 됩니다." } },
       { k: "kinds", label: "종류 (이름 수)", type: "num", def: 1, min: 1, step: 1, unit: "종" },
       { k: "qty", label: "종류당 수량", type: "num", def: 100, min: 100, step: 100, unit: "장", hint: "100장 단위" },
     ],
