@@ -537,7 +537,6 @@ export default function OrderView() {
                         {MOCKS[p.id].map((m) => (
                           <figure key={m.img}>
                             <img src={"/" + m.img} alt={m.cap} loading="lazy" />
-                            <figcaption>{m.cap}</figcaption>
                           </figure>
                         ))}
                       </div>
@@ -603,7 +602,13 @@ export default function OrderView() {
                 {recv !== "방문 픽업" ? (
                   <input className="od-in" value={addr} onChange={(e) => setAddr(e.target.value)} placeholder="받으실 주소 · 받는 분 · 연락처" />
                 ) : (
-                  <small className="od-hint">충무로역 7번 출구 도보 3분. 주차장은 없고 매장 앞에 잠깐 정차 가능합니다.</small>
+                  <div className="od-shop">
+                    <img src="/assets/shop-front.webp" alt="다인인쇄소(다인시스템) 매장 외관 — 파란 다인시스템 간판" width={84} height={112} loading="lazy" />
+                    <div>
+                      <b>서울 중구 마른내로4길 27 다인시스템 1층 (파란 간판)</b>
+                      <small>충무로역 7번 출구 도보 3분 · 주차장은 없고 매장 앞에 잠깐 정차 가능합니다.</small>
+                    </div>
+                  </div>
                 )}
                 {recv.startsWith("택배") && <small className="od-hint">발송 후 1~2일 걸리고 하루 더 걸릴 수 있어요. 날짜가 정해진 급한 인쇄물은 퀵을 권합니다.</small>}
               </div>

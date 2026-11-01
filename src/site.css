@@ -889,3 +889,8 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .od-mock-row figure{margin:0;flex:0 0 min(300px,78%);scroll-snap-align:start}
 .od-mock-row img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
 .od-mock-row figcaption{font-size:13px;color:#4b5563;margin-top:4px}
+
+.od-shop{display:flex;gap:12px;align-items:center;margin-top:10px;padding:10px;border:1px solid #e5e7eb;border-radius:12px;background:#fafbff}
+.od-shop img{width:84px;height:112px;object-fit:cover;border-radius:8px;flex:none}
+.od-shop b{display:block;font-size:14px;line-height:1.4}
+.od-shop small{display:block;margin-top:4px;color:#6b7280;line-height:1.4}

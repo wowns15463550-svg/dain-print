@@ -51,7 +51,7 @@ const orientField = (_unused?: boolean): Field => ({
   k: "orient",
   label: "제본 방향",
   type: "pick",
-  opts: ["가로형", "세로형"],
+  opts: ["세로형", "가로형"],
   def: "세로형",
 });
 // 가로형일 때 넘기는 방향 (무선 · 중철: A5 · B6은 좌철·상철 모두, 그 밖의 크기는 상철만)
@@ -62,8 +62,8 @@ const bindField = (leftOk: boolean, all = false): Field => ({
   opts: [SIDE_BIND, TOP_BIND],
   def: TOP_BIND,
   showIf: (v) => v.orient === "가로형",
-  optsOf: (v) => (all || (leftOk && ["A5", "B6"].includes(String(v.size))) ? [SIDE_BIND, TOP_BIND] : [TOP_BIND]),
-  hintOf: (v) => (all || (leftOk && ["A5", "B6"].includes(String(v.size))) ? "좌철은 왼쪽으로 넘기는 형식, 상철은 위로 넘기는 형식이에요." : "가로형은 위로 넘기는 상철만 가능해요. (상철 = 위로 넘기는 형식)"),
+  // 좌철이 안 되는 크기도 그림은 보여 주되 X 표시로 막아 둔다
+  offOf: (v) => (all || (leftOk && ["A5", "B6"].includes(String(v.size))) ? [] : [SIDE_BIND]),
 });
 export const COATS = ["없음", "무광코팅", OTHER];
 const SHEET_PAPERS = ["스노우지 150g", "스노우지 200g", "스노우지 250g", "랑데뷰 160g", "랑데뷰 190g", "랑데뷰 240g"];
