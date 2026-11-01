@@ -906,3 +906,4 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .od-modal-btn{display:flex;gap:8px;margin-top:18px;position:sticky;bottom:-22px;background:#fff;padding:10px 0 2px}
 .od-modal-btn .btn{flex:1;justify-content:center}
 .od-modal-end{margin:14px 0 0;padding:10px 12px;border-radius:10px;background:#f3f4f6;font-size:14px;font-weight:700;line-height:1.5}
+.od-modal-spring{margin-top:12px;padding:8px 12px 10px;border-radius:10px;background:#fdf1ef}.od-modal-spring h4{color:#9b3a31;margin-top:4px}.od-modal-spring ul{color:#7a2f28}

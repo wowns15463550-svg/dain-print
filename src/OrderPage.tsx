@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Arrow, Ico } from "./App";
 import { Shell } from "./ServicePage";
-import { CONTACT, PAPER_GUIDE, PRINT_NOTES, PRINT_NO_REPRINT, SPRING_NOTE } from "./site-data";
+import { CONTACT, PAPER_GUIDE, FOLD_NOTE, ORDER_INFO, PRINT_NOTES, PRINT_NO_REPRINT, PRODUCT_NOTES } from "./site-data";
 import { PRODUCTS, SLOW_IDS, SIZE_MM, OTHER, FOLD_OTHER, sizeMM, type Field, type Product, type Vals } from "./order-options";
 
 type Item = { key: number; pid: string; vals: Vals };
@@ -631,7 +631,22 @@ export default function OrderView() {
               <div className="od-modal-in" onClick={(e) => e.stopPropagation()}>
                 <h3>⚠️ 인쇄 데이터 유의사항</h3>
                 <p className="od-modal-lead">보내시기 전에 파일을 한 번만 확인해 주세요.</p>
-                {items.some((it) => it.pid === "spring") && <p className="od-modal-spring"><b>스프링 제본</b> {SPRING_NOTE}</p>}
+                <section>
+                  <h4>{ORDER_INFO.title}</h4>
+                  <ul>{ORDER_INFO.items.map((t) => <li key={t}>{t}</li>)}</ul>
+                </section>
+                {[...new Set(items.map((it) => it.pid))].filter((id) => PRODUCT_NOTES[id]).map((id) => (
+                  <section key={id} className="od-modal-spring">
+                    <h4>{PRODUCT_NOTES[id].title}</h4>
+                    <ul>{PRODUCT_NOTES[id].items.map((t) => <li key={t}>{t}</li>)}</ul>
+                  </section>
+                ))}
+                {items.some((it) => it.vals.fold && it.vals.fold !== "없음") && (
+                  <section className="od-modal-spring">
+                    <h4>{FOLD_NOTE.title}</h4>
+                    <ul>{FOLD_NOTE.items.map((t) => <li key={t}>{t}</li>)}</ul>
+                  </section>
+                )}
                 {PRINT_NOTES.map((g) => (
                   <section key={g.title}>
                     <h4>{g.title}</h4>
