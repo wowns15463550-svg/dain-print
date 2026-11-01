@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Arrow, Ico } from "./App";
 import { Shell } from "./ServicePage";
-import { CONTACT, PAPER_GUIDE } from "./site-data";
+import { CONTACT, PAPER_GUIDE, PRINT_NOTES, SPRING_NOTE } from "./site-data";
 import { PRODUCTS, SLOW_IDS, SIZE_MM, OTHER, FOLD_OTHER, sizeMM, type Field, type Product, type Vals } from "./order-options";
 
 type Item = { key: number; pid: string; vals: Vals };
@@ -388,6 +388,13 @@ export default function OrderView() {
   const [addr, setAddr] = useState("");
   const [memo, setMemo] = useState("");
   const [copied, setCopied] = useState("");
+  const [ask, setAsk] = useState<"" | "kakao" | "mail">("");
+  useEffect(() => {
+    if (!ask) return;
+    const k = (e: KeyboardEvent) => e.key === "Escape" && setAsk("");
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [ask]);
   const [today, setToday] = useState("");
 
   // 품목 페이지에서 ?item=spring-binding 처럼 들어오면 그 품목으로 시작
@@ -619,6 +626,35 @@ export default function OrderView() {
             </div>
           </div>
 
+          {ask && (
+            <div className="od-modal" role="dialog" aria-modal="true" aria-label="인쇄 데이터 유의사항" onClick={() => setAsk("")}>
+              <div className="od-modal-in" onClick={(e) => e.stopPropagation()}>
+                <h3>⚠️ 인쇄 데이터 유의사항</h3>
+                <p className="od-modal-lead">보내시기 전에 파일을 한 번만 확인해 주세요.</p>
+                {items.some((it) => it.pid === "spring") && <p className="od-modal-spring"><b>스프링 제본</b> {SPRING_NOTE}</p>}
+                {PRINT_NOTES.map((g) => (
+                  <section key={g.title}>
+                    <h4>{g.title}</h4>
+                    <ul>{g.items.map((t) => <li key={t}>{t}</li>)}</ul>
+                  </section>
+                ))}
+                <div className="od-modal-btn">
+                  <button type="button" className="btn" onClick={() => setAsk("")}>돌아가기</button>
+                  <button
+                    type="button"
+                    className="btn btn-accent"
+                    onClick={() => {
+                      copy(ask);
+                      window.open(ask === "kakao" ? CONTACT.kakao : CONTACT.mailWrite, "_blank", "noopener");
+                      setAsk("");
+                    }}
+                  >
+                    확인했습니다 · {ask === "kakao" ? "카톡 열기" : "메일 열기"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           <aside className="od-out" aria-label="완성된 주문 내용">
             <div className="od-out-in">
               <h2>주문 내용</h2>
@@ -628,20 +664,14 @@ export default function OrderView() {
                 <button
                   type="button"
                   className="btn btn-accent"
-                  onClick={() => {
-                    copy("kakao");
-                    window.open(CONTACT.kakao, "_blank", "noopener");
-                  }}
+                  onClick={() => setAsk("kakao")}
                 >
                   <Ico k="talk" /> {copied === "kakao" ? "복사됨 · 채팅창에 붙여넣기" : "카톡으로 보내기"}
                 </button>
                 <button
                   type="button"
                   className="btn"
-                  onClick={() => {
-                    copy("mail");
-                    window.open(CONTACT.mailWrite, "_blank", "noopener");
-                  }}
+                  onClick={() => setAsk("mail")}
                 >
                   <Ico k="mail" /> {copied === "mail" ? "복사됨 · 메일 본문에 붙여넣기" : "네이버 메일로 보내기"}
                 </button>

@@ -894,3 +894,14 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .od-shop img{width:84px;height:112px;object-fit:cover;border-radius:8px;flex:none}
 .od-shop b{display:block;font-size:14px;line-height:1.4}
 .od-shop small{display:block;margin-top:4px;color:#6b7280;line-height:1.4}
+
+.od-modal{position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.od-modal-in{background:#fff;border-radius:16px;max-width:560px;width:100%;max-height:88vh;overflow:auto;padding:22px 20px}
+.od-modal-in h3{margin:0 0 6px;font-size:19px}
+.od-modal-in h4{margin:14px 0 6px;font-size:15px;color:#1E4BD2}
+.od-modal-in ul{margin:0;padding-left:18px;font-size:14px;line-height:1.55}
+.od-modal-in li{margin-bottom:4px}
+.od-modal-lead{margin:0;color:#4b5563;font-size:14px}
+.od-modal-spring{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:#fdf1ef;color:#9b3a31;font-size:14px;line-height:1.5}
+.od-modal-btn{display:flex;gap:8px;margin-top:18px;position:sticky;bottom:-22px;background:#fff;padding:10px 0 2px}
+.od-modal-btn .btn{flex:1;justify-content:center}
