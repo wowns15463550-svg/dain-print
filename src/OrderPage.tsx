@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Arrow, Ico } from "./App";
 import { Shell } from "./ServicePage";
-import { CONTACT, PAPER_GUIDE, PRINT_NOTES, SPRING_NOTE } from "./site-data";
+import { CONTACT, PAPER_GUIDE, PRINT_NOTES, PRINT_NO_REPRINT, SPRING_NOTE } from "./site-data";
 import { PRODUCTS, SLOW_IDS, SIZE_MM, OTHER, FOLD_OTHER, sizeMM, type Field, type Product, type Vals } from "./order-options";
 
 type Item = { key: number; pid: string; vals: Vals };
@@ -638,6 +638,7 @@ export default function OrderView() {
                     <ul>{g.items.map((t) => <li key={t}>{t}</li>)}</ul>
                   </section>
                 ))}
+                <p className="od-modal-end">{PRINT_NO_REPRINT}</p>
                 <div className="od-modal-btn">
                   <button type="button" className="btn" onClick={() => setAsk("")}>돌아가기</button>
                   <button
