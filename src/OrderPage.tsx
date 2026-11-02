@@ -172,6 +172,17 @@ const sizePic = (o: string, all: string[]): ReactNode => {
   const mh = Math.max(...all.map((x) => SIZE_MM[x]?.[1] ?? 0));
   const k = Math.min(48 / mw, 52 / mh);
   const w = m[0] * k, h = m[1] * k;
+  // 포스터(B2·A2·B3)는 접힌 모서리 종이에 크기 이름을 안에 적어 보여 줌
+  if (all.includes("B2")) {
+    const x = 32 - w / 2, y = 54 - h, c = 7;
+    return (
+      <>
+        <path {...W} d={`M${x} ${y}h${w - c}l${c} ${c}v${h - c}h${-w}z`} />
+        <path className="ln" d={`M${x + w - c} ${y}v${c}h${c}`} />
+        <text x="32" y={y + h / 2 + 4} textAnchor="middle" className="sm">{o}</text>
+      </>
+    );
+  }
   return <path {...W} d={`M${32 - w / 2} ${54 - h}h${w}v${h}h${-w}z`} />;
 };
 const PIC_LABEL: Record<string, string> = {
