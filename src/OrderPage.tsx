@@ -518,7 +518,25 @@ export default function OrderView() {
             </ol>
           </div>
           <div className="od-hero-img">
-            <img src="/assets/order-hero2.webp" alt="휴대폰으로 인쇄 주문서를 고르고 보내는 모습" width={1168} height={880} />
+            <video
+              className="od-hero-video"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              poster="/assets/order-hero-loop.webp"
+              width={960}
+              height={720}
+              aria-label="주문이 들어오면 출력해 앞뒤를 확인하고, 포장해 손님께 전해 드리는 다인인쇄소 모습"
+              ref={(el) => {
+                // 움직임 줄이기 설정을 켠 손님에게는 멈춘 그림만 보여 줌
+                if (el && typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) el.pause();
+              }}
+            >
+              <source src="/assets/order-hero-loop.webm" type="video/webm" />
+              <source src="/assets/order-hero-loop.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
       </section>

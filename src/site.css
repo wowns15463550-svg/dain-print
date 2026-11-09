@@ -696,6 +696,7 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .od-hero{background:linear-gradient(180deg,#EEF2FB 0%,#F4F5F7 100%)}
 .od-hero-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(24px,4vw,56px);align-items:center;padding-block:clamp(36px,5vw,72px)}
 .od-hero h1 strong{color:#C2544A}
+.od-hero-img video{width:100%;height:auto;aspect-ratio:4/3;display:block;border-radius:20px;background:#EEF2FB;box-shadow:0 30px 60px rgba(30,75,210,.14)}
 .od-hero-img img{width:100%;height:auto;border-radius:20px;box-shadow:0 30px 60px rgba(30,75,210,.14)}
 .od-steps{list-style:none;margin:28px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
 .od-steps li{display:flex;align-items:center;gap:10px;padding:10px 16px 10px 10px;background:var(--surface);border:1px solid var(--line);box-shadow:0 6px 16px rgba(13,21,38,.05)}
