@@ -83,6 +83,10 @@ export function Shell({ children }: { children: ReactNode }) {
           <Ico k="mail" />
           <span>메일</span>
         </a>
+        <a className="qm-i qm-order" href="/order/">
+          <Ico k="order" />
+          <span>주문하기</span>
+        </a>
         <a className="qm-i qm-map" href="/#visit">
           <Ico k="pin" />
           <span>오시는 길</span>

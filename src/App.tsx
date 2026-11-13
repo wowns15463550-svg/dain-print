@@ -121,7 +121,7 @@ export function Phone() {
     </svg>
   );
 }
-export function Ico({ k }: { k: "talk" | "blog" | "insta" | "mail" | "pin" | "up" | "close" | "cloud" | "bank" }) {
+export function Ico({ k }: { k: "talk" | "blog" | "insta" | "mail" | "pin" | "up" | "close" | "cloud" | "bank" | "order" }) {
   const p = { stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, fill: "none" };
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
@@ -163,6 +163,7 @@ export function Ico({ k }: { k: "talk" | "blog" | "insta" | "mail" | "pin" | "up
           <path {...p} d="M6.5 10v7M10.5 10v7M13.5 10v7M17.5 10v7" />
         </>
       )}
+      {k === "order" && <path {...p} d="M7 3.5h7l4 4V20a.5.5 0 0 1-.5.5h-10A.5.5 0 0 1 7 20V3.5ZM14 3.5v4h4M9.5 12h6M9.5 15.5h6" />}
       {k === "up" && <path {...p} d="M12 19V5M6 11l6-6 6 6" />}
       {k === "close" && <path {...p} d="M6 6l12 12M18 6 6 18" />}
     </svg>
@@ -442,6 +443,17 @@ export default function App() {
             {l}
           </a>
         ))}
+        <div className="sheet-sns">
+          <a href={CONTACT.blog} target="_blank" rel="noreferrer">
+            <Ico k="blog" /> 블로그
+          </a>
+          <a href={CONTACT.insta} target="_blank" rel="noreferrer">
+            <Ico k="insta" /> 인스타그램
+          </a>
+          <a href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
+            <Ico k="mail" /> 메일 보내기
+          </a>
+        </div>
         <div className="sheet-foot">
           <a className="btn btn-accent" href={`tel:${tel}`}>
             <Phone /> {CONTACT.phone}
@@ -991,7 +1003,7 @@ export default function App() {
                     {f.link && (
                       <>
                         {" "}
-                        <a className="qa-link" href={f.link.href} target="_blank" rel="noreferrer">
+                        <a className="qa-link" href={f.link.href} {...(f.link.href.startsWith("#") ? {} : { target: "_blank", rel: "noreferrer" })}>
                           {f.link.label} →
                         </a>
                       </>
@@ -1156,6 +1168,10 @@ export default function App() {
         <a className="qm-i qm-mail" href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
           <Ico k="mail" />
           <span>메일</span>
+        </a>
+        <a className="qm-i qm-order" href="/order/">
+          <Ico k="order" />
+          <span>주문하기</span>
         </a>
         <a className="qm-i qm-map" href="#visit" onClick={openVisit}>
           <Ico k="pin" />
