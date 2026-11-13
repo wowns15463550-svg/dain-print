@@ -206,6 +206,36 @@ function HoursBanner() {
   );
 }
 
+// 작업 과정 장면: 처음엔 그림, 화면에 들어오면 5초 영상이 한 번 재생되고 마지막 장면에서 멈춤
+function StepMedia({ s }: { s: (typeof STEPS)[number] }) {
+  const fig = useRef<HTMLElement>(null);
+  const vid = useRef<HTMLVideoElement>(null);
+  const [live, setLive] = useState(false);
+  useEffect(() => {
+    const f = fig.current;
+    const v = vid.current;
+    if (!f || !v || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        v.src = s.vid;
+        v.play().then(() => setLive(true)).catch(() => {});
+      },
+      { threshold: 0.6 },
+    );
+    io.observe(f);
+    return () => io.disconnect();
+  }, [s.vid]);
+  return (
+    <figure className={"step-img" + (live ? " live" : "")} ref={fig}>
+      <img src={s.img} alt={s.alt} loading="lazy" width={720} height={720} />
+      <video ref={vid} muted playsInline preload="none" aria-hidden="true" tabIndex={-1} />
+      <figcaption className="step-say">{s.say}</figcaption>
+    </figure>
+  );
+}
+
 export default function App() {
   const [menu, setMenu] = useState(false);
   const [slide, setSlide] = useState(0);
@@ -825,9 +855,7 @@ export default function App() {
             <ol className={stepAnim ? "steps anim" : "steps"} ref={stepsRef}>
               {STEPS.map((s, i) => (
                 <li className={"step" + (i <= stepOn ? " on" : "") + (i === stepOn ? " cur" : "")} key={s.t}>
-                  <figure className="step-img">
-                    <img src={s.img} alt={s.alt} loading="lazy" width={1100} height={825} />
-                  </figure>
+                  <StepMedia s={s} />
                   <div className="step-body">
                     <span className="step-n">{i + 1}</span>
                     <h3>{s.t}</h3>

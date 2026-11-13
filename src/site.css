@@ -980,3 +980,12 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .bank-box .btn{width:100%;margin-top:22px}
 .bank-note{margin-top:16px;font-size:14px;color:var(--ink-2);text-align:left}
 @media (max-width:900px){.qm-i{font-size:10.5px}}
+
+/* 작업 과정: 다인이·준이 영상 + 하단 설명 띠 */
+.step-img{position:relative;border-radius:14px}
+.step-img video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s var(--out)}
+.step-img.live video{opacity:1}
+.step:hover .step-img img{transform:none}
+.step-say{position:absolute;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 16px);bottom:8px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.92);color:var(--ink);font-size:12.5px;font-weight:700;text-align:center;box-shadow:0 4px 14px rgba(13,21,38,.12);backdrop-filter:blur(4px)}
+.step.cur .step-say{background:var(--accent);color:var(--on-accent)}
+@media (max-width:560px){.step-say{font-size:13px}}

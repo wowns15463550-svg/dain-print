@@ -116,11 +116,11 @@ export const FINISHING = [
 ];
 
 export const STEPS = [
-  { t: "파일 접수", d: "메일로 PDF 파일과 원하는 사양을 보내주세요.", img: "assets/step1.webp", alt: "노트북으로 인쇄 파일을 메일로 보내는 고객" },
-  { t: "확인 · 견적", d: "파일 상태를 확인하고 견적과 작업 일정을 알려드립니다.", img: "assets/step2.webp", alt: "휴대폰으로 견적 답장을 확인하는 고객" },
-  { t: "선입금", d: "견적을 확인하고 계좌이체로 입금하시면 작업 순서에 올립니다.", img: "assets/step3.webp", alt: "휴대폰으로 계좌이체를 하는 고객" },
-  { t: "출력 · 제본", d: "충무로 작업실에서 출력과 제본을 원스톱으로 함께 진행합니다.", img: "assets/step4.webp", alt: "출력된 인쇄물을 확인하는 모습" },
-  { t: "받아가기", d: "방문 픽업, CJ대한통운 택배, 서울 근교 퀵 중에서 고르세요.", img: "assets/step5.webp", alt: "완성된 책을 받아 든 고객" },
+  { t: "파일 접수", d: "메일로 PDF 파일과 원하는 사양을 보내주세요.", img: "assets/step-c1.webp", vid: "assets/step-c1.mp4", say: "PDF 파일 접수 완료", alt: "다인이가 노트북으로 손님이 보낸 PDF 파일을 받는 모습" },
+  { t: "확인 · 견적", d: "파일 상태를 확인하고 견적과 작업 일정을 알려드립니다.", img: "assets/step-c2.webp", vid: "assets/step-c2.mp4", say: "사이즈 · 여백 · 화질 확인", alt: "다인이가 돋보기로 인쇄 상태를 확인하는 모습" },
+  { t: "선입금", d: "견적을 확인하고 계좌이체로 입금하시면 작업 순서에 올립니다.", img: "assets/step-c3.webp", vid: "assets/step-c3.mp4", say: "입금 확인", alt: "젊은 여성 손님이 휴대폰으로 입금하는 모습" },
+  { t: "출력 · 제본", d: "충무로 작업실에서 출력과 제본을 원스톱으로 함께 진행합니다.", img: "assets/step-c4.webp", vid: "assets/step-c4.mp4", say: "출력 · 제본 진행 중", alt: "준이가 출력기에서 나온 인쇄물의 색을 확인하는 모습" },
+  { t: "받아가기", d: "방문 픽업, CJ대한통운 택배, 서울 근교 퀵 중에서 고르세요.", img: "assets/step-c5.webp", vid: "assets/step-c5.mp4", say: "포장해서 전달드려요", alt: "손님이 완성된 인쇄물을 종이가방에 받아 가는 모습" },
 ];
 
 export const MAIL_TEMPLATE = `제목: [주문] 성함 / 품목
