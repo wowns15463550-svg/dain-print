@@ -1,7 +1,8 @@
 // 사진 원본(힉스필드 생성 이미지)을 내려받아 public/assets 에 webp 로 저장한다.
 // 이미 있는 파일은 건너뛴다. 사진을 바꾸려면 public/assets 의 파일을 같은 이름으로 덮어쓰면 된다.
 import sharp from "sharp";
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 
 const BASE = "https://d8j0ntlcm91z4.cloudfront.net/user_3JLMWZZfNQHwBM2wE2jmL8UkvQ6/";
 const OUT = "public/assets/";
@@ -117,6 +118,21 @@ const ASSETS = [
   ["card-s3.webp", "hf_20261031_053814_f7855916-83bd-40a7-ae80-6aa39e52a9e2", { max: 1100 }],
   ["card-s4.webp", "hf_20261031_053814_3d9be0a0-8cd6-4d26-b327-535b46ebab7e", { max: 1100 }],
   ["m-cardcutter2b.webp", "hf_20261030_163437_828364d2-b7b9-4a3b-852a-7a803fe16264", { max: 900 }],
+  // 작업 과정 5단계: 다인이·준이 그림(영상의 첫 화면으로도 씀)
+  ["step-c1.webp", "hf_20261113_204743_de39d12f-bfc9-49b2-a8b1-01e1873a66a7", { max: 720 }],
+  ["step-c2.webp", "hf_20261113_204744_7f92bdde-fc33-43c3-bb06-cb3824dc3382", { max: 720 }],
+  ["step-c3.webp", "hf_20261113_204744_150855af-28da-4536-aa72-656d69972621", { max: 720 }],
+  ["step-c4.webp", "hf_20261113_204744_3100a049-af58-41d5-9cbd-50c413a76f69", { max: 720 }],
+  ["step-c5.webp", "hf_20261113_204745_69867d30-0045-4641-a9b8-4b933b9c9b16", { max: 720 }],
+];
+
+// 작업 과정 짧은 영상(5초) — 있으면 건너뛰고, 받다가 실패해도 배포는 막지 않는다
+const VIDEOS = [
+  ["step-c1.mp4", "hf_20261113_221607_7ddb1cfe-dc41-4061-b0b4-dee006594372"],
+  ["step-c2.mp4", "hf_20261113_221605_fa236eff-159a-4334-b0d0-e367dd867126"],
+  ["step-c3.mp4", "hf_20261113_221605_e17e5546-1025-4880-8dd2-9301c820a676"],
+  ["step-c4.mp4", "hf_20261113_221605_73afb7fa-4ba6-4ee0-a655-ef443151e455"],
+  ["step-c5.mp4", "hf_20261113_221605_cf3aa7f9-46f6-4f0c-a8ef-78c27ebb9dde"],
 ];
 
 mkdirSync(OUT, { recursive: true });
@@ -136,6 +152,24 @@ for (const [name, id, opt = {}] of ASSETS) {
   await img.webp({ quality: 82 }).toFile(OUT + name);
   fetched++;
   console.log("saved", name);
+}
+
+for (const [name, id] of VIDEOS) {
+  if (existsSync(OUT + name)) continue;
+  try {
+    const res = await fetch(BASE + id + ".mp4");
+    if (!res.ok) throw new Error(`download failed ${res.status}: ${id}`);
+    const raw = OUT + "tmp-" + name;
+    writeFileSync(raw, Buffer.from(await res.arrayBuffer()));
+    // 가볍게 다시 인코딩(소리 없음, 720px, 웹 재생용). ffmpeg 가 없으면 원본 그대로 쓴다
+    const r = spawnSync("ffmpeg", ["-y", "-loglevel", "error", "-i", raw, "-an", "-vf", "scale='min(720,iw)':-2", "-c:v", "libx264", "-preset", "veryfast", "-crf", "28", "-pix_fmt", "yuv420p", "-movflags", "+faststart", OUT + name]);
+    if (r.status === 0) unlinkSync(raw);
+    else renameSync(raw, OUT + name);
+    fetched++;
+    console.log("saved", name);
+  } catch (e) {
+    console.warn("skip video", name, String(e));
+  }
 }
 
 // 링크 미리보기 이미지 (1200x630)
