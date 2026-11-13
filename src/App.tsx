@@ -4,11 +4,9 @@ import BLOG from "./blog-data.json";
 import { CHECKS, CONTACT, EQUIPMENT, EVENTS, FAQ, FINISHING, GALLERY, MAIL_TEMPLATE, NOTICES, ORDER_NOTES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
 
 const HERO_SLIDES = [
-  { src: "assets/hero-presses-r.webp", w: 964, pos: "18% 62%", alt: "코니카미놀타 AccurioPress C14000과 캐논 varioPRINT 115" },
-  { src: "assets/h-output.webp", w: 1344, pos: "40% 50%", alt: "C14000 배출부에 쌓인 컬러 인쇄물" },
-  { src: "assets/h-binder.webp", w: 1344, pos: "30% 50%", alt: "호리존 무선제본기" },
-  { src: "assets/h-cutter.webp", w: 1344, pos: "45% 50%", alt: "호리존 재단기로 교재를 재단하는 모습" },
-  { src: "assets/h-handover.webp", w: 1344, pos: "62% 40%", alt: "완성된 교재를 고객에게 건네는 모습" },
+  { src: "assets/h-output.webp", w: 1344, pos: "70% 50%", alt: "C14000 배출부에 쌓인 컬러 인쇄물" },
+  { src: "assets/h-binder.webp", w: 1344, pos: "80% 50%", alt: "호리존 무선제본기" },
+  { src: "assets/h-cutter.webp", w: 1344, pos: "60% 50%", alt: "호리존 재단기로 교재를 재단하는 모습" },
 ];
 const SLIDE_MS = 5500;
 
@@ -169,11 +167,10 @@ export function Ico({ k }: { k: "talk" | "blog" | "insta" | "mail" | "pin" | "up
     </svg>
   );
 }
-function Mark() {
+export function Mark({ white, href = "#top" }: { white?: boolean; href?: string }) {
   return (
-    <a href="#top" className="mark" aria-label="다인인쇄소 처음으로">
-      <b>DAIN PRINT</b>
-      <span>다인인쇄소</span>
+    <a href={href} className="mark" aria-label="다인인쇄소 처음으로">
+      <img src={white ? "/assets/logo-dain-white.svg" : "/assets/logo-dain.svg"} alt="다인인쇄소 DAIN PRINT" width={139} height={40} />
     </a>
   );
 }
@@ -201,23 +198,11 @@ function HoursBanner() {
     const d = new Date(Date.now() + 9 * 3600e3).getUTCDay();
     setWk(d === 0 || d === 6);
   }, []);
-  const msg = wk
-    ? ["오늘은 휴무일입니다", "파일은 미리 보내 주세요", "평일 09:30부터 순서대로 확인해 드립니다"]
-    : [`영업시간 ${CONTACT.hours}`, "주말 · 공휴일은 휴무입니다", "주말 작업이 꼭 필요하면 미리 상의해 주세요"];
-  const row = (k: number) => (
-    <span className="hb-row" key={k} aria-hidden={k > 0 ? "true" : undefined}>
-      {msg.map((m) => (
-        <span key={m}>
-          {m}
-          <i aria-hidden="true">●</i>
-        </span>
-      ))}
-    </span>
-  );
   return (
-    <div className={wk ? "hours-bar off" : "hours-bar"} role="note" aria-label={wk ? "오늘은 휴무일입니다" : "영업 안내"}>
-      <div className="hb-track">{[0, 1, 2, 3].map(row)}</div>
-    </div>
+    <p className={wk ? "hero-hours off" : "hero-hours"} role="note">
+      <i aria-hidden="true" />
+      {wk ? "오늘은 휴무일입니다 · 파일은 미리 보내 주세요" : `평일 ${CONTACT.hours} · ${CONTACT.closed}`}
+    </p>
   );
 }
 
@@ -381,6 +366,25 @@ export default function App() {
 
   // HOT EVENT 창
   const [evPop, setEvPop] = useState(false);
+  // 입금 계좌 창 (아래 띠 · 오른쪽 띠의 '입금계좌', 다른 페이지에서 /#bank-pop 으로 들어와도 열림)
+  const [bankPop, setBankPop] = useState(false);
+  useEffect(() => {
+    const open = () => {
+      if (location.hash === "#bank-pop") {
+        setBankPop(true);
+        history.replaceState(null, "", location.pathname);
+      }
+    };
+    open();
+    window.addEventListener("hashchange", open);
+    return () => window.removeEventListener("hashchange", open);
+  }, []);
+  useEffect(() => {
+    if (!bankPop) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setBankPop(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [bankPop]);
   const evPopClose = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!evPop) return;
@@ -464,10 +468,10 @@ export default function App() {
 
       <main>
         <section className="hero" ref={heroRef} aria-label="다인인쇄소 소개">
-          <HoursBanner />
           <div className="hero-body">
             <div className="wrap hero-grid">
               <div className="hero-copy">
+              <HoursBanner />
               <h1 className="serif">
                 <span className="ln">
                   <span>서울 충무로,</span>
@@ -494,16 +498,24 @@ export default function App() {
                   파일 보내기
                 </a>
               </div>
-              <div className="presses">
+              <dl className="hero-facts">
                 <div>
-                  <small>컬러</small>
-                  <b>AccurioPress C14000</b>
+                  <dt>컬러</dt>
+                  <dd>AccurioPress C14000</dd>
                 </div>
                 <div>
-                  <small>흑백</small>
-                  <b>varioPRINT 115</b>
+                  <dt>흑백</dt>
+                  <dd>varioPRINT 115</dd>
                 </div>
-              </div>
+                <div>
+                  <dt>납기</dt>
+                  <dd>오전 접수, 보통 오후 5시</dd>
+                </div>
+                <div>
+                  <dt>수량</dt>
+                  <dd>1부부터 대량까지</dd>
+                </div>
+              </dl>
               </div>
               <div className="hero-img" aria-roledescription="carousel" aria-label="다인인쇄소 장비와 작업 모습">
                 {HERO_SLIDES.map((h, i) => (
@@ -1097,7 +1109,7 @@ export default function App() {
       <footer className="ftr">
         <div className="wrap">
           <div className="ftr-top">
-            <Mark />
+            <Mark white />
             <nav className="ftr-nav" aria-label="하단 메뉴">
               {NAV.map(([h, l]) => (
                 <a key={h} href={h}>
@@ -1144,7 +1156,7 @@ export default function App() {
         </div>
       </footer>
 
-      <nav className={solid ? "qm" : "qm top"} aria-label="빠른 문의" hidden={menu || visit || evPop || !!zoom}>
+      <nav className={solid ? "qm" : "qm top"} aria-label="빠른 문의" hidden={menu || visit || evPop || bankPop || !!zoom}>
         <a
           className="qm-hot"
           href="#notice"
@@ -1173,6 +1185,17 @@ export default function App() {
           <Ico k="order" />
           <span>주문하기</span>
         </a>
+        <a
+          className="qm-i qm-bank"
+          href="#bank-pop"
+          onClick={(e) => {
+            e.preventDefault();
+            setBankPop(true);
+          }}
+        >
+          <Ico k="bank" />
+          <span>입금계좌</span>
+        </a>
         <a className="qm-i qm-map" href="#visit" onClick={openVisit}>
           <Ico k="pin" />
           <span>오시는 길</span>
@@ -1199,6 +1222,26 @@ export default function App() {
           <button type="button" className="vm-x" onClick={() => setZoom(null)} aria-label="닫기" autoFocus>
             <Ico k="close" />
           </button>
+        </div>
+      )}
+
+      {bankPop && (
+        <div className="vm" onClick={(e) => e.target === e.currentTarget && setBankPop(false)}>
+          <div className="bank-box" role="dialog" aria-modal="true" aria-labelledby="bank-h">
+            <button type="button" className="vm-x" onClick={() => setBankPop(false)} aria-label="닫기" autoFocus>
+              <Ico k="close" />
+            </button>
+            <small>입금 계좌</small>
+            <h2 className="serif" id="bank-h">
+              {CONTACT.bankName}
+            </h2>
+            <p className="bank-no">{CONTACT.bankNo}</p>
+            <p className="bank-holder">예금주 {CONTACT.bankHolder}</p>
+            <button type="button" className={copied === "bankpop" ? "btn btn-accent done" : "btn btn-accent"} onClick={() => copy("bankpop", CONTACT.bankNo)}>
+              {copied === "bankpop" ? "복사했습니다" : "계좌번호 복사"}
+            </button>
+            <p className="bank-note">견적을 확인하신 뒤 입금해 주시면 작업 순서에 올립니다. 입금자명이 주문자와 다르면 알려주세요.</p>
+          </div>
         </div>
       )}
 

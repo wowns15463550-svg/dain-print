@@ -1,5 +1,5 @@
 // 품목별 페이지 (예: /spring-binding/). 자바스크립트 없이 미리 그린 HTML 그대로 보여줍니다.
-import { Arrow, Ico, Phone } from "./App";
+import { Arrow, Ico, Mark, Phone } from "./App";
 import { CONTACT } from "./site-data";
 import { SERVICE_PAGES, TEMPLATES, type ServicePage } from "./service-pages";
 import type { ReactNode } from "react";
@@ -12,10 +12,7 @@ export function Shell({ children }: { children: ReactNode }) {
     <div className="dn sp" id="top">
       <header className="hdr solid">
         <div className="wrap hdr-in">
-          <a href="/" className="mark" aria-label="다인인쇄소 처음으로">
-            <b>DAIN PRINT</b>
-            <span>다인인쇄소</span>
-          </a>
+          <Mark href="/" />
           <nav className="nav" aria-label="주요 메뉴">
             <a href="/#service">인쇄 · 제본</a>
             <a href="/#gallery">갤러리</a>
@@ -40,10 +37,7 @@ export function Shell({ children }: { children: ReactNode }) {
       <footer className="ftr">
         <div className="wrap">
           <div className="ftr-top">
-            <a href="/" className="mark" aria-label="다인인쇄소 처음으로">
-              <b>DAIN PRINT</b>
-              <span>다인인쇄소</span>
-            </a>
+            <Mark white href="/" />
             <nav className="ftr-nav" aria-label="품목">
               {SERVICE_PAGES.map((o) => (
                 <a key={o.slug} href={`/${o.slug}/`}>
@@ -86,6 +80,10 @@ export function Shell({ children }: { children: ReactNode }) {
         <a className="qm-i qm-order" href="/order/">
           <Ico k="order" />
           <span>주문하기</span>
+        </a>
+        <a className="qm-i qm-bank" href="/#bank-pop">
+          <Ico k="bank" />
+          <span>입금계좌</span>
         </a>
         <a className="qm-i qm-map" href="/#visit">
           <Ico k="pin" />
