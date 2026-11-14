@@ -8,7 +8,7 @@ export type Mood = "happy" | "sad" | "unsure";
 export type Intent = { id: string; chip?: string; keys: string[]; a: string; links?: Link[]; next?: string[]; mood?: Mood };
 
 export const L = {
-  order: { label: "간단하게 주문하기", href: "/order/" },
+  order: { label: "주문하기", href: "/order/" },
   kakao: { label: "카톡 상담", href: CONTACT.kakao, ext: true },
   tel: { label: `전화 ${CONTACT.phone}`, href: `tel:${CONTACT.phone.replace(/-/g, "")}` },
   mail: { label: "메일 보내기", href: CONTACT.mailWrite, ext: true },

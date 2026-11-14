@@ -1189,3 +1189,27 @@ html[data-wk] .hdr-closed .wk{display:inline}
   .index-row a{padding-inline:14px;font-size:13px;letter-spacing:-.04em}
 }
 .od-steps b{flex:0 0 auto}
+
+/* 슬로건: 기울인 굵은 글씨 + CMYK 사선 막대 + 파랑 그라데이션 (2026-11-15 사장님, 보내준 컨셉) */
+.hero h1.hero-alt{font-weight:900;letter-spacing:-.045em;line-height:1.1;color:#0E1830}
+.hero h1.hero-alt .ln{overflow:visible;white-space:nowrap}
+.hero h1.hero-alt .sk{display:inline-block;transform:skewX(-9deg);transform-origin:left bottom}
+.hero h1.hero-alt .l1>span{display:flex;align-items:center;gap:.5em;font-size:.78em}
+.hero h1.hero-alt .cmyk{display:inline-flex;gap:.12em;margin-left:.1em}
+.hero h1.hero-alt .cmyk i{display:block;width:.5em;height:.16em;transform:skewX(-35deg)}
+.hero h1.hero-alt .cmyk i:nth-child(1){background:#00AEEF}
+.hero h1.hero-alt .cmyk i:nth-child(2){background:#EC008C}
+.hero h1.hero-alt .cmyk i:nth-child(3){background:#FFD400}
+.hero h1.hero-alt .cmyk i:nth-child(4){background:#111}
+.hero h1.hero-alt .rule{display:block;flex:1 1 30px;max-width:150px;height:2px;background:#0E1830;opacity:.75}
+.hero h1.hero-alt .l2>span{font-size:1.26em}
+.hero h1.hero-alt .rush-word{position:relative;font-weight:900;color:transparent;background:linear-gradient(100deg,#2F63F0 0%,#1E4BD2 45%,#0A2A8E 100%);-webkit-background-clip:text;background-clip:text;padding-right:.05em}
+.hero h1.hero-alt .rush-word::after{content:"";position:absolute;left:.04em;right:.1em;bottom:-.1em;height:.07em;background:linear-gradient(90deg,#1E4BD2,#0A2A8E);transform:skewX(-35deg);transform-origin:left bottom}
+.hero-sub.hero-sub-alt{display:flex;align-items:center;gap:14px;margin-top:38px}
+.hero-sub-alt .bar{flex:0 0 44px;height:2px;background:#0E1830;opacity:.7}
+.hero-sub-alt .sub-ln{font-weight:700;color:#0E1830}
+.hero-sub-alt .sub-ln:first-child{font-weight:700}
+.hero-sub-alt .onestop{color:#1E4BD2;font-weight:900}
+.hero-cta .btn-order{background:#0E1830;border-color:#0E1830;color:#fff;box-shadow:0 10px 24px rgba(14,24,48,.28)}
+.hero-cta .btn-order:hover{background:#1E4BD2;border-color:#1E4BD2;color:#fff}
+@media (max-width:560px){.hero h1.hero-alt{font-size:clamp(30px,9vw,40px)}.hero-sub.hero-sub-alt{margin-top:26px}.hero h1.hero-alt .rule{max-width:60px}}

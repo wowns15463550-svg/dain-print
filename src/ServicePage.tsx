@@ -39,7 +39,7 @@ export function Shell({ children }: { children: ReactNode }) {
                 </a>
               ))}
               <a href="/templates/">작업 템플릿</a>
-              <a href="/order/">간단하게 주문하기</a>
+              <a href="/order/">주문하기</a>
             </nav>
           </div>
           <div className="ftr-info">
@@ -125,7 +125,7 @@ export default function ServiceView({ p }: { p: ServicePage }) {
                   <Ico k="talk" /> 카톡으로 문의하기
                 </a>
                 <a className="btn" href={`/order/?item=${p.slug}`}>
-                  간단하게 주문하기 <Arrow />
+                  주문하기 <Arrow />
                 </a>
               </div>
               <p className="sp-meta">
@@ -265,7 +265,7 @@ export default function ServiceView({ p }: { p: ServicePage }) {
                 <Phone /> {CONTACT.phone}
               </a>
               <a className="btn" href={`/order/?item=${p.slug}`}>
-                간단하게 주문하기 <Arrow />
+                주문하기 <Arrow />
               </a>
             </div>
           </div>
