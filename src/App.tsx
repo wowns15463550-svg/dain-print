@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { SERVICE_PAGES } from "./service-pages";
 import BLOG from "./blog-data.json";
-import { CHECKS, CONTACT, EQUIPMENT, EVENTS, FAQ, FINISHING, GALLERY, MAIL_TEMPLATE, NOTICES, ORDER_NOTES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
+import { CHECKS, CONTACT, EQUIPMENT, EVENTS, FAQ, FINISHING, GALLERY, NOTICES, ORDER_NOTES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
 
 
 // 사장님이 직접 찍은 실제 매장 사진 (전화번호 지움, 사람 흐림 처리)
@@ -904,13 +904,13 @@ export default function App() {
           <div className="wrap">
             <div className="rv">
               <h2 className="serif sec-title">
-                주문은 <strong>메일</strong> 한{"\u00a0"}통이면 됩니다
+                주문은 <strong>주문서</strong> 하나면{"\u00a0"}됩니다
               </h2>
-              <p className="sec-lead">양식을 복사해서 채운 뒤 파일과 함께 보내주세요. 모르는 칸은 비워두셔도 됩니다.</p>
+              <p className="sec-lead">사양을 고르면 주문 내용이 자동으로 정리됩니다. 카톡이나 네이버 메일로 파일과 함께 보내주세요.</p>
               <a className="order-helper" href="/order/">
                 <span>
-                  <b>주문하기</b>
-                  <small>품목 · 사양 · 필요한 날짜를 고르면 주문 내용이 자동으로 완성돼요</small>
+                  <b>눌러서 고르면 주문서 완성</b>
+                  <small>품목 · 사양 · 필요한 날짜를 고르고 카톡이나 메일로 보내세요</small>
                 </span>
                 <em>
                   주문하기 <Arrow />
@@ -919,26 +919,6 @@ export default function App() {
             </div>
             <div className="order-grid">
               <div className="order-l">
-                <div className="mail rv">
-                  <div className="mail-h">
-                    <span className="mail-to">
-                      <small>받는 사람</small>
-                      {CONTACT.email}
-                    </span>
-                    <span className="mail-acts">
-                      <a className="mini mini-accent" href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
-                        메일 쓰기
-                      </a>
-                      <button type="button" className={copied === "mail" ? "mini done" : "mini"} onClick={() => copy("mail", CONTACT.email)}>
-                        {copied === "mail" ? "복사됨" : "주소 복사"}
-                      </button>
-                      <button type="button" className={copied === "tpl" ? "mini done" : "mini"} onClick={() => copy("tpl", MAIL_TEMPLATE)}>
-                        {copied === "tpl" ? "복사됨" : "양식 복사"}
-                      </button>
-                    </span>
-                  </div>
-                  <pre>{MAIL_TEMPLATE}</pre>
-                </div>
               <div className="notes rv">
                 <h3>주문 전에 꼭 읽어주세요</h3>
                 <ol>

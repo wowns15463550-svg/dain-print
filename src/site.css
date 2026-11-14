@@ -1213,3 +1213,10 @@ html[data-wk] .hdr-closed .wk{display:inline}
 .hero-cta .btn-order{background:#0E1830;border-color:#0E1830;color:#fff;box-shadow:0 10px 24px rgba(14,24,48,.28)}
 .hero-cta .btn-order:hover{background:#1E4BD2;border-color:#1E4BD2;color:#fff}
 @media (max-width:560px){.hero h1.hero-alt{font-size:clamp(30px,9vw,40px)}.hero-sub.hero-sub-alt{margin-top:26px}.hero h1.hero-alt .rule{max-width:60px}}
+
+/* 주문하기는 눈에 띄게 붉은색 (2026-11-15 사장님) */
+.hero-cta .btn-order{background:#D92B20;border-color:#D92B20;color:#fff;box-shadow:0 12px 28px rgba(217,43,32,.34)}
+.hero-cta .btn-order:hover{background:#B01E15;border-color:#B01E15;color:#fff}
+.order-helper{background:#D92B20;box-shadow:0 14px 34px rgba(217,43,32,.26)}
+.order-helper:hover{background:#B01E15}
+.order-helper em{color:#D92B20}
