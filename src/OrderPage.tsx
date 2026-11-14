@@ -47,7 +47,7 @@ function describe(it: Item) {
     case "perfect":
       r.push(["크기", size]);
       if (v.orient === "가로형") r.push(["방향", `가로형 · ${String(v.bind).replace(/ \(.*\)$/, "")}`]);
-      r.push(["내지", join(paperOf(v), v.side, v.color)], ["표지", "스노우지 250g · 단면 · 무광코팅"], ["페이지", `${v.pages}p`]);
+      r.push(["내지", join(paperOf(v), v.side, v.color)], ["표지", `스노우지 250g · ${v.cover === "양면" ? "양면" : "단면"} · 무광코팅`], ["페이지", `${v.pages}p`]);
       if (spineMM(v)) r.push(["세네카", `약 ${spineMM(v)}mm`]);
       r.push(["권수", `${v.qty}권`]);
       break;
@@ -96,6 +96,7 @@ function flags(it: Item): string[] {
   if (v.fold === FOLD_OTHER) f.push(`접지 직접 지정: ${String(v.fold_txt || "").trim() || "요청사항 확인"}`);
   if (v.coat === OTHER) f.push(`코팅 직접 지정: ${coatOf(v)}`);
   if (it.pid === "saddle" && Number(v.pages) % 4 !== 0) f.push(`중철 쪽수 ${v.pages}p — 4의 배수 아님`);
+  if (it.pid === "perfect" && v.cover === "양면") f.push("무선 표지 양면");
   if (v.orient === "가로형") f.push(v.bind ? `가로형 ${String(v.bind).replace(/ \(.*\)$/, "")}` : "가로형");
   return f;
 }
@@ -138,7 +139,6 @@ const PICS: Record<string, ReactNode> = {
   없음: (<path {...W} d="M18 6h28v44H18z" />),
   반접지: (<><path {...Bl} d="M8 12h24v32H8z" /><path {...W} d="M32 12h24v32H32z" /><path className="ar" d="M14 50h16m-4-3l4 3-4 3" /></>),
   "3단 접지": (<><path {...Bl} d="M8 12h16v32H8z" /><path {...W} d="M24 12h16v32H24z" /><path {...G} d="M40 12h16v32H40z" /><path className="ar" d="M12 50h10m-3-3l3 3-3 3M52 50H42m3-3l-3 3 3 3" /></>),
-  "대문 접지": (<><path {...Bl} d="M8 12h12v32H8z" /><path {...W} d="M20 12h24v32H20z" /><path {...Bl} d="M44 12h12v32H44z" /><path className="ar" d="M10 50h9m-3-3l3 3-3 3M54 50h-9m3-3l-3 3 3 3" /></>),
   // ── 인쇄 · 면
   흑백: (<circle cx="32" cy="28" r="12" fill="#222" />),
   칼라: (<><path d="M32 28L32 16A12 12 0 0 1 42.4 34Z" style={{ fill: "#E8635A" }} /><path d="M32 28L42.4 34A12 12 0 0 1 21.6 34Z" style={{ fill: "#4C8DF0" }} /><path d="M32 28L21.6 34A12 12 0 0 1 32 16Z" style={{ fill: "#F2C94C" }} /></>),
@@ -300,6 +300,38 @@ function PaperPick({ f, v, set }: { f: Extract<Field, { type: "pick" }>; v: Vals
   );
 }
 
+// 접지 칸 크기 안내 (확인된 크기만: A4 3단 접지, 작업 파일 가로 297mm 기준)
+const FOLD_PANELS: Record<string, { front: [string, number][]; back: [string, number][] }> = {
+  "A4|3단 접지": {
+    front: [["안쪽으로 접히는 면", 97], ["뒷표지", 100], ["앞표지", 100]],
+    back: [["안쪽 1", 100], ["안쪽 2", 100], ["안쪽 3", 97]],
+  },
+};
+function FoldGuide({ v }: { v: Vals }) {
+  const d = FOLD_PANELS[`${v.size}|${v.fold}`];
+  if (!d) return null;
+  const row = (title: string, ps: [string, number][]) => (
+    <div className="od-fold-side">
+      <b>{title}</b>
+      <div className="od-fold-row">
+        {ps.map(([n, w], i) => (
+          <div key={i} style={{ flexGrow: w }} className={w < 100 ? "short" : undefined}>
+            <em>{w}mm</em>
+            <span>{n}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+  return (
+    <div className="od-fold" aria-label={`${v.size} ${v.fold} 칸 크기`}>
+      <p>{v.size} {v.fold} · 펼친 가로 297mm를 이렇게 나눠 주세요. 안으로 접히는 칸만 3mm 좁아요.</p>
+      {row("앞면 (겉면)", d.front)}
+      {row("뒷면 (안쪽면)", d.back)}
+    </div>
+  );
+}
+
 function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | number | boolean) => void }) {
   if (f.type === "pick") {
     if (f.showIf && !f.showIf(v)) return null;
@@ -335,6 +367,7 @@ function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | nu
           <input className="od-in" value={String(v[f.k + "_txt"] ?? "")} onChange={(e) => set(f.k + "_txt", e.target.value)} placeholder={f.k === "coat" ? "원하시는 코팅을 적어 주세요" : f.k === "fold" ? "원하시는 접지를 적어 주세요" : "원하시는 종이를 적어 주세요 (예: 랑데뷰 130g)"} />
         )}
         {hint && <small className={why || off.length ? "od-warn" : "od-hint"}>{hint}</small>}
+        {f.k === "fold" && <FoldGuide v={v} />}
       </div>
     );
   }
@@ -433,7 +466,7 @@ export default function OrderView() {
           ? "중철 · 접지 작업은 당일 출고가 어려울 수 있어요. 먼저 전화나 카톡으로 가능 여부를 확인해 주세요."
           : items.every((it) => it.pid === "card")
             ? "명함은 접수 후 파일에 이상이 없으면 보통 2~3시간 안에 나옵니다."
-            : "오전에 주문하시고 파일에 문제가 없으면 보통 오후 5시쯤 나옵니다. 오후 주문은 먼저 연락 주세요.",
+            : "당일 인쇄는 특성상 기기 결함이나 대량 작업이 있을 때는 불가할 수 있어요. 먼저 전화나 카톡으로 가능 여부를 확인해 주세요.",
       );
     }
   }
