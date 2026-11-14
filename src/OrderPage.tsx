@@ -157,7 +157,7 @@ const PICS: Record<string, ReactNode> = {
   "p:flyer": (<><path {...W} d="M14 5h30l6 6v40H14z" /><path {...Bl} d="M19 11h26v16H19z" />{lines(19, 45, [34, 39, 44])}</>),
   "p:sheet": (<><path {...Bl} d="M6 14l17-4v34l-17 4z" /><path {...W} d="M23 10l18 4v34l-18-4z" /><path {...G} d="M41 14l17-4v34l-17 4z" />{lines(27, 37, [22, 28, 34])}</>),
   "p:card": (<><path {...W} d="M6 14h50v30H6z" /><path {...Bl} d="M11 20h12v12H11z" />{lines(29, 51, [24, 30, 36])}</>),
-  "p:poster": (<><path {...W} d="M14 3h28v50H14z" /><path {...Bl} d="M18 8h20v26H18z" /><text x="28" y="25" textAnchor="middle">POSTER</text>{lines(18, 38, [41, 46])}</>),
+  "p:poster": (<><path {...W} d="M14 3h28v50H14z" /><path {...Bl} d="M18 8h20v26H18z" /><text x="28" y="24.5" textAnchor="middle" className="xs" textLength="16" lengthAdjust="spacingAndGlyphs">POSTER</text>{lines(18, 38, [41, 46])}</>),
   "p:form": (<><path {...G} d="M16 8h32v42H16z" /><path {...W} d="M12 5h32v42H12z" />{lines(17, 39, [15, 21, 27, 33])}<path className="st" d="M13 10l5 4" /></>),
   // ── 받는 방법
   "방문 픽업": (<><path {...W} d="M10 22h44v28H10z" /><path {...Bl} d="M8 12h48l-4 10H12z" /><path {...G} d="M26 32h12v18H26z" /></>),
@@ -438,6 +438,22 @@ function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | nu
   );
 }
 
+// 당일 인쇄 사이렌 버튼 — 이름은 여기 한 곳만 고치면 됩니다
+const URGENT = { name: "다인 119", sub: "급한 일정 · 당일 접수 가능 여부 확인" };
+
+function Siren() {
+  return (
+    <svg viewBox="0 0 48 48" width="34" height="34" fill="none" aria-hidden="true">
+      <g className="sr-ray" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
+        <path d="M24 3v5M9.5 9.5l3.5 3.5M38.5 9.5 35 13M3 22h5M40 22h5" />
+      </g>
+      <path d="M12 34V25a12 12 0 0 1 24 0v9z" fill="currentColor" />
+      <path d="M17 26a7 7 0 0 1 5-6.5" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" opacity=".7" />
+      <rect x="8" y="34" width="32" height="6" rx="2" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function OrderRoot() {
   return (
     <Shell>
@@ -473,6 +489,13 @@ export default function OrderView() {
     const p = PRODUCTS.find((x) => x.slug === q || x.id === q);
     if (p) setItems([newItem(p.id)]);
   }, []);
+
+  // 당일(사이렌)을 켜면 페이지 전체 색이 급한 분위기로 바뀜
+  useEffect(() => {
+    const el = document.querySelector(".dn");
+    el?.classList.toggle("urgent", sameDay);
+    return () => el?.classList.remove("urgent");
+  }, [sameDay]);
 
   const upd = (key: number, fn: (it: Item) => Item) => setItems((xs) => xs.map((x) => (x.key === key ? fn(x) : x)));
 
@@ -602,6 +625,28 @@ export default function OrderView() {
       <section className="sp-sec od">
         <div className="wrap od-grid">
           <div className="od-form">
+            <div className={sameDay ? "od-urgent on" : "od-urgent"}>
+              <button type="button" className="od-urgent-btn" aria-pressed={sameDay} onClick={() => setSameDay((x) => !x)}>
+                <span className="od-siren">
+                  <Siren />
+                </span>
+                <span className="od-urgent-t">
+                  <b>{URGENT.name}</b>
+                  <small>{sameDay ? "당일 인쇄를 요청하는 중이에요" : URGENT.sub}</small>
+                </span>
+                <em>{sameDay ? "켜짐 · 누르면 끄기" : "급하면 눌러주세요"}</em>
+              </button>
+              {sameDay && (
+                <div className="od-urgent-body">
+                  <p>
+                    오전에 접수하고 파일에 이상이 없으면 보통 오후 5시쯤 나옵니다. 기기 결함이나 대량 작업이 있을 때는 당일 인쇄가 어려울 수 있어서, 주문 글을 보내기 전에 전화로 가능 여부를 먼저 확인해 주세요.
+                  </p>
+                  <a className="od-urgent-tel" href={`tel:${CONTACT.phone.replace(/-/g, "")}`}>
+                    {CONTACT.phone} 전화로 바로 확인
+                  </a>
+                </div>
+              )}
+            </div>
             {items.map((it, idx) => {
               const p = prod(it.pid);
               return (

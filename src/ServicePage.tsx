@@ -1,5 +1,5 @@
 // 품목별 페이지 (예: /spring-binding/). 자바스크립트 없이 미리 그린 HTML 그대로 보여줍니다.
-import { Arrow, Ico, Mark, Phone } from "./App";
+import { Arrow, HdrClosed, Ico, Mark, Phone } from "./App";
 import { CONTACT } from "./site-data";
 import { SERVICE_PAGES, TEMPLATES, type ServicePage } from "./service-pages";
 import type { ReactNode } from "react";
@@ -13,6 +13,7 @@ export function Shell({ children }: { children: ReactNode }) {
       <header className="hdr solid">
         <div className="wrap hdr-in">
           <Mark href="/" />
+          <HdrClosed />
           <nav className="nav" aria-label="주요 메뉴">
             <a href="/#service">인쇄 · 제본</a>
             <a href="/#gallery">갤러리</a>

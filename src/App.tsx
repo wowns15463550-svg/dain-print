@@ -169,6 +169,21 @@ export function Mark({ white, href = "#top" }: { white?: boolean; href?: string 
   );
 }
 
+// 머리글 로고 옆 휴무 표시 — 평일엔 "주말 · 공휴일 휴무", 주말엔 "오늘은 휴무일"(chat.ts가 <html data-wk>를 켜면 CSS로 바뀜)
+export function HdrClosed() {
+  return (
+    <span className="hdr-closed" role="note">
+      <i aria-hidden="true" />
+      <span className="wd-l">주말 · 공휴일 휴무</span>
+      <span className="wd-s">주말 휴무</span>
+      <span className="wk">오늘은 휴무일</span>
+    </span>
+  );
+}
+
+// 첫 화면 아래 품목 줄 → 주문서에서 그 품목이 먼저 골라진 채로 열림 (SERVICES 순서와 같음)
+const SVC_SLUGS = ["perfect-binding", "saddle-stitch", "spring-binding", "form-stapling", "flyer-leaflet", "business-card", "postcard-invitation", "poster"];
+
 function useCopy() {
   const [copied, setCopied] = useState<string | null>(null);
   const copy = (key: string, text: string) => {
@@ -195,7 +210,7 @@ function HoursBanner() {
   return (
     <p className={wk ? "hero-hours off" : "hero-hours"} role="note">
       <i aria-hidden="true" />
-      {wk ? "오늘은 휴무일입니다 · 파일은 미리 보내 주세요" : `평일 ${CONTACT.hours} · ${CONTACT.closed}`}
+      {wk ? "오늘은 휴무일입니다 · 주말 작업은 미리 연락 주세요" : `평일 ${CONTACT.hours} · ${CONTACT.closed}`}
     </p>
   );
 }
@@ -493,6 +508,7 @@ export default function App() {
       <header className={solid || menu ? "hdr solid" : "hdr"}>
         <div className="wrap hdr-in">
           <Mark />
+          <HdrClosed />
           <nav className="nav" aria-label="주요 메뉴">
             {NAV.map(([h, l]) => (
               <a key={h} href={h} onClick={h === "#visit" ? openVisit : h === "#notice" ? () => setNoticeOpen(true) : undefined} className={here === h.slice(1) ? "on" : undefined} aria-current={here === h.slice(1) ? "true" : undefined}>
@@ -599,7 +615,7 @@ export default function App() {
           <nav className="index" aria-label="인쇄 품목">
             <div className="index-row">
               {SERVICES.map((s, i) => (
-                <a key={s.name} href="#service" onClick={() => setSvc(i)}>
+                <a key={s.name} href={`/order/?item=${SVC_SLUGS[i]}`} title={`${s.name} 주문하기`}>
                   {s.name}
                 </a>
               ))}

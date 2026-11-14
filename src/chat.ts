@@ -383,6 +383,7 @@ else mount();
 {
   const wk = new Date(Date.now() + 9 * 3600e3).getUTCDay();
   if (wk === 0 || wk === 6) {
+    document.documentElement.dataset.wk = "1"; // 머리글 휴무 표시를 '오늘은 휴무일'로 바꿈(CSS)
     const FROM = CONTACT.phone;
     const TO = CONTACT.phoneWeekend;
     const swap = () => {
