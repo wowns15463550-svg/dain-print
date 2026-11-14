@@ -230,6 +230,54 @@ function StepMedia({ s }: { s: (typeof STEPS)[number] }) {
   );
 }
 
+// 첫 화면 영상: 두 영상이 번갈아 나온다(하나가 끝나면 다음 영상으로 부드럽게 바뀜)
+const HERO_CLIPS = [
+  { d: "/assets/hero-loop.mp4", m: "/assets/hero-loop-m.mp4", poster: "/assets/hero-loop.webp", label: "인쇄기에서 종이가 빠르게 지나가는 모습" },
+  { d: "/assets/hero-loop2.mp4", m: "/assets/hero-loop2-m.mp4", poster: "/assets/hero-loop2.webp", label: "출력된 인쇄물이 배출부에 쌓이는 모습" },
+];
+function HeroVideo() {
+  const [cur, setCur] = useState(0);
+  const refs = useRef<(HTMLVideoElement | null)[]>([]);
+  const still = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  useEffect(() => {
+    if (still) return;
+    refs.current.forEach((v, i) => {
+      if (!v) return;
+      if (i === cur) {
+        v.currentTime = 0;
+        v.play().catch(() => {});
+      } else window.setTimeout(() => v.pause(), 900);
+    });
+  }, [cur, still]);
+  return (
+    <div className="hero-img">
+      {HERO_CLIPS.map((c, i) => (
+        <video
+          key={c.d}
+          ref={(el) => {
+            refs.current[i] = el;
+            if (el && still) el.pause();
+          }}
+          className={"hero-vid" + (i === cur ? " on" : "")}
+          autoPlay={i === 0}
+          muted
+          playsInline
+          preload={i === 0 ? "metadata" : "none"}
+          poster={c.poster}
+          width={1600}
+          height={819}
+          aria-label={c.label}
+          aria-hidden={i !== cur}
+          onEnded={() => setCur((n) => (n + 1) % HERO_CLIPS.length)}
+        >
+          <source src={c.m} type="video/mp4" media="(max-width: 900px)" />
+          <source src={c.d} type="video/mp4" />
+        </video>
+      ))}
+    </div>
+  );
+}
+
 export default function App() {
   const [menu, setMenu] = useState(false);
   const [paperOpen, setPaperOpen] = useState<number | null>(null);
@@ -533,26 +581,7 @@ export default function App() {
                 </div>
               </dl>
               </div>
-              <div className="hero-img">
-                <video
-                  className="hero-vid"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  poster="/assets/hero-loop.webp"
-                  width={1600}
-                  height={819}
-                  aria-label="인쇄기에서 종이가 빠르게 지나가는 모습"
-                  ref={(el) => {
-                    if (el && typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) el.pause();
-                  }}
-                >
-                  <source src="/assets/hero-loop-m.mp4" type="video/mp4" media="(max-width: 900px)" />
-                  <source src="/assets/hero-loop.mp4" type="video/mp4" />
-                </video>
-              </div>
+              <HeroVideo />
             </div>
           </div>
           <nav className="index" aria-label="인쇄 품목">
