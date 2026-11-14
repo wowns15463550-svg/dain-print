@@ -1,5 +1,6 @@
 // 주문서 도우미 (/order/) — 손님이 사양을 고르면 주문 글이 자동으로 완성됩니다. 가격은 보여주지 않습니다.
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Arrow, Ico } from "./App";
 import { Shell } from "./ServicePage";
 import { CONTACT, PAPER_GUIDE, FOLD_NOTE, ORDER_INFO, PRINT_NOTES, PRINT_NO_REPRINT, PRODUCT_NOTES } from "./site-data";
@@ -655,7 +656,7 @@ export default function OrderView() {
             </div>
           </div>
 
-          {ask && (
+          {ask && typeof document !== "undefined" && createPortal(
             <div className="od-modal" role="dialog" aria-modal="true" aria-label="인쇄 데이터 유의사항" onClick={() => setAsk("")}>
               <div className="od-modal-in" onClick={(e) => e.stopPropagation()}>
                 <h3>⚠️ 인쇄 데이터 유의사항</h3>
@@ -698,7 +699,8 @@ export default function OrderView() {
                   </button>
                 </div>
               </div>
-            </div>
+            </div>,
+            document.body,
           )}
           <aside className="od-out" aria-label="완성된 주문 내용">
             <div className="od-out-in">

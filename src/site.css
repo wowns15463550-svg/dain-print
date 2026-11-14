@@ -350,6 +350,7 @@ details[open] .plus::after{transform:scaleY(0)}
   .qm-up{display:none}
   .qm-mail,.qm-blog,.qm-insta{display:none}
   .qm-order{display:flex}
+  .qm-tel{order:-1}
   .ftr{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
 }
 @media (min-width:901px) and (max-height:620px){.qm-i{height:50px;width:56px}.qm-i span{display:none}}
@@ -902,7 +903,7 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .od-shop b{display:block;font-size:14px;line-height:1.4}
 .od-shop small{display:block;margin-top:4px;color:#6b7280;line-height:1.4}
 
-.od-modal{position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.od-modal{position:fixed;inset:0;z-index:1000;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px}
 .od-modal-in{background:#fff;border-radius:16px;max-width:560px;width:100%;max-height:88vh;overflow:auto;padding:22px 20px}
 .od-modal-in h3{margin:0 0 6px;font-size:19px}
 .od-modal-in h4{margin:14px 0 6px;font-size:15px;color:#1E4BD2}
@@ -989,3 +990,7 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .step-say{position:absolute;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 16px);bottom:8px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.92);color:var(--ink);font-size:12.5px;font-weight:700;text-align:center;box-shadow:0 4px 14px rgba(13,21,38,.12);backdrop-filter:blur(4px)}
 .step.cur .step-say{background:var(--accent);color:var(--on-accent)}
 @media (max-width:560px){.step-say{font-size:13px}}
+
+/* 안내창은 body 바로 아래에 붙으므로 글꼴을 직접 지정 */
+.od-modal{font-family:var(--f-sans);color:var(--ink);line-height:1.6;word-break:keep-all;overflow-wrap:anywhere;-webkit-font-smoothing:antialiased;background:rgba(15,23,42,.62)}
+.od-modal-btn .btn:not(.btn-accent){background:#fff;color:var(--ink);border:1px solid var(--line-2)}
