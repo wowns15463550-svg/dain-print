@@ -230,26 +230,30 @@ function StepMedia({ s }: { s: (typeof STEPS)[number] }) {
   );
 }
 
-// 첫 화면 영상: 맨 처음 C14000 사진을 잠깐 보여준 뒤 영상 두 개가 번갈아 나온다(겹쳐서 부드럽게 바뀜)
+// 첫 화면 영상: 영상 1 → 영상 2 → C14000 사진 → 다시 영상 1 순서로 돈다(겹쳐서 부드럽게 바뀜)
 const HERO_CLIPS = [
   { d: "/assets/hero-loop.mp4", m: "/assets/hero-loop-m.mp4", poster: "/assets/hero-loop.webp", label: "인쇄기에서 종이가 빠르게 지나가는 모습" },
   { d: "/assets/hero-loop2.mp4", m: "/assets/hero-loop2-m.mp4", poster: "/assets/hero-loop2.webp", label: "종이가 롤러를 따라 빠르게 이송되는 모습" },
 ];
 const HERO_PHOTO = { src: "/assets/h-output.webp", label: "다인인쇄소의 AccurioPress C14000 출력기" };
-// 슬라이드 0 = 사진, 1~ = 영상
+// 슬라이드 0~(영상 수-1) = 영상, 마지막 = 사진
 function HeroVideo() {
   const [cur, setCur] = useState(0);
   const refs = useRef<(HTMLVideoElement | null)[]>([]);
   const still = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   useEffect(() => {
     if (still) return;
-    if (cur === 0) {
-      const t = window.setTimeout(() => setCur(1), 4500);
-      return () => window.clearTimeout(t);
+    if (cur === HERO_CLIPS.length) {
+      const stop = window.setTimeout(() => refs.current.forEach((v) => v?.pause()), 900);
+      const t = window.setTimeout(() => setCur(0), 4500);
+      return () => {
+        window.clearTimeout(stop);
+        window.clearTimeout(t);
+      };
     }
     refs.current.forEach((v, i) => {
       if (!v) return;
-      if (i + 1 === cur) {
+      if (i === cur) {
         v.currentTime = 0;
         v.play().catch(() => {});
       } else window.setTimeout(() => v.pause(), 900);
@@ -257,7 +261,7 @@ function HeroVideo() {
   }, [cur, still]);
   return (
     <div className="hero-img">
-      <img className={"hero-vid" + (cur === 0 ? " on" : "")} src={HERO_PHOTO.src} alt={HERO_PHOTO.label} width={1344} height={752} aria-hidden={cur !== 0} />
+      <img className={"hero-vid" + (cur === HERO_CLIPS.length ? " on" : "")} src={HERO_PHOTO.src} alt={HERO_PHOTO.label} width={1344} height={752} aria-hidden={cur !== HERO_CLIPS.length} />
       {HERO_CLIPS.map((c, i) => (
         <video
           key={c.d}
@@ -265,16 +269,17 @@ function HeroVideo() {
             refs.current[i] = el;
             if (el && still) el.pause();
           }}
-          className={"hero-vid" + (i + 1 === cur ? " on" : "")}
+          className={"hero-vid" + (i === cur ? " on" : "")}
+          autoPlay={i === 0}
           muted
           playsInline
-          preload={i === 0 ? "auto" : "none"}
+          preload={i === 0 ? "metadata" : "none"}
           poster={c.poster}
           width={1600}
           height={819}
           aria-label={c.label}
-          aria-hidden={i + 1 !== cur}
-          onEnded={() => setCur((n) => (n % HERO_CLIPS.length) + 1)}
+          aria-hidden={i !== cur}
+          onEnded={() => setCur((n) => (n === i ? n + 1 : n))}
         >
           <source src={c.m} type="video/mp4" media="(max-width: 900px)" />
           <source src={c.d} type="video/mp4" />
