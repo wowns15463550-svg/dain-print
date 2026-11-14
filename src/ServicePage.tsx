@@ -18,7 +18,6 @@ export function Shell({ children }: { children: ReactNode }) {
             <a href="/#service">인쇄 · 제본</a>
             <a href="/#gallery">갤러리</a>
             <a href="/#equipment">장비</a>
-            <a href="/#order">주문 방법</a>
             <a href="/templates/">작업 템플릿</a>
             <a href="/#visit">오시는 길</a>
           </nav>

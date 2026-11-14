@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { SERVICE_PAGES } from "./service-pages";
 import BLOG from "./blog-data.json";
-import { CHECKS, CONTACT, EQUIPMENT, EVENTS, FAQ, FINISHING, GALLERY, NOTICES, ORDER_NOTES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
+import { CHECKS, CONTACT, EQUIPMENT, EVENTS, FAQ, FINISHING, GALLERY, NOTICES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
 
 
 // 사장님이 직접 찍은 실제 매장 사진 (전화번호 지움, 사람 흐림 처리)
@@ -90,7 +90,6 @@ const NAV = [
   ["#gallery", "갤러리"],
   ["#equipment", "장비"],
   ["#process", "작업 과정"],
-  ["#order", "주문 방법"],
   ["#visit", "오시는 길"],
 ] as const;
 
@@ -297,8 +296,8 @@ export default function App() {
   // 지금 보고 있는 섹션 → 위쪽 메뉴에 표시
   const [here, setHere] = useState("");
   useEffect(() => {
-    const ids = ["notice", "service", "equipment", "gallery", "process", "order", "check", "blog", "faq", "visit"];
-    const alias: Record<string, string> = { check: "order" };
+    const ids = ["notice", "service", "equipment", "gallery", "process", "check", "blog", "faq", "visit"];
+    const alias: Record<string, string> = {};
     let raf = 0;
     const calc = () => {
       raf = 0;
@@ -897,80 +896,6 @@ export default function App() {
                 </li>
               ))}
             </ol>
-          </div>
-        </section>
-
-        <section className="sec" id="order">
-          <div className="wrap">
-            <div className="rv">
-              <h2 className="serif sec-title">
-                주문은 <strong>주문서</strong> 하나면{"\u00a0"}됩니다
-              </h2>
-              <p className="sec-lead">사양을 고르면 주문 내용이 자동으로 정리됩니다. 카톡이나 네이버 메일로 파일과 함께 보내주세요.</p>
-              <a className="order-helper" href="/order/">
-                <span>
-                  <b>눌러서 고르면 주문서 완성</b>
-                  <small>품목 · 사양 · 필요한 날짜를 고르고 카톡이나 메일로 보내세요</small>
-                </span>
-                <em>
-                  주문하기 <Arrow />
-                </em>
-              </a>
-            </div>
-            <div className="order-grid">
-              <div className="order-l">
-              <div className="notes rv">
-                <h3>주문 전에 꼭 읽어주세요</h3>
-                <ol>
-                  {ORDER_NOTES.map((n) => (
-                    <li key={n}>{n}</li>
-                  ))}
-                </ol>
-              </div>
-              </div>
-              <div className="rv">
-                <ul className="chk">
-                  <li>
-                    <b>받는 파일</b>
-                    <span>PDF 권장. AI, JPG, PNG도 받습니다.</span>
-                  </li>
-                  <li>
-                    <b>보내기 전에</b>
-                    <span>재단 여백과 해상도 등 여섯 가지만 확인해 주세요.</span>
-                  </li>
-                  <li>
-                    <b>급한 작업</b>
-                    <span>
-                      전화({CONTACT.phone})나 카톡으로 먼저 알려주세요.
-                    </span>
-                  </li>
-                </ul>
-                <div className="wh bank" id="bank">
-                  <div className="wh-h">
-                    <Ico k="bank" />
-                    <b>입금 계좌</b>
-                  </div>
-                  <dl>
-                    <dt>{CONTACT.bankName}</dt>
-                    <dd>
-                      {CONTACT.bankNo}
-                      <button type="button" className={copied === "bank" ? "mini done" : "mini"} onClick={() => copy("bank", CONTACT.bankNo)}>
-                        {copied === "bank" ? "복사됨" : "복사"}
-                      </button>
-                    </dd>
-                    <dt>예금주</dt>
-                    <dd>{CONTACT.bankHolder}</dd>
-                  </dl>
-                  <p>견적을 확인하신 뒤 입금해 주시면 작업 순서에 올립니다. 입금자명이 주문자와 다르면 알려주세요.</p>
-                </div>
-                <a className="link-line fmt" href="/templates/">
-                  작업 템플릿 받기 (3단 리플렛 · 명함 · A4 전단) <Arrow />
-                </a>
-                <a className="link-line fmt" href="#check">
-                  인쇄 전 확인 사항 보기 <Arrow />
-                </a>
-              </div>
-            </div>
           </div>
         </section>
 
