@@ -230,9 +230,8 @@ function StepMedia({ s }: { s: (typeof STEPS)[number] }) {
   );
 }
 
-// 첫 화면 영상: 재단기 영상 → 영상 1 → 영상 2 → C14000 사진 → 다시 영상 1 순서로 돈다(겹쳐서 부드럽게 바뀜)
+// 첫 화면 영상: 영상 1 → 영상 2 → C14000 사진 → 다시 영상 1 순서로 돈다(겹쳐서 부드럽게 바뀜)
 const HERO_CLIPS = [
-  { d: "/assets/hero-loop0.mp4", m: "/assets/hero-loop0-m.mp4", poster: "/assets/hero-loop0.webp", label: "재단기에서 인쇄물이 반듯하게 잘리는 모습" },
   { d: "/assets/hero-loop.mp4", m: "/assets/hero-loop-m.mp4", poster: "/assets/hero-loop.webp", label: "인쇄기에서 종이가 빠르게 지나가는 모습" },
   { d: "/assets/hero-loop2.mp4", m: "/assets/hero-loop2-m.mp4", poster: "/assets/hero-loop2.webp", label: "종이가 롤러를 따라 빠르게 이송되는 모습" },
 ];
