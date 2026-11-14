@@ -550,18 +550,18 @@ export default function App() {
               <div className="hero-copy">
               <h1 className="serif">
                 <span className="ln">
-                  <span>서울 충무로,</span>
+                  <span>
+                    서울 <strong>ONE STOP</strong>!
+                  </span>
                 </span>
                 <span className="ln">
                   <span>
-                    <strong>출력과 제본</strong>을 한 번에
+                    <em className="rush-word">당일인쇄</em> 전문 업체
                   </span>
                 </span>
               </h1>
               <p className="hero-sub">
-                <span className="sub-ln">
-                  최고급 디지털 프레스로 출력하고 <span className="nw">그 자리에서 제본까지.</span>
-                </span>
+                <span className="sub-ln">출력부터 제본까지</span>
                 <span className="sub-ln">
                   빠르고 정확한 <strong className="onestop">원스톱 인쇄소</strong>입니다.
                 </span>
@@ -579,14 +579,6 @@ export default function App() {
                 <div>
                   <dt>흑백</dt>
                   <dd>varioPRINT 115</dd>
-                </div>
-                <div>
-                  <dt>납기</dt>
-                  <dd>오전 접수, 보통 오후 5시</dd>
-                </div>
-                <div>
-                  <dt>수량</dt>
-                  <dd>1부부터 대량까지</dd>
                 </div>
               </dl>
               </div>

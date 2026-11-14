@@ -1146,3 +1146,28 @@ html[data-wk] .hdr-closed .wk{display:inline}
 .nav a{white-space:nowrap}
 @media (max-width:1560px){.hdr-in{gap:28px}.sp .hdr-tel{display:none}}
 @media (max-width:1280px){.nav{gap:16px}}
+
+/* 슬로건(서울 ONE STOP / 당일인쇄 전문 업체)·품목 바 색 (2026-11-15) */
+.hero h1 .rush-word{font-style:normal;font-weight:800;color:#D92B20}
+.hero h1 strong{color:var(--accent)}
+.hero-sub .sub-ln:first-child{font-weight:600;color:var(--ink)}
+@media (min-width:901px){.hero-facts{grid-template-columns:repeat(2,auto)}}
+.index-row{background:linear-gradient(180deg,#2A5BE6 0%,#1E4BD2 55%,#173FB8 100%);border:0;box-shadow:0 16px 38px rgba(30,75,210,.34)}
+.index-row a{color:#fff;font-weight:700}
+.index-row a+a::before{background:rgba(255,255,255,.28)}
+.index-row a:hover,.index-row a:focus-visible{background:#fff;color:var(--accent)}
+.index-row a:active{background:#EAF0FF;color:var(--accent-hi)}
+@media (max-width:900px){
+  .index{background:#1E4BD2;border-top:0}
+  .index-row{background:none;box-shadow:none}
+}
+
+/* 보내기 버튼 색: 카톡 노랑 / 네이버 메일 초록, 당일 시간 칸, 안내문 줄바꿈 (2026-11-15) */
+.od-send .btn-kakao{background:#FEE500;border-color:#FEE500;color:#191919;font-weight:800}
+.od-send .btn-kakao:hover{background:#F5DC00;border-color:#F5DC00;color:#191919}
+.od-send .btn-naver{background:#03C75A;border-color:#03C75A;color:#fff;font-weight:800}
+.od-send .btn-naver:hover{background:#02B351;border-color:#02B351;color:#fff}
+.od-warn-box{white-space:pre-line}
+.od-chips-time{flex-wrap:nowrap;align-items:stretch}
+.od-chips-time button{flex:0 0 auto}
+.od-time-in{flex:1 1 auto;min-width:0;height:auto;min-height:42px;padding-block:8px}

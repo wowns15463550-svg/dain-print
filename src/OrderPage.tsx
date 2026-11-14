@@ -204,7 +204,7 @@ const MOCKS: Record<string, { img: string; cap: string }[]> = {
 };
 const PROD_SUB: Record<string, string> = { perfect: "(떡제본)", sheet: "(리플렛 · 엽서)" };
 // 그림 카드로 보여줄 항목 (용지 · 크기 · 코팅 …)
-const RECV_IMG: Record<string, string> = { "방문 픽업": "/assets/recv-pickup.webp", "택배 (CJ대한통운)": "/assets/recv-parcel.webp", "퀵 (서울 근교)": "/assets/recv-quick.webp" };
+const RECV_IMG: Record<string, string> = { "방문 픽업": "/assets/recv-pickup2.webp", "택배 (CJ대한통운)": "/assets/recv-parcel2.webp", "퀵 (서울 근교)": "/assets/recv-quick2.webp" };
 const PIC_KEYS = ["size", "csize", "orient", "bind", "color", "coat", "fold", "csize2"];
 
 type PicItem = { key: string; label: string; sub?: string; art?: ReactNode; img?: string; off?: boolean };
@@ -523,12 +523,12 @@ export default function OrderView() {
     if (wd === 0 || wd === 6) warns.push("주말은 쉽니다. 주말 작업이 꼭 필요하면 미리 상의해 주세요 (협의 시 주말 출근 수당).");
     if (due === today) {
       const slow = items.some((it) => SLOW_IDS.includes(it.pid) || (it.pid === "sheet" && it.vals.fold !== "없음"));
-      const base = "당일 인쇄는 특성상 기기 결함이나 대량 작업이 있을 때는 불가할 수 있어요. 먼저 전화나 카톡으로 가능 여부를 확인해 주세요.";
+      const base = "당일 인쇄는 특성상 기기 결함이나 대량 작업이 있을 때는 불가할 수 있어요.\n먼저 전화나 카톡으로 가능 여부를 확인해 주세요.";
       warns.push(
         slow
-          ? "중철 · 접지 작업은 당일 출고가 어려울 수 있어요. 먼저 전화나 카톡으로 가능 여부를 확인해 주세요."
+          ? "중철 · 접지 작업은 당일 출고가 어려울 수 있어요.\n먼저 전화나 카톡으로 가능 여부를 확인해 주세요."
           : items.every((it) => it.pid === "card")
-            ? "명함은 접수 후 파일에 이상이 없으면 보통 2~3시간 안에 나와요. 다만 당일 인쇄는 특성상 기기 결함이나 대량 작업이 있을 때는 불가할 수 있어요."
+            ? "명함은 접수 후 파일에 이상이 없으면 보통 2~3시간 안에 나와요.\n다만 당일 인쇄는 특성상 기기 결함이나 대량 작업이 있을 때는 불가할 수 있어요."
             : base,
       );
     }
@@ -649,7 +649,7 @@ export default function OrderView() {
                 <h2>인쇄 일정</h2>
               </div>
               <div className="od-modes" role="radiogroup" aria-label="인쇄 일정">
-                <button type="button" role="radio" aria-checked={sameDay} className={sameDay ? "od-mode rush on" : "od-mode rush"} onClick={() => setSameDay(true)}>
+                <button type="button" role="radio" aria-checked={sameDay} className={sameDay ? "od-mode rush on" : "od-mode rush"} onClick={() => { setSameDay(true); setDueTime("상관없음"); }}>
                   <span className="od-siren">
                     <Siren />
                   </span>
@@ -659,7 +659,7 @@ export default function OrderView() {
                   </span>
                   <em>오늘 필요</em>
                 </button>
-                <button type="button" role="radio" aria-checked={!sameDay} className={!sameDay ? "od-mode norm on" : "od-mode norm"} onClick={() => setSameDay(false)}>
+                <button type="button" role="radio" aria-checked={!sameDay} className={!sameDay ? "od-mode norm on" : "od-mode norm"} onClick={() => { setSameDay(false); setDueTime("상관없음"); }}>
                   <span className="od-doc">
                     <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M7 3h7l5 5v13H7z" />
@@ -680,7 +680,26 @@ export default function OrderView() {
                   <small className="od-hint">비워 두면 "급하지 않음"으로 보냅니다.</small>
                 </label>
               )}
-              {(sameDay || due) && (
+              {sameDay && (
+                <div className="od-field">
+                  <span className="od-lab">시간</span>
+                  <div className="od-chips od-chips-time">
+                    <button type="button" className={dueTime === "상관없음" ? "on" : undefined} onClick={() => setDueTime("상관없음")}>
+                      상관없음
+                    </button>
+                    <input
+                      className="od-in od-time-in"
+                      value={dueTime === "상관없음" ? "" : dueTime}
+                      onChange={(e) => setDueTime(e.target.value.trim() ? e.target.value : "상관없음")}
+                      placeholder="직접 적기 (예: 오후 6시까지)"
+                      maxLength={40}
+                      aria-label="원하는 시간 직접 적기"
+                    />
+                  </div>
+                  <small className="od-hint">당일 인쇄는 오전 출고가 어려워요.</small>
+                </div>
+              )}
+              {!sameDay && due && (
                 <div className="od-field">
                   <span className="od-lab">시간</span>
                   <div className="od-chips">
@@ -751,16 +770,6 @@ export default function OrderView() {
               <div className="od-card-h">
                 <h2>받는 분 · 받는 방법</h2>
               </div>
-              <div className="od-row">
-                <label className="od-field">
-                  <span className="od-lab">성함 · 회사명 *</span>
-                  <input className="od-in" value={name} onChange={(e) => setName(e.target.value)} placeholder="홍길동 / ○○학원" />
-                </label>
-                <label className="od-field">
-                  <span className="od-lab">연락처 *</span>
-                  <input className="od-in" value={phone} inputMode="tel" onChange={(e) => setPhone(e.target.value)} placeholder="010-0000-0000" />
-                </label>
-              </div>
               <div className="od-field">
                 <span className="od-lab">받는 방법</span>
                 <PicRow big label="받는 방법" value={recv} onPick={setRecv} items={["방문 픽업", "택배 (CJ대한통운)", "퀵 (서울 근교)"].map((o) => ({ key: o, label: PIC_LABEL[o] ?? o, img: RECV_IMG[o] }))} />
@@ -776,6 +785,16 @@ export default function OrderView() {
                   </div>
                 )}
                 {recv.startsWith("택배") && <small className="od-hint">발송 후 1~2일 걸리고 하루 더 걸릴 수 있어요. 날짜가 정해진 급한 인쇄물은 퀵을 권합니다.</small>}
+              </div>
+              <div className="od-row">
+                <label className="od-field">
+                  <span className="od-lab">성함 *</span>
+                  <input className="od-in" value={name} onChange={(e) => setName(e.target.value)} placeholder="홍길동" />
+                </label>
+                <label className="od-field">
+                  <span className="od-lab">연락처 *</span>
+                  <input className="od-in" value={phone} inputMode="tel" onChange={(e) => setPhone(e.target.value)} placeholder="010-0000-0000" />
+                </label>
               </div>
               <label className="od-field">
                 <span className="od-lab">요청사항</span>
@@ -838,14 +857,14 @@ export default function OrderView() {
               <div className="od-send">
                 <button
                   type="button"
-                  className="btn btn-accent"
+                  className="btn btn-kakao"
                   onClick={() => setAsk("kakao")}
                 >
                   <Ico k="talk" /> {copied === "kakao" ? "복사됨 · 채팅창에 붙여넣기" : "카톡으로 보내기"}
                 </button>
                 <button
                   type="button"
-                  className="btn"
+                  className="btn btn-naver"
                   onClick={() => setAsk("mail")}
                 >
                   <Ico k="mail" /> {copied === "mail" ? "복사됨 · 메일 본문에 붙여넣기" : "네이버 메일로 보내기"}
