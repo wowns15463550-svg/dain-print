@@ -327,6 +327,7 @@ export default function App() {
   const [svcX, setSvcX] = useState(false);
   const [ev, setEv] = useState(0);
   const [evHold, setEvHold] = useState(false);
+  const [noticeOpen, setNoticeOpen] = useState(false);
   const evTouch = useRef<number | null>(null);
   const [visit, setVisit] = useState(false);
   const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
@@ -494,14 +495,14 @@ export default function App() {
           <Mark />
           <nav className="nav" aria-label="주요 메뉴">
             {NAV.map(([h, l]) => (
-              <a key={h} href={h} onClick={h === "#visit" ? openVisit : undefined} className={here === h.slice(1) ? "on" : undefined} aria-current={here === h.slice(1) ? "true" : undefined}>
+              <a key={h} href={h} onClick={h === "#visit" ? openVisit : h === "#notice" ? () => setNoticeOpen(true) : undefined} className={here === h.slice(1) ? "on" : undefined} aria-current={here === h.slice(1) ? "true" : undefined}>
                 {l}
               </a>
             ))}
           </nav>
           <span className="hdr-tel">{CONTACT.phone}</span>
-          <a className="btn btn-accent" href="#visit">
-            문의하기
+          <a className="btn btn-accent" href="/order/">
+            주문하기
           </a>
           <button
             type="button"
@@ -606,9 +607,21 @@ export default function App() {
           </nav>
         </section>
 
-        <section className="sec" id="notice">
-          <div className="wrap notice">
-            <div className="ev-col rv">
+        <section className="notice-sec" id="notice" aria-label="공지사항">
+          <div className="wrap">
+            <div className="nbar">
+              <span className="nbar-k">공지</span>
+              <button type="button" className="nbar-t" onClick={() => setNoticeOpen((v) => !v)} aria-expanded={noticeOpen} aria-controls="notice-panel">
+                <span className={NOTICES[0].hot ? "tag hot" : "tag"}>{NOTICES[0].tag}</span>
+                <span className="nbar-title">{NOTICES[0].title}</span>
+              </button>
+              <button type="button" className={noticeOpen ? "nbar-more open" : "nbar-more"} onClick={() => setNoticeOpen((v) => !v)} aria-expanded={noticeOpen} aria-controls="notice-panel">
+                {noticeOpen ? "접기" : "공지 · 이벤트 전체 보기"}
+                <i aria-hidden="true" />
+              </button>
+            </div>
+            <div className="notice" id="notice-panel" hidden={!noticeOpen}>
+            <div className="ev-col">
               <div
                 className="ev"
                 aria-roledescription="carousel"
@@ -646,9 +659,7 @@ export default function App() {
                 </div>
               </div>
             </div>
-            <div className="nl-col rv">
-              <h2 className="serif sec-title">공지사항</h2>
-              <p className="sec-lead">휴무, 택배 마감, 작업 안내를 이곳에 먼저 올립니다.</p>
+            <div className="nl-col">
               <div className="nl">
               {NOTICES.map((n, i) => (
                 <details className="ni" key={n.title}>
@@ -662,6 +673,7 @@ export default function App() {
                 </details>
               ))}
               </div>
+            </div>
             </div>
           </div>
         </section>

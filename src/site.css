@@ -1020,3 +1020,24 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .od-fold-row>div.short{background:#E8EEFC;border-color:#1E4BD2}
 .od-fold-row em{font-style:normal;font-weight:800;font-size:15px;color:#1E4BD2}
 .od-fold-row span{font-size:11.5px;line-height:1.3;color:#6B7280;word-break:keep-all}
+
+/* 공지 한 줄 알림띠 (2026-11-14) */
+.notice-sec{padding-block:20px;background:#fff;border-bottom:1px solid var(--line)}
+.nbar{display:flex;align-items:center;gap:14px;min-height:44px}
+.nbar-k{flex:none;font-size:13px;font-weight:800;letter-spacing:.04em;color:#1E4BD2}
+.nbar-t{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:10px;padding:6px 0;background:none;border:0;color:var(--ink);font:inherit;font-size:15px;text-align:left;cursor:pointer}
+.nbar-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.nbar-more{flex:none;display:inline-flex;align-items:center;gap:8px;padding:8px 0;background:none;border:0;color:var(--ink-2);font:inherit;font-size:14px;cursor:pointer}
+.nbar-more i{width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .3s}
+.nbar-more.open i{transform:rotate(-135deg) translateY(-2px)}
+.nbar-more:hover,.nbar-t:hover .nbar-title{color:#1E4BD2}
+.notice-sec .notice{margin-top:24px;padding-block:clamp(24px,4vw,48px);border-top:1px solid var(--line)}
+.notice[hidden]{display:none}
+@media (max-width:640px){.nbar{gap:10px}.nbar-more{font-size:13px}.nbar-more{max-width:96px;white-space:normal;line-height:1.3;text-align:right}}
+
+/* 제목 통일 (2026-11-14): 모든 큰 제목은 굵은 프리텐다드 */
+.sp-hero h1,.od-hero h1,.sp-h2,.evm-head h2,.pc-top h4,.eq-sub-head h3{font-family:var(--f-sans);font-weight:700;letter-spacing:-.035em}
+.svc-btn h3,.sheet>a{font-family:var(--f-sans);font-weight:600;letter-spacing:-.03em}
+.sec{padding-block:clamp(72px,8vw,120px)}
+.nbar .tag{flex:none;white-space:nowrap;padding:3px 9px;line-height:1.5}
+.notice-sec .nl-col .nl{margin-top:0}
