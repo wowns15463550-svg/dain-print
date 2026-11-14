@@ -133,6 +133,8 @@ const VIDEOS = [
   ["step-c3.mp4", "hf_20261113_221605_e17e5546-1025-4880-8dd2-9301c820a676"],
   ["step-c4.mp4", "hf_20261113_221605_73afb7fa-4ba6-4ee0-a655-ef443151e455"],
   ["step-c5.mp4", "hf_20261113_221605_cf3aa7f9-46f6-4f0c-a8ef-78c27ebb9dde"],
+  // 주문서 '당일 인쇄'를 고르면 나오는 급한 영상(땀 흘리며 뛰어다니는 준이·다인이, 8초)
+  ["order-hero-rush.mp4", "hf_20261114_152131_ebd34681-fc7f-4b02-8e14-c8d7c28e5bc3", { max: 960 }],
 ];
 
 mkdirSync(OUT, { recursive: true });
@@ -154,7 +156,7 @@ for (const [name, id, opt = {}] of ASSETS) {
   console.log("saved", name);
 }
 
-for (const [name, id] of VIDEOS) {
+for (const [name, id, opt = {}] of VIDEOS) {
   if (existsSync(OUT + name)) continue;
   try {
     const res = await fetch(BASE + id + ".mp4");
@@ -162,7 +164,7 @@ for (const [name, id] of VIDEOS) {
     const raw = OUT + "tmp-" + name;
     writeFileSync(raw, Buffer.from(await res.arrayBuffer()));
     // 가볍게 다시 인코딩(소리 없음, 720px, 웹 재생용). ffmpeg 가 없으면 원본 그대로 쓴다
-    const r = spawnSync("ffmpeg", ["-y", "-loglevel", "error", "-i", raw, "-an", "-vf", "scale='min(720,iw)':-2", "-c:v", "libx264", "-preset", "veryfast", "-crf", "28", "-pix_fmt", "yuv420p", "-movflags", "+faststart", OUT + name]);
+    const r = spawnSync("ffmpeg", ["-y", "-loglevel", "error", "-i", raw, "-an", "-vf", `scale='min(${opt.max ?? 720},iw)':-2`, "-c:v", "libx264", "-preset", "veryfast", "-crf", "28", "-pix_fmt", "yuv420p", "-movflags", "+faststart", OUT + name]);
     if (r.status === 0) unlinkSync(raw);
     else renameSync(raw, OUT + name);
     fetched++;
