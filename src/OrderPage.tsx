@@ -1,5 +1,5 @@
 // 주문서 도우미 (/order/) — 손님이 사양을 고르면 주문 글이 자동으로 완성됩니다. 가격은 보여주지 않습니다.
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { Arrow, Ico } from "./App";
 import { Shell } from "./ServicePage";
@@ -438,8 +438,7 @@ function Ctl({ f, v, set }: { f: Field; v: Vals; set: (k: string, x: string | nu
   );
 }
 
-// 당일 인쇄 사이렌 버튼 — 이름은 여기 한 곳만 고치면 됩니다
-const URGENT = { name: "다인 119", sub: "급한 일정 · 당일 접수 가능 여부 확인" };
+// 당일 인쇄 사이렌 그림
 
 function Siren() {
   return (
@@ -497,6 +496,22 @@ export default function OrderView() {
     return () => el?.classList.remove("urgent");
   }, [sameDay]);
 
+  // 당일 인쇄를 고르면 위 그림이 "땀 흘리며 급하게 뛰는" 영상으로 바뀜
+  const rushRef = useRef<HTMLVideoElement>(null);
+  const [rushOn, setRushOn] = useState(false);
+  useEffect(() => {
+    const v = rushRef.current;
+    if (!v) return;
+    if (sameDay) {
+      if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+      v.currentTime = 0;
+      v.play().then(() => setRushOn(true), () => {});
+    } else {
+      setRushOn(false);
+      v.pause();
+    }
+  }, [sameDay]);
+
   const upd = (key: number, fn: (it: Item) => Item) => setItems((xs) => xs.map((x) => (x.key === key ? fn(x) : x)));
 
   const warns: string[] = [];
@@ -508,12 +523,13 @@ export default function OrderView() {
     if (wd === 0 || wd === 6) warns.push("주말은 쉽니다. 주말 작업이 꼭 필요하면 미리 상의해 주세요 (협의 시 주말 출근 수당).");
     if (due === today) {
       const slow = items.some((it) => SLOW_IDS.includes(it.pid) || (it.pid === "sheet" && it.vals.fold !== "없음"));
+      const base = "당일 인쇄는 특성상 기기 결함이나 대량 작업이 있을 때는 불가할 수 있어요. 먼저 전화나 카톡으로 가능 여부를 확인해 주세요.";
       warns.push(
         slow
           ? "중철 · 접지 작업은 당일 출고가 어려울 수 있어요. 먼저 전화나 카톡으로 가능 여부를 확인해 주세요."
           : items.every((it) => it.pid === "card")
-            ? "명함은 접수 후 파일에 이상이 없으면 보통 2~3시간 안에 나옵니다."
-            : "당일 인쇄는 특성상 기기 결함이나 대량 작업이 있을 때는 불가할 수 있어요. 먼저 전화나 카톡으로 가능 여부를 확인해 주세요.",
+            ? "명함은 접수 후 파일에 이상이 없으면 보통 2~3시간 안에 나와요. 다만 당일 인쇄는 특성상 기기 결함이나 대량 작업이 있을 때는 불가할 수 있어요."
+            : base,
       );
     }
   }
@@ -618,6 +634,9 @@ export default function OrderView() {
               <source src="/assets/order-hero-loop.webm" type="video/webm" />
               <source src="/assets/order-hero-loop.mp4" type="video/mp4" />
             </video>
+            <video className={rushOn ? "od-hero-rush on" : "od-hero-rush"} ref={rushRef} muted loop playsInline preload="none" width={960} height={720} aria-hidden="true" tabIndex={-1}>
+              <source src="/assets/order-hero-rush.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
       </section>
@@ -625,27 +644,59 @@ export default function OrderView() {
       <section className="sp-sec od">
         <div className="wrap od-grid">
           <div className="od-form">
-            <div className={sameDay ? "od-urgent on" : "od-urgent"}>
-              <button type="button" className="od-urgent-btn" aria-pressed={sameDay} onClick={() => setSameDay((x) => !x)}>
-                <span className="od-siren">
-                  <Siren />
-                </span>
-                <span className="od-urgent-t">
-                  <b>{URGENT.name}</b>
-                  <small>{sameDay ? "당일 인쇄를 요청하는 중이에요" : URGENT.sub}</small>
-                </span>
-                <em>{sameDay ? "켜짐 · 누르면 끄기" : "급하면 눌러주세요"}</em>
-              </button>
-              {sameDay && (
-                <div className="od-urgent-body">
-                  <p>
-                    오전에 접수하고 파일에 이상이 없으면 보통 오후 5시쯤 나옵니다. 기기 결함이나 대량 작업이 있을 때는 당일 인쇄가 어려울 수 있어서, 주문 글을 보내기 전에 전화로 가능 여부를 먼저 확인해 주세요.
-                  </p>
-                  <a className="od-urgent-tel" href={`tel:${CONTACT.phone.replace(/-/g, "")}`}>
-                    {CONTACT.phone} 전화로 바로 확인
-                  </a>
+            <div className="od-card od-when">
+              <div className="od-card-h">
+                <h2>인쇄 일정</h2>
+              </div>
+              <div className="od-modes" role="radiogroup" aria-label="인쇄 일정">
+                <button type="button" role="radio" aria-checked={sameDay} className={sameDay ? "od-mode rush on" : "od-mode rush"} onClick={() => setSameDay(true)}>
+                  <span className="od-siren">
+                    <Siren />
+                  </span>
+                  <span className="od-mode-t">
+                    <b>당일 인쇄</b>
+                    <small>오늘 필요해요 · 당일 접수 가능 여부 확인</small>
+                  </span>
+                  <em>오늘 필요</em>
+                </button>
+                <button type="button" role="radio" aria-checked={!sameDay} className={!sameDay ? "od-mode norm on" : "od-mode norm"} onClick={() => setSameDay(false)}>
+                  <span className="od-doc">
+                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M7 3h7l5 5v13H7z" />
+                      <path d="M14 3v5h5M10 13h6M10 17h6" />
+                    </svg>
+                  </span>
+                  <span className="od-mode-t">
+                    <b>일반 인쇄</b>
+                    <small>여유 있는 일정 · 날짜를 정해 주세요</small>
+                  </span>
+                  <em>날짜 선택</em>
+                </button>
+              </div>
+              {!sameDay && (
+                <label className="od-field">
+                  <span className="od-lab">언제까지 필요하세요?</span>
+                  <input className="od-in" type="date" value={due} min={today || undefined} onChange={(e) => setDue(e.target.value)} />
+                  <small className="od-hint">비워 두면 "급하지 않음"으로 보냅니다.</small>
+                </label>
+              )}
+              {(sameDay || due) && (
+                <div className="od-field">
+                  <span className="od-lab">시간</span>
+                  <div className="od-chips">
+                    {["상관없음", "오전까지", "오후 5시쯤", "퇴근 전(7시)"].map((o) => (
+                      <button type="button" key={o} className={dueTime === o ? "on" : undefined} onClick={() => setDueTime(o)}>
+                        {o}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
+              {warns.map((w) => (
+                <p className="od-warn od-warn-box" key={w}>
+                  {w}
+                </p>
+              ))}
             </div>
             {items.map((it, idx) => {
               const p = prod(it.pid);
@@ -698,7 +749,7 @@ export default function OrderView() {
 
             <div className="od-card">
               <div className="od-card-h">
-                <h2>받는 분 · 일정</h2>
+                <h2>받는 분 · 받는 방법</h2>
               </div>
               <div className="od-row">
                 <label className="od-field">
@@ -710,31 +761,6 @@ export default function OrderView() {
                   <input className="od-in" value={phone} inputMode="tel" onChange={(e) => setPhone(e.target.value)} placeholder="010-0000-0000" />
                 </label>
               </div>
-              <div className="od-row">
-                <label className="od-field">
-                  <span className="od-lab">언제까지 필요하세요?</span>
-                  <button type="button" className={sameDay ? "od-today on" : "od-today"} aria-pressed={sameDay} onClick={() => setSameDay((x) => !x)}>
-                    <i aria-hidden="true">{sameDay ? "✓" : ""}</i> 당일 (오늘 필요해요)
-                  </button>
-                  <input className="od-in" type="date" value={sameDay ? today : due} min={today || undefined} disabled={sameDay} onChange={(e) => setDue(e.target.value)} />
-                  {!sameDay && <small className="od-hint">비워 두면 "급하지 않음"으로 보냅니다.</small>}
-                </label>
-                <div className="od-field">
-                  <span className="od-lab">시간</span>
-                  <div className="od-chips">
-                    {["상관없음", "오전까지", "오후 5시쯤", "퇴근 전(7시)"].map((o) => (
-                      <button type="button" key={o} className={dueTime === o ? "on" : undefined} onClick={() => setDueTime(o)}>
-                        {o}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              {warns.map((w) => (
-                <p className="od-warn od-warn-box" key={w}>
-                  {w}
-                </p>
-              ))}
               <div className="od-field">
                 <span className="od-lab">받는 방법</span>
                 <PicRow big label="받는 방법" value={recv} onPick={setRecv} items={["방문 픽업", "택배 (CJ대한통운)", "퀵 (서울 근교)"].map((o) => ({ key: o, label: PIC_LABEL[o] ?? o, img: RECV_IMG[o] }))} />

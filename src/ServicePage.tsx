@@ -24,12 +24,6 @@ export function Shell({ children }: { children: ReactNode }) {
             <a href="/#visit">오시는 길</a>
           </nav>
           <span className="hdr-tel">{CONTACT.phone}</span>
-          <a className="btn btn-accent" href={CONTACT.kakao} target="_blank" rel="noreferrer">
-            카톡 상담
-          </a>
-          <a className="sp-hdr-cta" href={CONTACT.kakao} target="_blank" rel="noreferrer">
-            카톡 상담
-          </a>
         </div>
       </header>
 

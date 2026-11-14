@@ -200,21 +200,6 @@ function useCopy() {
   return { copied, copy };
 }
 
-// 영업 안내 띠 — 오른쪽에서 왼쪽으로 흐름. 늘 "주말·공휴일 휴무"를 알리고, 주말(한국 시간)에 들어오면 "오늘은 휴무일"
-function HoursBanner() {
-  const [wk, setWk] = useState(false);
-  useEffect(() => {
-    const d = new Date(Date.now() + 9 * 3600e3).getUTCDay();
-    setWk(d === 0 || d === 6);
-  }, []);
-  return (
-    <p className={wk ? "hero-hours off" : "hero-hours"} role="note">
-      <i aria-hidden="true" />
-      {wk ? "오늘은 휴무일입니다 · 주말 작업은 미리 연락 주세요" : `평일 ${CONTACT.hours} · ${CONTACT.closed}`}
-    </p>
-  );
-}
-
 // 작업 과정 장면: 처음엔 그림, 화면에 들어오면 5초 영상이 한 번 재생되고 마지막 장면에서 멈춤
 function StepMedia({ s }: { s: (typeof STEPS)[number] }) {
   const fig = useRef<HTMLElement>(null);
@@ -563,7 +548,6 @@ export default function App() {
           <div className="hero-body">
             <div className="wrap hero-grid">
               <div className="hero-copy">
-              <HoursBanner />
               <h1 className="serif">
                 <span className="ln">
                   <span>서울 충무로,</span>
@@ -585,9 +569,6 @@ export default function App() {
               <div className="hero-cta">
                 <a className="btn btn-order" href="/order/">
                   간단하게 주문하기 <Arrow />
-                </a>
-                <a className="btn" href={CONTACT.mailWrite} target="_blank" rel="noreferrer">
-                  파일 보내기
                 </a>
               </div>
               <dl className="hero-facts">
