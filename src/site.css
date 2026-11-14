@@ -1041,3 +1041,29 @@ textarea.od-in{resize:vertical;line-height:1.6}
 .sec{padding-block:clamp(72px,8vw,120px)}
 .nbar .tag{flex:none;white-space:nowrap;padding:3px 9px;line-height:1.5}
 .notice-sec .nl-col .nl{margin-top:0}
+
+/* 장비 칸: 짙은 남색 */
+.eq-dark{position:relative;background:#091842;color:#fff;overflow:hidden;isolation:isolate}
+.eq-dark::before{content:"";position:absolute;z-index:-1;inset:-20% -10% auto auto;width:70%;aspect-ratio:1;background:radial-gradient(closest-side,rgba(52,98,240,.55),rgba(52,98,240,0));pointer-events:none}
+.eq-dark::after{content:"";position:absolute;z-index:-1;inset:auto auto -30% -15%;width:55%;aspect-ratio:1;background:radial-gradient(closest-side,rgba(30,75,210,.35),rgba(30,75,210,0));pointer-events:none}
+.eq-eyebrow{font-size:13px;font-weight:700;letter-spacing:.22em;color:#8FB0FF;margin-bottom:18px}
+.eq-dark .sec-title{color:#fff;font-family:var(--f-sans);font-weight:800;font-size:clamp(40px,6.4vw,88px);line-height:1.08;letter-spacing:-.045em}
+.eq-dark .sec-title strong{color:#6F95FF;font-weight:800}
+.eq-dark .sec-lead{color:rgba(255,255,255,.72);font-size:clamp(16px,1.4vw,19px);max-width:34em}
+.eq-dark .eq-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);position:relative;backdrop-filter:blur(2px)}
+.eq-dark .eq-card figure{background:#0D2158}
+.eq-dark .eq-main figure{aspect-ratio:16/11}
+.eq-dark .eq-body small{color:#8FB0FF;font-size:13px;letter-spacing:.04em}
+.eq-dark .eq-body h3{color:#fff;font-family:var(--f-sans);font-weight:700;letter-spacing:-.03em}
+.eq-dark .eq-main .eq-body{padding:30px 34px 36px;gap:8px}
+.eq-dark .eq-main .eq-body h3{font-size:clamp(26px,2.9vw,40px);line-height:1.15}
+.eq-dark .eq-body p{color:rgba(255,255,255,.7)}
+.eq-dark .eq-main .eq-body p{font-size:16px}
+.eq-no{position:absolute;z-index:2;top:14px;left:22px;font-family:var(--f-sans);font-weight:800;font-size:clamp(44px,5vw,72px);line-height:1;letter-spacing:-.05em;color:#fff;text-shadow:0 2px 24px rgba(5,14,48,.55);pointer-events:none}
+.eq-dark .eq-grid{margin-top:clamp(40px,5vw,64px)}
+.eq-dark .eq-sub-head{border-bottom-color:rgba(255,255,255,.28)}
+.eq-dark .eq-sub-head h3{color:#fff}
+.eq-dark .eq-sub-head p{color:rgba(255,255,255,.65)}
+.eq-dark .eq-mini .eq-body h3{font-size:17px}
+.eq-dark .mob-more{color:#fff;border-color:rgba(255,255,255,.4);background:transparent}
+@media (max-width:760px){.eq-no{top:10px;left:16px}.eq-dark .eq-main .eq-body{padding:22px 22px 28px}}

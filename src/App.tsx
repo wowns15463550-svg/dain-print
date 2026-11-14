@@ -230,8 +230,9 @@ function StepMedia({ s }: { s: (typeof STEPS)[number] }) {
   );
 }
 
-// 첫 화면 영상: 영상 1 → 영상 2 → C14000 사진 → 다시 영상 1 순서로 돈다(겹쳐서 부드럽게 바뀜)
+// 첫 화면 영상: 재단기 영상 → 영상 1 → 영상 2 → C14000 사진 → 다시 영상 1 순서로 돈다(겹쳐서 부드럽게 바뀜)
 const HERO_CLIPS = [
+  { d: "/assets/hero-loop0.mp4", m: "/assets/hero-loop0-m.mp4", poster: "/assets/hero-loop0.webp", label: "재단기에서 인쇄물이 반듯하게 잘리는 모습" },
   { d: "/assets/hero-loop.mp4", m: "/assets/hero-loop-m.mp4", poster: "/assets/hero-loop.webp", label: "인쇄기에서 종이가 빠르게 지나가는 모습" },
   { d: "/assets/hero-loop2.mp4", m: "/assets/hero-loop2-m.mp4", poster: "/assets/hero-loop2.webp", label: "종이가 롤러를 따라 빠르게 이송되는 모습" },
 ];
@@ -794,17 +795,21 @@ export default function App() {
           </div>
         </section>
 
-        <section className="sec" id="equipment" aria-labelledby="eq-h">
+        <section className="sec eq-dark" id="equipment" aria-labelledby="eq-h">
           <div className="wrap">
             <div className="rv">
+              <p className="eq-eyebrow">EQUIPMENT</p>
               <h2 className="serif sec-title" id="eq-h">
-                장비가 좋아야 색이 정확합니다
+                색은, <strong>장비가</strong> 말합니다
               </h2>
-              <p className="sec-lead">출력부터 재단, 제본까지 바깥에 맡기지 않고 작업실에서 직접 끝냅니다.</p>
+              <p className="sec-lead">컬러는 AccurioPress C14000, 흑백은 varioPRINT 115. 재단과 제본 장비까지 충무로 작업실에 갖춰져 있습니다.</p>
             </div>
             <div className="eq-grid">
-              {EQUIPMENT.map((e) => (
-                <article className="eq-card rv" key={e.name}>
+              {EQUIPMENT.map((e, i) => (
+                <article className="eq-card eq-main rv" key={e.name}>
+                  <span className="eq-no" aria-hidden="true">
+                    0{i + 1}
+                  </span>
                   <figure>
                     <button type="button" className="zoomable" onMouseMove={lens} onClick={() => setZoom({ src: e.img, alt: e.name })} aria-label={`${e.name} 사진 크게 보기`}>
                       <img src={e.img} alt={e.name} loading="lazy" width={1184} height={888} />
