@@ -300,11 +300,19 @@ function PaperPick({ f, v, set }: { f: Extract<Field, { type: "pick" }>; v: Vals
   );
 }
 
-// 접지 칸 크기 안내 (확인된 크기만: A4 3단 접지, 작업 파일 가로 297mm 기준)
+// 접지 칸 크기 안내 (사장님이 확인한 크기만: A3·A4·A5 3단 접지)
 const FOLD_PANELS: Record<string, { front: [string, number][]; back: [string, number][] }> = {
   "A4|3단 접지": {
     front: [["안쪽으로 접히는 면", 97], ["뒷표지", 100], ["앞표지", 100]],
     back: [["안쪽 1", 100], ["안쪽 2", 100], ["안쪽 3", 97]],
+  },
+  "A3|3단 접지": {
+    front: [["안쪽으로 접히는 면", 138], ["뒷표지", 141], ["앞표지", 141]],
+    back: [["안쪽 1", 141], ["안쪽 2", 141], ["안쪽 3", 138]],
+  },
+  "A5|3단 접지": {
+    front: [["안쪽으로 접히는 면", 68], ["뒷표지", 71], ["앞표지", 71]],
+    back: [["안쪽 1", 71], ["안쪽 2", 71], ["안쪽 3", 68]],
   },
 };
 function FoldGuide({ v }: { v: Vals }) {
@@ -315,7 +323,7 @@ function FoldGuide({ v }: { v: Vals }) {
       <b>{title}</b>
       <div className="od-fold-row">
         {ps.map(([n, w], i) => (
-          <div key={i} style={{ flexGrow: w }} className={w < 100 ? "short" : undefined}>
+          <div key={i} style={{ flexGrow: w }} className={w < Math.max(...ps.map((x) => x[1])) ? "short" : undefined}>
             <em>{w}mm</em>
             <span>{n}</span>
           </div>
@@ -325,7 +333,7 @@ function FoldGuide({ v }: { v: Vals }) {
   );
   return (
     <div className="od-fold" aria-label={`${v.size} ${v.fold} 칸 크기`}>
-      <p>{v.size} {v.fold} · 펼친 가로 297mm를 이렇게 나눠 주세요. 안으로 접히는 칸만 3mm 좁아요.</p>
+      <p>{v.size} {v.fold} · 펼친 가로 {Math.max(...SIZE_MM[String(v.size)])}mm를 이렇게 나눠 주세요. 안으로 접히는 칸만 3mm 좁아요.</p>
       {row("앞면 (겉면)", d.front)}
       {row("뒷면 (안쪽면)", d.back)}
     </div>
