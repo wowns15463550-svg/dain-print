@@ -1230,3 +1230,8 @@ html[data-wk] .hdr-closed .wk{display:inline}
 @keyframes rk-line{0%{opacity:0;transform:translateX(6px)}30%{opacity:.9}100%{opacity:0;transform:translateX(-8px)}}
 .btn-order:hover .rk svg{transform:translate(4px,-4px);animation:none;transition:transform .25s}
 @media (prefers-reduced-motion:reduce){.rk svg,.rk i{animation:none}.rk i{opacity:.6}}
+
+/* 주문하기 버튼: 둥근 알약 + 그라데이션 (2026-11-15 사장님 참고 그림) */
+.hero-cta .btn-order{height:58px;padding-inline:34px;border:0;border-radius:999px;font-size:18px;font-weight:800;background:linear-gradient(135deg,#FF5B48 0%,#E0352A 45%,#A3150E 100%);box-shadow:0 14px 32px rgba(217,43,32,.42),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .25s var(--out),box-shadow .25s,filter .25s}
+.hero-cta .btn-order:hover{background:linear-gradient(135deg,#FF6A57 0%,#EA3E32 45%,#B01A12 100%);transform:translateY(-2px);box-shadow:0 18px 38px rgba(217,43,32,.5),inset 0 1px 0 rgba(255,255,255,.4)}
+.hero-cta .btn-order:active{transform:translateY(0)}
