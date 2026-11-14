@@ -230,21 +230,26 @@ function StepMedia({ s }: { s: (typeof STEPS)[number] }) {
   );
 }
 
-// 첫 화면 영상: 세 영상이 번갈아 나온다(하나가 끝나면 다음 영상으로 부드럽게 바뀜)
+// 첫 화면 영상: 맨 처음 C14000 사진을 잠깐 보여준 뒤 영상 두 개가 번갈아 나온다(겹쳐서 부드럽게 바뀜)
 const HERO_CLIPS = [
   { d: "/assets/hero-loop.mp4", m: "/assets/hero-loop-m.mp4", poster: "/assets/hero-loop.webp", label: "인쇄기에서 종이가 빠르게 지나가는 모습" },
-  { d: "/assets/hero-loop3.mp4", m: "/assets/hero-loop3-m.mp4", poster: "/assets/hero-loop3.webp", label: "출력된 인쇄물이 배출부에 쌓이는 모습" },
   { d: "/assets/hero-loop2.mp4", m: "/assets/hero-loop2-m.mp4", poster: "/assets/hero-loop2.webp", label: "종이가 롤러를 따라 빠르게 이송되는 모습" },
 ];
+const HERO_PHOTO = { src: "/assets/h-output.webp", label: "다인인쇄소의 AccurioPress C14000 출력기" };
+// 슬라이드 0 = 사진, 1~ = 영상
 function HeroVideo() {
   const [cur, setCur] = useState(0);
   const refs = useRef<(HTMLVideoElement | null)[]>([]);
   const still = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   useEffect(() => {
     if (still) return;
+    if (cur === 0) {
+      const t = window.setTimeout(() => setCur(1), 4500);
+      return () => window.clearTimeout(t);
+    }
     refs.current.forEach((v, i) => {
       if (!v) return;
-      if (i === cur) {
+      if (i + 1 === cur) {
         v.currentTime = 0;
         v.play().catch(() => {});
       } else window.setTimeout(() => v.pause(), 900);
@@ -252,6 +257,7 @@ function HeroVideo() {
   }, [cur, still]);
   return (
     <div className="hero-img">
+      <img className={"hero-vid" + (cur === 0 ? " on" : "")} src={HERO_PHOTO.src} alt={HERO_PHOTO.label} width={1344} height={752} aria-hidden={cur !== 0} />
       {HERO_CLIPS.map((c, i) => (
         <video
           key={c.d}
@@ -259,17 +265,16 @@ function HeroVideo() {
             refs.current[i] = el;
             if (el && still) el.pause();
           }}
-          className={"hero-vid" + (i === cur ? " on" : "")}
-          autoPlay={i === 0}
+          className={"hero-vid" + (i + 1 === cur ? " on" : "")}
           muted
           playsInline
-          preload={i === 0 ? "metadata" : "none"}
+          preload={i === 0 ? "auto" : "none"}
           poster={c.poster}
           width={1600}
           height={819}
           aria-label={c.label}
-          aria-hidden={i !== cur}
-          onEnded={() => setCur((n) => (n + 1) % HERO_CLIPS.length)}
+          aria-hidden={i + 1 !== cur}
+          onEnded={() => setCur((n) => (n % HERO_CLIPS.length) + 1)}
         >
           <source src={c.m} type="video/mp4" media="(max-width: 900px)" />
           <source src={c.d} type="video/mp4" />
