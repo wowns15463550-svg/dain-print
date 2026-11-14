@@ -551,7 +551,7 @@ export default function App() {
               <h1 className="serif">
                 <span className="ln">
                   <span>
-                    서울 <strong>ONE STOP</strong>!
+                    서울 충무로
                   </span>
                 </span>
                 <span className="ln">

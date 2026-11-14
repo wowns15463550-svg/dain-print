@@ -1148,8 +1148,8 @@ html[data-wk] .hdr-closed .wk{display:inline}
 @media (max-width:1280px){.nav{gap:16px}}
 
 /* 슬로건(서울 ONE STOP / 당일인쇄 전문 업체)·품목 바 색 (2026-11-15) */
-.hero h1 .rush-word{font-style:normal;font-weight:800;color:#D92B20}
-.hero h1 strong{color:var(--accent)}
+.hero h1 .rush-word{font-style:normal;font-weight:700;color:#C2544A}
+.hero h1{font-weight:600;letter-spacing:-.035em;color:#101828}
 .hero-sub .sub-ln:first-child{font-weight:600;color:var(--ink)}
 @media (min-width:901px){.hero-facts{grid-template-columns:repeat(2,auto)}}
 .index-row{background:linear-gradient(180deg,#2A5BE6 0%,#1E4BD2 55%,#173FB8 100%);border:0;box-shadow:0 16px 38px rgba(30,75,210,.34)}
@@ -1171,3 +1171,21 @@ html[data-wk] .hdr-closed .wk{display:inline}
 .od-chips-time{flex-wrap:nowrap;align-items:stretch}
 .od-chips-time button{flex:0 0 auto}
 .od-time-in{flex:1 1 auto;min-width:0;height:auto;min-height:42px;padding-block:8px}
+
+/* 슬로건 톤 낮춤, 주문서 3단계 한 줄·같은 색, 품목 바 좁은 화면 (2026-11-15) */
+.od-steps{flex-wrap:nowrap;gap:8px}
+.od-steps li{flex:1 1 0;min-width:0;white-space:nowrap;padding:9px 12px 9px 9px}
+.od-steps li:last-child b{background:var(--accent)}
+.od-steps span{font-size:13.5px}
+@media (max-width:560px){
+  .od-steps{gap:6px}
+  .od-steps li{flex:1 1 0;flex-direction:column;align-items:flex-start;gap:6px;padding:9px 8px;white-space:normal}
+  .od-steps b{width:24px;height:24px;font-size:12px}
+  .od-steps span{font-size:12.5px;line-height:1.35;word-break:keep-all}
+}
+@media (min-width:901px) and (max-width:1120px){
+  .index-row{max-width:calc(100% - 230px);grid-auto-columns:auto;overflow-x:auto;scrollbar-width:none}
+  .index-row::-webkit-scrollbar{display:none}
+  .index-row a{padding-inline:14px;font-size:13px;letter-spacing:-.04em}
+}
+.od-steps b{flex:0 0 auto}
