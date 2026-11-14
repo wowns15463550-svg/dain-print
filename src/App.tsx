@@ -3,12 +3,6 @@ import { SERVICE_PAGES } from "./service-pages";
 import BLOG from "./blog-data.json";
 import { CHECKS, CONTACT, EQUIPMENT, EVENTS, FAQ, FINISHING, GALLERY, MAIL_TEMPLATE, NOTICES, ORDER_NOTES, PAPER_GUIDE, SERVICES, STEPS } from "./site-data";
 
-const HERO_SLIDES = [
-  { src: "assets/h-output.webp", w: 1344, pos: "70% 50%", alt: "C14000 배출부에 쌓인 컬러 인쇄물" },
-  { src: "assets/h-binder.webp", w: 1344, pos: "80% 50%", alt: "호리존 무선제본기" },
-  { src: "assets/h-cutter.webp", w: 1344, pos: "60% 50%", alt: "호리존 재단기로 교재를 재단하는 모습" },
-];
-const SLIDE_MS = 5500;
 
 // 사장님이 직접 찍은 실제 매장 사진 (전화번호 지움, 사람 흐림 처리)
 const SHOP_PHOTOS = [
@@ -238,7 +232,6 @@ function StepMedia({ s }: { s: (typeof STEPS)[number] }) {
 
 export default function App() {
   const [menu, setMenu] = useState(false);
-  const [slide, setSlide] = useState(0);
   const [paperOpen, setPaperOpen] = useState<number | null>(null);
   const [checkOpen, setCheckOpen] = useState<number | null>(null);
   const [solid, setSolid] = useState(false);
@@ -292,13 +285,6 @@ export default function App() {
   const heroRef = useRef<HTMLElement>(null);
   const { copied, copy } = useCopy();
   const tel = CONTACT.phone.replace(/-/g, "");
-
-  // hero slideshow; restarts its timer whenever the slide changes (auto or by dot)
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = window.setTimeout(() => setSlide((n) => (n + 1) % HERO_SLIDES.length), SLIDE_MS);
-    return () => window.clearTimeout(t);
-  }, [slide]);
 
   // header turns solid once the hero leaves; sections lift in on entry
   useEffect(() => {
@@ -547,35 +533,25 @@ export default function App() {
                 </div>
               </dl>
               </div>
-              <div className="hero-img" aria-roledescription="carousel" aria-label="다인인쇄소 장비와 작업 모습">
-                {HERO_SLIDES.map((h, i) => (
-                  <img
-                    key={h.src}
-                    className={i === slide ? "on" : undefined}
-                    src={h.src}
-                    alt={h.alt}
-                    style={{ objectPosition: h.pos }}
-                    width={h.w}
-                    height={752}
-                    fetchPriority={i === 0 ? "high" : "low"}
-                    loading={i === 0 ? "eager" : "lazy"}
-                    aria-hidden={i !== slide}
-                  />
-                ))}
-                <div className="hero-dots">
-                  {HERO_SLIDES.map((h, i) => (
-                    <button
-                      key={h.src}
-                      type="button"
-                      className={i === slide ? "on" : undefined}
-                      aria-label={`${i + 1}번째 사진 보기: ${h.alt}`}
-                      aria-current={i === slide}
-                      onClick={() => setSlide(i)}
-                    >
-                      <i />
-                    </button>
-                  ))}
-                </div>
+              <div className="hero-img">
+                <video
+                  className="hero-vid"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  poster="/assets/hero-loop.webp"
+                  width={1600}
+                  height={819}
+                  aria-label="인쇄기에서 종이가 빠르게 지나가는 모습"
+                  ref={(el) => {
+                    if (el && typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) el.pause();
+                  }}
+                >
+                  <source src="/assets/hero-loop-m.mp4" type="video/mp4" media="(max-width: 900px)" />
+                  <source src="/assets/hero-loop.mp4" type="video/mp4" />
+                </video>
               </div>
             </div>
           </div>

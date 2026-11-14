@@ -994,3 +994,14 @@ textarea.od-in{resize:vertical;line-height:1.6}
 /* 안내창은 body 바로 아래에 붙으므로 글꼴을 직접 지정 */
 .od-modal{font-family:var(--f-sans);color:var(--ink);line-height:1.6;word-break:keep-all;overflow-wrap:anywhere;-webkit-font-smoothing:antialiased;background:rgba(15,23,42,.62)}
 .od-modal-btn .btn:not(.btn-accent){background:#fff;color:var(--ink);border:1px solid var(--line-2)}
+
+/* 첫 화면 영상: 컴퓨터는 오른쪽 절반(왼쪽은 흐려짐), 휴대폰도 아래쪽 절반만 보이고 위로 흐려짐 */
+.hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+@media (min-width:901px){.hero-vid{-webkit-mask-image:none;mask-image:none}}
+@media (max-width:900px){
+  .hero{padding-bottom:66vw;min-height:0}
+  .hero-img{position:absolute;inset:auto 0 0 0;height:78vw;margin:0;min-height:0;z-index:0}
+  .hero-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#EEF1F5 0%,rgba(238,241,245,.92) 24%,rgba(238,241,245,.3) 60%,rgba(238,241,245,0) 90%);pointer-events:none}
+  .hero .wrap,.hero-in{position:relative;z-index:1}
+  .hero-vid{object-position:50% 50%}
+}
