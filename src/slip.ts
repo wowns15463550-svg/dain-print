@@ -106,7 +106,32 @@ function size(v: string) {
 
 $("go").onclick = () => {
   const s = parse($<HTMLTextAreaElement>("paste").value);
-  if (!s) { $("err").textContent = "주문 글을 찾지 못했어요. [주문] 으로 시작하는 글을 통째로 붙여넣어 주세요."; return; }
+  if (!s) {
+    // 주문서가 아닌 문의 글: 직접 입력 칸을 열고 붙여넣은 글을 내용 칸에 넣어 줌
+    $("err").textContent = "주문서 글이 아니에요. 아래 직접 입력 칸에 적어 주세요.";
+    openManual($<HTMLTextAreaElement>("paste").value.trim());
+    return;
+  }
+  $("err").textContent = "";
+  const m = load(); if (m[s.no]) s.done = m[s.no].done; m[s.no] = s; save(m);
+  show(s); list();
+};
+function openManual(memo = "") {
+  $("manual").hidden = false;
+  if (memo) $<HTMLTextAreaElement>("m-memo").value = memo;
+  $<HTMLInputElement>("m-name").focus();
+}
+$("manual-open").onclick = () => openManual();
+$("m-go").onclick = () => {
+  const v = (id: string) => ($(id) as HTMLInputElement).value.trim();
+  if (!v("m-name") && !v("m-phone")) { $("err").textContent = "성함이나 연락처 중 하나는 적어 주세요."; return; }
+  const rush = ($("m-rush") as HTMLInputElement).checked;
+  const memo = v("m-memo");
+  const raw = `[주문] ${v("m-name") || "성함"} · ${v("m-phone") || "연락처"}\n${rush ? "★당일★ " : ""}${v("m-when")} · ${v("m-recv")}\n${memo}`;
+  const s: Slip = {
+    no: orderNo(raw, todayISO()) , name: v("m-name") || "성함", phone: v("m-phone") || "연락처", when: v("m-when"), recv: v("m-recv"), addr: v("m-addr"),
+    rush, special: rush ? ["당일 필요 (오늘 받아야 함)"] : [], items: [{ title: "문의 내용", rows: memo ? memo.split("\n").filter(Boolean) : [] }], raw, at: Date.now(),
+  };
   $("err").textContent = "";
   const m = load(); if (m[s.no]) s.done = m[s.no].done; m[s.no] = s; save(m);
   show(s); list();

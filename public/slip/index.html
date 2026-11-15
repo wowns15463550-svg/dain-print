@@ -27,11 +27,20 @@ button,select,input{font:inherit}button{cursor:pointer;border:0;border-radius:10
 .item{border-top:1px dashed #111;margin-top:8px;padding-top:6px}.item b{display:block;font-size:15px}.slip-f{margin-top:10px;font-size:11px;color:#667;text-align:right}
 body[data-size=a4] #slip{font-size:17px}body[data-size=a4] .qr{width:120px;height:120px}body[data-size=a5] #slip{font-size:15px}body[data-size=a5] .qr{width:100px;height:100px}
 @media print{body{background:#fff}.pg>*:not(.printzone){display:none!important}.printzone{display:block!important;box-shadow:none;padding:0}.printzone>*:not(#slip){display:none!important}#slip{border:0;padding:0;border-radius:0}h1{display:none}}
+.mf{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.mf label{font-size:13px;color:#445;display:flex;flex-direction:column;gap:3px}.mf .w{grid-column:1/-1}.mf .chk{flex-direction:row;align-items:center;font-size:15px;font-weight:700}.mf input,.mf select{padding:9px;border:1px solid #ccd;border-radius:8px;font-size:15px}
 </style></head><body><div class="pg">
 <h1>전표 도우미 <small>사장님 컴퓨터 전용 · 주문 기록은 이 컴퓨터에만 저장돼요</small></h1>
 <div class="box"><h2>1. 주문 글 붙여넣기 → 전표 만들기</h2>
 <textarea id="paste" placeholder="카톡·메일로 받은 [주문] 글을 통째로 붙여넣으세요"></textarea>
-<div class="row2"><button id="go">전표 만들기</button><span class="err" id="err"></span></div></div>
+<div class="row2"><button id="go">전표 만들기</button><button class="sec" id="manual-open">직접 입력</button><span class="err" id="err"></span></div>
+<div id="manual" hidden><h2 style="margin-top:16px">직접 입력 (문의 메시지로 온 주문)</h2>
+<div class="mf"><label>성함<input id="m-name"></label><label>연락처<input id="m-phone" inputmode="tel"></label>
+<label>날짜·시간<input id="m-when" placeholder="예: 11.16(월) 17시"></label>
+<label>받는 방법<select id="m-recv"><option>방문 픽업</option><option>택배</option><option>퀵</option></select></label>
+<label class="w">주소 (택배·퀵일 때)<input id="m-addr"></label>
+<label class="w">내용 (품목·요청, 줄바꿈 가능)<textarea id="m-memo" style="min-height:90px"></textarea></label>
+<label class="chk"><input type="checkbox" id="m-rush"> ★당일★ 오늘 받아야 함</label></div>
+<button id="m-go">전표 만들기</button></div></div>
 <div class="box printzone" id="slip-wrap" hidden><h2>전표 미리보기</h2>
 <div class="row2" style="margin:0 0 10px"><select id="size"><option value="r80">영수증 80mm</option><option value="a5">A5</option><option value="a4">A4</option></select><button id="print">전표 출력</button></div>
 <div id="slip"></div></div>
