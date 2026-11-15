@@ -116,9 +116,26 @@ $("go").onclick = () => {
   const m = load(); if (m[s.no]) s.done = m[s.no].done; m[s.no] = s; save(m);
   show(s); list();
 };
+// 문의 글에서 연락처·이름·날짜·받는 방법·당일을 뽑아 빈 칸에 미리 채워 줌 (틀릴 수 있어서 눈으로 확인)
+function guess(t: string) {
+  const set = (id: string, v: string) => { const el = $<HTMLInputElement>(id); if (v && !el.value) el.value = v; };
+  const ph = t.match(/01[016789][-\s]?\d{3,4}[-\s]?\d{4}/);
+  if (ph) {
+    const d = ph[0].replace(/\D/g, "");
+    set("m-phone", `${d.slice(0, 3)}-${d.slice(3, d.length - 4)}-${d.slice(-4)}`);
+    const nm = t.slice(0, ph.index).match(/([가-힣]{2,4})\s*[\/,·]?\s*$/);
+    if (nm) set("m-name", nm[1]);
+  }
+  const dt = t.match(/(\d{1,2})[\/.](\d{1,2})/);
+  const tm = t.match(/(오전|오후)?\s*(\d{1,2})\s*시/);
+  set("m-when", [dt ? `${dt[1]}.${dt[2]}` : "", tm ? `${tm[1] || ""} ${tm[2]}시`.trim() : ""].filter(Boolean).join(" "));
+  const r = $<HTMLSelectElement>("m-recv");
+  if (/퀵/.test(t)) r.value = "퀵"; else if (/택배/.test(t)) r.value = "택배"; else r.value = "방문 픽업";
+  if (/오늘|당일/.test(t)) $<HTMLInputElement>("m-rush").checked = true;
+}
 function openManual(memo = "") {
   $("manual").hidden = false;
-  if (memo) $<HTMLTextAreaElement>("m-memo").value = memo;
+  if (memo) { $<HTMLTextAreaElement>("m-memo").value = memo; guess(memo); }
   $<HTMLInputElement>("m-name").focus();
 }
 $("manual-open").onclick = () => openManual();
@@ -137,6 +154,21 @@ $("m-go").onclick = () => {
   show(s); list();
 };
 $("print").onclick = () => print();
+// 클로드가 만들어 준 링크(/slip/#d=...)로 들어오면 바로 전표를 만든다
+function fromHash() {
+  const m0 = location.hash.match(/^#d=(.+)$/);
+  if (!m0) return;
+  try {
+    const b = atob(m0[1].replace(/-/g, "+").replace(/_/g, "/"));
+    const j = JSON.parse(new TextDecoder().decode(Uint8Array.from(b, (c) => c.charCodeAt(0))));
+    const items = Array.isArray(j.items) ? j.items.map((it: { title?: string; rows?: string[] }) => ({ title: String(it.title || ""), rows: (it.rows || []).map(String) })) : [];
+    const raw = JSON.stringify(j);
+    const s: Slip = { no: orderNo(raw, todayISO()), name: String(j.name || "성함"), phone: String(j.phone || "연락처"), when: String(j.when || ""), recv: String(j.recv || ""), addr: String(j.addr || ""), rush: !!j.rush, special: Array.isArray(j.special) ? j.special.map(String) : [], items, raw, at: Date.now() };
+    const m = load(); if (m[s.no]) s.done = m[s.no].done; m[s.no] = s; save(m);
+    history.replaceState(null, "", location.pathname);
+    show(s); list(); card(s);
+  } catch { $("err").textContent = "링크의 주문 내용을 읽지 못했어요."; }
+}
 $("scan").addEventListener("keydown", (e) => {
   if ((e as KeyboardEvent).key !== "Enter") return;
   const v = $<HTMLInputElement>("scan").value.trim().toUpperCase();
@@ -149,3 +181,4 @@ $<HTMLSelectElement>("size").onchange = (e) => size((e.target as HTMLSelectEleme
 $("clear").onclick = () => { if (confirm("저장된 주문 기록을 모두 지울까요?")) { save({}); list(); $("card").hidden = true; } };
 let sv = "r80"; try { sv = localStorage.getItem("dain-slip-size") || "r80"; } catch { /* */ }
 $<HTMLSelectElement>("size").value = sv; size(sv); list();
+fromHash();
