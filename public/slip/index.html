@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>전표 도우미 | 다인인쇄소</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Pretendard Variable",Pretendard,system-ui,sans-serif;background:#F4F5F7;color:#111}
+.pg{max-width:1100px;margin:0 auto;padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:20px}@media(max-width:860px){.pg{grid-template-columns:1fr}}
+h1{grid-column:1/-1;margin:0;font-size:24px}h1 small{font-size:14px;color:#667;font-weight:500;margin-left:8px}
+.box{background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.06)}.box h2{margin:0 0 10px;font-size:17px}
+textarea{width:100%;min-height:170px;border:1px solid #ccd;border-radius:10px;padding:10px;font:inherit;font-size:14px}
+button,select,input{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:11px 16px;background:#1E4BD2;color:#fff;font-weight:700}
+.sec{background:#e9ecf5;color:#223}.err{color:#C0261B;font-size:14px;margin-top:6px;min-height:18px}.mut{color:#889;font-size:14px}
+#scan{width:100%;font-size:20px;padding:12px;border:2px solid #1E4BD2;border-radius:10px}
+.li{display:block;width:100%;text-align:left;background:#f3f5fb;color:#223;margin-bottom:6px;font-weight:500;font-size:14px}.li.d{opacity:.5}
+.row2{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+#card .c-no{font-size:13px;color:#667}.ok{color:#0a7a3b;font-style:normal;font-weight:800}#card .c-name{font-size:26px;font-weight:800;margin:4px 0}#card .c-name a{color:#1E4BD2;margin-left:8px}
+#card .c-big{font-size:19px;font-weight:700;margin:3px 0}#card .warn{background:#FFF1EE;border:1px solid #E0352A;border-radius:8px;padding:8px;margin:8px 0;color:#B01E15;font-weight:700}
+#card .item{border-top:1px solid #dde;padding:8px 0;font-size:14px}#card .c-btn{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}#card .c-btn button:nth-child(1){background:#0a7a3b}
+#c-msg{min-height:90px}
+/* 전표 */
+#slip{background:#fff;border:1px dashed #99a;border-radius:6px;padding:14px;font-size:13px;line-height:1.45}
+.slip-h{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #111;padding-bottom:4px;margin-bottom:8px}.slip-h b{font-size:18px}
+.slip-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.no{font-size:20px;font-weight:900;letter-spacing:.5px}.rush{display:inline-block;background:#111;color:#fff;font-weight:900;padding:2px 8px;margin-top:4px;font-size:15px}
+.qr{width:84px;height:84px}.qr svg{width:100%;height:100%}
+.big{font-size:24px;font-weight:900;margin-top:6px}.big.ph{font-size:20px;margin-top:0}
+.row{margin-top:6px;font-size:14px}.row b{display:inline-block;min-width:68px;margin-right:6px;background:#111;color:#fff;padding:0 6px;font-size:12px}
+.warn{border:2px solid #111;margin-top:8px;padding:5px 7px;font-weight:800}.warn b{display:block}
+.item{border-top:1px dashed #111;margin-top:8px;padding-top:6px}.item b{display:block;font-size:15px}.slip-f{margin-top:10px;font-size:11px;color:#667;text-align:right}
+body[data-size=a4] #slip{font-size:17px}body[data-size=a4] .qr{width:120px;height:120px}body[data-size=a5] #slip{font-size:15px}body[data-size=a5] .qr{width:100px;height:100px}
+@media print{body{background:#fff}.pg>*:not(.printzone){display:none!important}.printzone{display:block!important;box-shadow:none;padding:0}.printzone>*:not(#slip){display:none!important}#slip{border:0;padding:0;border-radius:0}h1{display:none}}
+</style></head><body><div class="pg">
+<h1>전표 도우미 <small>사장님 컴퓨터 전용 · 주문 기록은 이 컴퓨터에만 저장돼요</small></h1>
+<div class="box"><h2>1. 주문 글 붙여넣기 → 전표 만들기</h2>
+<textarea id="paste" placeholder="카톡·메일로 받은 [주문] 글을 통째로 붙여넣으세요"></textarea>
+<div class="row2"><button id="go">전표 만들기</button><span class="err" id="err"></span></div></div>
+<div class="box printzone" id="slip-wrap" hidden><h2>전표 미리보기</h2>
+<div class="row2" style="margin:0 0 10px"><select id="size"><option value="r80">영수증 80mm</option><option value="a5">A5</option><option value="a4">A4</option></select><button id="print">전표 출력</button></div>
+<div id="slip"></div></div>
+<div class="box"><h2>2. 작업 끝나면 QR 스캔</h2><input id="scan" autocomplete="off" placeholder="여기를 누르고 바코드(QR) 스캐너로 읽으세요 (번호를 직접 쳐도 됩니다)">
+<div class="err" id="err2"></div><div id="card" hidden></div></div>
+<div class="box"><h2>저장된 주문</h2><div id="list"></div><div class="row2"><button class="sec" id="clear">기록 모두 지우기</button></div></div>
+</div><script src="/slip.js"></script></body></html>

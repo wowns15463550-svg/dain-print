@@ -7,6 +7,7 @@
     "build": "node scripts/build.mjs"
   },
   "dependencies": {
+    "qrcode-generator": "^1.4.4",
     "react": "19.1.1",
     "react-dom": "19.1.1"
   },

@@ -95,6 +95,9 @@ await esbuild.build({
   define: { "process.env.NODE_ENV": '"production"' },
 });
 
+// 전표 도우미 (/slip/, 사장님 전용)
+await esbuild.build({ ...common, entryPoints: ["src/slip.ts"], outfile: "dist/slip.js", platform: "browser", format: "iife", minify: true, target: ["es2019"] });
+
 // 다인이 챗봇 (모든 페이지)
 await esbuild.build({
   ...common,
@@ -279,7 +282,7 @@ writeFileSync(
 );
 
 writeFileSync("dist/.nojekyll", "");
-writeFileSync("dist/robots.txt", `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}sitemap.xml\n`);
+writeFileSync("dist/robots.txt", `User-agent: *\nAllow: /\nDisallow: /slip/\nSitemap: ${SITE_URL}sitemap.xml\n`);
 const today = new Date().toISOString().slice(0, 10);
 const urls = [SITE_URL, ...servicePages.map((p) => `${SITE_URL}${p.slug}/`), `${SITE_URL}templates/`, `${SITE_URL}order/`];
 writeFileSync(

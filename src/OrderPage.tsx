@@ -1,4 +1,5 @@
 // 주문서 도우미 (/order/) — 손님이 사양을 고르면 주문 글이 자동으로 완성됩니다. 가격은 보여주지 않습니다.
+import { orderNo } from "./order-no";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { Arrow, Ico } from "./App";
@@ -558,6 +559,7 @@ export default function OrderView() {
       L.push("", "━━━━━━━━━━", `${items.length > 1 ? (NUM[i] ?? i + 1) + " " : ""}${d.name}`);
       d.rows.forEach(([k, v]) => L.push(`${k} : ${v}`));
     });
+    L.push("", `주문번호 : ${orderNo(L.join("\n"), today)}`);
     return L.join("\n");
   }, [items, name, phone, due, sameDay, today, dueTime, recv, addr, memo]);
 
