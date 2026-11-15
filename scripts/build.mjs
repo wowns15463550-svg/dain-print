@@ -218,6 +218,12 @@ if (existsSync("public")) cpSync("public", "dist", { recursive: true });
 mkdirSync("dist/vendor/pdfjs", { recursive: true });
 for (const f of ["pdf.min.js", "pdf.worker.min.js"]) cpSync(`node_modules/pdfjs-dist/legacy/build/${f}`, `dist/vendor/pdfjs/${f}`);
 
+// 전표 도우미: 스크립트가 바뀌면 브라우저가 옛 파일을 쓰지 않도록 주소 뒤에 ?v= 붙임
+{
+  const f = "dist/slip/index.html";
+  writeFileSync(f, readFileSync(f, "utf8").replace('src="/slip.js"', `src="/slip.js?v=${ver("dist/slip.js")}"`));
+}
+
 // 품목별 페이지: dist/{slug}/index.html
 for (const p of servicePages) {
   const url = `${SITE_URL}${p.slug}/`;
