@@ -245,10 +245,11 @@ function StepMedia({ s }: { s: (typeof STEPS)[number] }) {
   );
 }
 
-// 첫 화면 영상: 영상 1 → 영상 2 → C14000 사진 → 다시 영상 1 순서로 돈다(겹쳐서 부드럽게 바뀜)
+// 첫 화면 영상: 영상 1 → 영상 2 → 재단 영상 → C14000 사진 → 다시 영상 1 순서로 돈다(겹쳐서 부드럽게 바뀜)
 const HERO_CLIPS = [
   { d: "/assets/hero-loop.mp4", m: "/assets/hero-loop-m.mp4", poster: "/assets/hero-loop.webp", label: "인쇄기에서 종이가 빠르게 지나가는 모습" },
   { d: "/assets/hero-loop2.mp4", m: "/assets/hero-loop2-m.mp4", poster: "/assets/hero-loop2.webp", label: "종이가 롤러를 따라 빠르게 이송되는 모습" },
+  { d: "/assets/hero-loop3.mp4", m: "/assets/hero-loop3-m.mp4", poster: "/assets/hero-loop3.webp", label: "재단기가 종이 뭉치를 깔끔하게 자르는 모습" },
 ];
 const HERO_PHOTO = { src: "/assets/h-output.webp", label: "다인인쇄소의 AccurioPress C14000 출력기" };
 // 슬라이드 0~(영상 수-1) = 영상, 마지막 = 사진
